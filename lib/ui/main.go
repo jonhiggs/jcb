@@ -8,6 +8,10 @@ var maxY int
 var maxX int
 var mainWin *gc.Window
 
+const (
+	INSERT = 1
+)
+
 func Start() {
 	stdscr, _ := gc.Init()
 	defer gc.End()
