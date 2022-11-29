@@ -1,5 +1,7 @@
 package ui
 
+import gc "github.com/rthornton128/goncurses"
+
 func scanMain() bool {
 	mainWin.Refresh()
 	ch := transactionWin.GetChar()
@@ -17,16 +19,17 @@ func scanMain() bool {
 	//	if err != nil {
 	//		ui.PrintError(err)
 	//	}
-	//case 'i':
-	//	err := ui.NewTransaction()
-	//	if err != nil {
-	//		ui.PrintError(err)
-	//	}
-	//	uiTransaction.UpdateTransactions()
-	//	uiTransaction.TransactionWindow.Touch()
-	//	uiTransaction.TransactionWindow.Refresh()
-	//	ui.MainWindow.Touch()
-	//	ui.MainWindow.Refresh()
+	case 'i':
+		renderTransactionAdd()
+		//err := ui.NewTransaction()
+		//if err != nil {
+		//	ui.PrintError(err)
+		//}
+		//uiTransaction.UpdateTransactions()
+		//uiTransaction.TransactionWindow.Touch()
+		//uiTransaction.TransactionWindow.Refresh()
+		//ui.MainWindow.Touch()
+		//ui.MainWindow.Refresh()
 	//case 'e':
 	//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 	//	if err != nil {
@@ -83,4 +86,22 @@ func scanMain() bool {
 func scanHelp() bool {
 	helpWin.GetChar()
 	return false
+}
+
+func scanTransactionAdd() {
+	transactionAddWin.Keypad(true)
+	transactionAddWin.Refresh()
+
+	transactionAddForm.Driver(gc.REQ_FIRST_FIELD)
+	transactionAddForm.Driver(gc.REQ_END_LINE)
+
+	for {
+		ch := transactionAddWin.GetChar()
+		switch ch {
+		case 'q', 3:
+			return
+		default:
+			transactionAddForm.Driver(ch)
+		}
+	}
 }
