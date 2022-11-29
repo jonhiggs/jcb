@@ -10,7 +10,7 @@ var transactionWin *gc.Window
 var transactionMenuItems []*gc.MenuItem
 var transactionMenu *gc.Menu
 
-func InitTransactions() error {
+func initTransactions() error {
 	var err error
 	transactionMenu, err = gc.NewMenu(make([]*gc.MenuItem, 0))
 	if err != nil {
