@@ -2,6 +2,7 @@ package ui
 
 import (
 	"jcb/domain"
+	"jcb/lib/transaction"
 	"time"
 
 	gc "github.com/rthornton128/goncurses"
@@ -57,7 +58,14 @@ func renderTransactionAdd() {
 
 	transactionAddWin.Box(0, 0)
 
-	scanTransactionAdd()
+	var err error
+	switch scanTransactionAdd() {
+	case INSERT:
+		err = transactionInsert(fields)
+	}
+	if err != nil {
+		printError(err)
+	}
 
 	mainWin.Touch()
 	mainWin.Refresh()
@@ -117,4 +125,31 @@ func renderTransactionAdd() {
 	//		form.Driver(ch)
 	//	}
 	//}
+}
+
+func transactionInsert(fields []*gc.Field) error {
+	errStack := make([]error, 1)
+	hasErr := false
+
+	errStack[0] = transactionAddForm.Driver(gc.REQ_VALIDATION)
+	//errStack[1] = uiValidator.Date(fields[0].Buffer())
+
+	for _, e := range errStack {
+		if e != nil {
+			return e
+		}
+	}
+
+	if !hasErr {
+		t := unformatTransaction(FormattedTransaction{
+			"0",
+			fields[0].Buffer(),
+			fields[1].Buffer(),
+			fields[2].Buffer(),
+		})
+
+		err := transaction.Save(t)
+		return err
+	}
+	return nil
 }

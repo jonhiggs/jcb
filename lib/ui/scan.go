@@ -79,7 +79,7 @@ func scanHelp() bool {
 	return false
 }
 
-func scanTransactionAdd() {
+func scanTransactionAdd() int {
 	transactionAddWin.Keypad(true)
 	transactionAddWin.Refresh()
 
@@ -89,6 +89,8 @@ func scanTransactionAdd() {
 	for {
 		ch := transactionAddWin.GetChar()
 		switch ch {
+		case gc.KEY_RETURN:
+			return INSERT
 		case 1: // ctrl-a
 			transactionAddForm.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
@@ -109,7 +111,7 @@ func scanTransactionAdd() {
 		case 6, gc.KEY_RIGHT:
 			transactionAddForm.Driver(gc.REQ_RIGHT_CHAR)
 		case 'q', 3:
-			return
+			return 0
 		default:
 			transactionAddForm.Driver(ch)
 		}
