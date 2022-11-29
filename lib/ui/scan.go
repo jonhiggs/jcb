@@ -2,7 +2,6 @@ package ui
 
 import (
 	"jcb/lib/transaction"
-	"strconv"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -14,9 +13,11 @@ func scanMain() {
 		ch := transactionWin.GetChar()
 		switch ch {
 		case 'x':
-			idStr := transactionMenu.Current(nil).Description()
-			id, _ := strconv.ParseInt(idStr, 10, 64)
-			err := transaction.Delete(id)
+			t, err := selectedTransaction()
+			if err != nil {
+				printError(err)
+			}
+			err = transaction.Delete(t)
 			if err != nil {
 				printError(err)
 			}

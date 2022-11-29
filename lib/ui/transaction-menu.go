@@ -3,6 +3,7 @@ package ui
 import (
 	"errors"
 	"fmt"
+	"jcb/domain"
 	"jcb/lib/transaction"
 	"strconv"
 
@@ -41,10 +42,10 @@ func initTransactions() error {
 	return nil
 }
 
-func selectedTransactionId() int64 {
+func selectedTransaction() (domain.Transaction, error) {
 	idStr := transactionMenu.Current(nil).Description()
 	i, _ := strconv.ParseInt(idStr, 10, 64)
-	return i
+	return transaction.Find(i)
 }
 
 //func deletetransactionMenuItem(id int64) error {

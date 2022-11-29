@@ -7,12 +7,16 @@ import (
 	"strconv"
 )
 
+func Find(id int64) (domain.Transaction, error) {
+	return db.FindTransaction(id)
+}
+
 func Save(t domain.Transaction) error {
 	return db.SaveTransaction(t)
 }
 
-func Delete(id int64) error {
-	return db.DeleteTransaction(id)
+func Delete(t domain.Transaction) error {
+	return db.DeleteTransaction(t.Id)
 }
 
 func All() ([]domain.Transaction, error) {
