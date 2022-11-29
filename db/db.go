@@ -41,13 +41,14 @@ func Init() error {
 }
 
 func FindTransaction(id int64) (domain.Transaction, error) {
-	var date time.Time
+	var date string
 	var description string
 	var cents int64
 
 	statement, _ := db.Prepare("SELECT id, date, description, cents FROM transactions WHERE id = ?")
 	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents)
-	return domain.Transaction{id, date, description, cents}, err
+
+	return domain.Transaction{id, parseDate(date), description, cents}, err
 }
 
 func SaveTransaction(t domain.Transaction) error {
@@ -104,4 +105,10 @@ func DeleteTransaction(id int64) error {
 	}
 	_, err = statement.Exec(id)
 	return err
+}
+
+func parseDate(timeStr string) time.Time {
+	const timeLayout = "2006-01-02 03:04:05-07:00"
+	dateTime, _ := time.Parse(timeLayout, timeStr)
+	return dateTime
 }
