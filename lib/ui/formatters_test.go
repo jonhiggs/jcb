@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/domain"
 	"testing"
 	"time"
@@ -68,5 +69,26 @@ func TestUnformatTransactionA(t *testing.T) {
 
 	if trans.Cents != 100 {
 		t.Error("incorrect cents")
+	}
+}
+
+func TestUnformatTransactionB(t *testing.T) {
+	ftrans := FormattedTransaction{"  0  ", "  2002-03-04  ", "  test new  ", "  0.2   "}
+	trans := unformatTransaction(ftrans)
+
+	if trans.Id != 0 {
+		t.Error("incorrect id")
+	}
+
+	if trans.Date.Format("2006-01-02") != "2002-03-04" {
+		t.Error("incorrect date")
+	}
+
+	if trans.Description != "test new" {
+		t.Error("incorrect description")
+	}
+
+	if trans.Cents != 2 {
+		t.Error(fmt.Sprintf("incorrect cents [%d]", trans.Cents))
 	}
 }

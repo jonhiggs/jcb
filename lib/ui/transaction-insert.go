@@ -2,8 +2,10 @@ package ui
 
 import (
 	"errors"
+	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
+	"strings"
 	"time"
 
 	gc "github.com/rthornton128/goncurses"
@@ -94,12 +96,20 @@ func transactionInsertRead() (domain.Transaction, error) {
 		return domain.Transaction{}, err
 	}
 
-	t := unformatTransaction(FormattedTransaction{
-		"0",                                     // id
-		transactionInsertFormFields[0].Buffer(), // date
-		transactionInsertFormFields[1].Buffer(), // description
-		transactionInsertFormFields[2].Buffer(), // amount
-	})
+	idStr := "0"
+	dateStr := transactionInsertFormFields[0].Buffer()
+	descriptionStr := transactionInsertFormFields[1].Buffer()
+	amountStr := strings.Trim(transactionInsertFormFields[2].Buffer(), " ")
+
+	amountSplit := strings.Split(amountStr, ".")
+	if len(amountSplit) > 2 {
+		return domain.Transaction{}, errors.New("Amount has too many dots")
+	}
+	if len(amountSplit) == 2 && len(amountSplit[1]) > 2 {
+		return domain.Transaction{}, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
+	}
+
+	t := unformatTransaction(FormattedTransaction{idStr, dateStr, descriptionStr, amountStr})
 
 	err = transaction.Validate(t)
 	return t, err
