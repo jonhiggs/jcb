@@ -8,17 +8,17 @@ import (
 	gc "github.com/rthornton128/goncurses"
 )
 
-var transactionAddWin *gc.Window
-var transactionAddForm gc.Form
+var transactionInsertWin *gc.Window
+var transactionInsertForm gc.Form
 
-func renderTransactionAdd() {
+func renderTransactionInsert() {
 	t := formatTransaction(domain.Transaction{0, time.Now(), "", 0})
 
 	gc.Cursor(1)
-	transactionAddWin, _ = gc.NewWindow(9, 60, 8, 10)
+	transactionInsertWin, _ = gc.NewWindow(9, 60, 8, 10)
 
 	defer gc.Cursor(0)
-	defer transactionAddWin.Delete()
+	defer transactionInsertWin.Delete()
 
 	// date field
 	fields := make([]*gc.Field, 4)
@@ -41,25 +41,25 @@ func renderTransactionAdd() {
 	fields[3].SetBuffer("0d")
 	defer fields[3].Free()
 
-	transactionAddForm, _ = gc.NewForm(fields)
-	defer transactionAddForm.UnPost()
-	defer transactionAddForm.Free()
-	transactionAddForm.SetSub(transactionAddWin)
-	transactionAddForm.Post()
+	transactionInsertForm, _ = gc.NewForm(fields)
+	defer transactionInsertForm.UnPost()
+	defer transactionInsertForm.Free()
+	transactionInsertForm.SetSub(transactionInsertWin)
+	transactionInsertForm.Post()
 
-	transactionAddWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-	transactionAddWin.MovePrint(1, 2, "New Transaction")
-	transactionAddWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	transactionInsertWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	transactionInsertWin.MovePrint(1, 2, "New Transaction")
+	transactionInsertWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
-	transactionAddWin.MovePrint(3, 2, "Date:")
-	transactionAddWin.MovePrint(4, 2, "Description:")
-	transactionAddWin.MovePrint(5, 2, "Amount:")
-	transactionAddWin.MovePrint(6, 2, "Repeat every")
+	transactionInsertWin.MovePrint(3, 2, "Date:")
+	transactionInsertWin.MovePrint(4, 2, "Description:")
+	transactionInsertWin.MovePrint(5, 2, "Amount:")
+	transactionInsertWin.MovePrint(6, 2, "Repeat every")
 
-	transactionAddWin.Box(0, 0)
+	transactionInsertWin.Box(0, 0)
 
 	var err error
-	switch scanTransactionAdd() {
+	switch scanTransactionInsert() {
 	case INSERT:
 		err = transactionInsert(fields)
 	}
@@ -74,7 +74,7 @@ func renderTransactionAdd() {
 }
 
 func transactionInsert(fields []*gc.Field) error {
-	err := transactionAddForm.Driver(gc.REQ_VALIDATION)
+	err := transactionInsertForm.Driver(gc.REQ_VALIDATION)
 	if err != nil {
 		return err
 	}

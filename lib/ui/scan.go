@@ -63,7 +63,7 @@ func scanMain() {
 		//	//for i := len(items) - 1; items[i].Index() != uiTransaction.TransactionMenu.Current(nil).Index(); i = i - 1 {
 		//	//}
 		case 'i':
-			renderTransactionAdd()
+			renderTransactionInsert()
 		case '?':
 			renderHelp()
 		case 3, 'q':
@@ -79,43 +79,43 @@ func scanHelp() bool {
 	return false
 }
 
-func scanTransactionAdd() int {
-	transactionAddWin.Keypad(true)
-	transactionAddWin.Refresh()
+func scanTransactionInsert() int {
+	transactionInsertWin.Keypad(true)
+	transactionInsertWin.Refresh()
 
-	transactionAddForm.Driver(gc.REQ_FIRST_FIELD)
-	transactionAddForm.Driver(gc.REQ_END_LINE)
+	transactionInsertForm.Driver(gc.REQ_FIRST_FIELD)
+	transactionInsertForm.Driver(gc.REQ_END_LINE)
 
 	for {
-		ch := transactionAddWin.GetChar()
+		ch := transactionInsertWin.GetChar()
 		switch ch {
 		case gc.KEY_RETURN:
 			// if valid {
 			return INSERT
 			// }
 		case 1: // ctrl-a
-			transactionAddForm.Driver(gc.REQ_BEG_FIELD)
+			transactionInsertForm.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
-			transactionAddForm.Driver(gc.REQ_END_FIELD)
+			transactionInsertForm.Driver(gc.REQ_END_FIELD)
 		case 11: // ctrl-k
-			transactionAddForm.Driver(gc.REQ_DEL_LINE)
+			transactionInsertForm.Driver(gc.REQ_DEL_LINE)
 		case 4, 33: // ctrl-d, delete
-			transactionAddForm.Driver(gc.REQ_DEL_CHAR)
+			transactionInsertForm.Driver(gc.REQ_DEL_CHAR)
 		case 23, 27: // ctrl-w, esc/alt-backspace
-			transactionAddForm.Driver(gc.REQ_DEL_WORD)
+			transactionInsertForm.Driver(gc.REQ_DEL_WORD)
 		case gc.KEY_BACKSPACE:
-			transactionAddForm.Driver(gc.REQ_DEL_PREV)
+			transactionInsertForm.Driver(gc.REQ_DEL_PREV)
 		case gc.KEY_DOWN, gc.KEY_TAB:
-			transactionAddForm.Driver(gc.REQ_NEXT_FIELD)
-			transactionAddForm.Driver(gc.REQ_END_LINE)
+			transactionInsertForm.Driver(gc.REQ_NEXT_FIELD)
+			transactionInsertForm.Driver(gc.REQ_END_LINE)
 		case 2, gc.KEY_LEFT:
-			transactionAddForm.Driver(gc.REQ_LEFT_CHAR)
+			transactionInsertForm.Driver(gc.REQ_LEFT_CHAR)
 		case 6, gc.KEY_RIGHT:
-			transactionAddForm.Driver(gc.REQ_RIGHT_CHAR)
+			transactionInsertForm.Driver(gc.REQ_RIGHT_CHAR)
 		case 'q', 3:
 			return 0
 		default:
-			transactionAddForm.Driver(ch)
+			transactionInsertForm.Driver(ch)
 		}
 	}
 }
