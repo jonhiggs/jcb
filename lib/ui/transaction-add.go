@@ -71,85 +71,20 @@ func renderTransactionAdd() {
 	mainWin.Refresh()
 	footerWin.Touch()
 	footerWin.Refresh()
-
-	//for {
-	//	ch := win.GetChar()
-	//	win.MovePrint(0, 0, ch)
-	//	switch ch {
-	//	case gc.KEY_RETURN:
-	//		errStack := make([]error, 2)
-	//		hasErr := false
-
-	//		errStack[0] = form.Driver(gc.REQ_VALIDATION)
-	//		errStack[1] = uiValidator.Date(fields[0].Buffer())
-
-	//		for _, e := range errStack {
-	//			if e != nil {
-	//				PrintError(e)
-	//				hasErr = true
-	//			}
-	//		}
-
-	//		if !hasErr {
-	//			_, err := db.SaveTransaction(db.Transaction{
-	//				0,
-	//				uiStringify.Date(fields[0].Buffer()),
-	//				fields[1].Buffer(),
-	//				uiStringify.Cents(fields[2].Buffer()),
-	//			})
-
-	//			return err
-	//		}
-	//	case 1: // ctrl-a
-	//		form.Driver(gc.REQ_BEG_FIELD)
-	//	case 5: // ctrl-e
-	//		form.Driver(gc.REQ_END_FIELD)
-	//	case 11: // ctrl-k
-	//		form.Driver(gc.REQ_DEL_LINE)
-	//	case 3: // ctrl-c
-	//		return nil
-	//	case 4, 33: // ctrl-d, delete
-	//		form.Driver(gc.REQ_DEL_CHAR)
-	//	case 23, 27: // ctrl-w, esc/alt-backspace
-	//		form.Driver(gc.REQ_DEL_WORD)
-	//	case gc.KEY_BACKSPACE:
-	//		form.Driver(gc.REQ_DEL_PREV)
-	//	case gc.KEY_DOWN, gc.KEY_TAB:
-	//		form.Driver(gc.REQ_NEXT_FIELD)
-	//		form.Driver(gc.REQ_END_LINE)
-	//	case 2, gc.KEY_LEFT:
-	//		form.Driver(gc.REQ_LEFT_CHAR)
-	//	case 6, gc.KEY_RIGHT:
-	//		form.Driver(gc.REQ_RIGHT_CHAR)
-	//	default:
-	//		form.Driver(ch)
-	//	}
-	//}
 }
 
 func transactionInsert(fields []*gc.Field) error {
-	errStack := make([]error, 1)
-	hasErr := false
-
-	errStack[0] = transactionAddForm.Driver(gc.REQ_VALIDATION)
-	//errStack[1] = uiValidator.Date(fields[0].Buffer())
-
-	for _, e := range errStack {
-		if e != nil {
-			return e
-		}
-	}
-
-	if !hasErr {
-		t := unformatTransaction(FormattedTransaction{
-			"0",
-			fields[0].Buffer(),
-			fields[1].Buffer(),
-			fields[2].Buffer(),
-		})
-
-		err := transaction.Save(t)
+	err := transactionAddForm.Driver(gc.REQ_VALIDATION)
+	if err != nil {
 		return err
 	}
-	return nil
+
+	t := unformatTransaction(FormattedTransaction{
+		"0",
+		fields[0].Buffer(),
+		fields[1].Buffer(),
+		fields[2].Buffer(),
+	})
+
+	return transaction.Save(t)
 }

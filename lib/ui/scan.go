@@ -90,7 +90,9 @@ func scanTransactionAdd() int {
 		ch := transactionAddWin.GetChar()
 		switch ch {
 		case gc.KEY_RETURN:
+			// if valid {
 			return INSERT
+			// }
 		case 1: // ctrl-a
 			transactionAddForm.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
