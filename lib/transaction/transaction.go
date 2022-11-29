@@ -12,3 +12,7 @@ func Save(t domain.Transaction) error {
 func Delete(t domain.Transaction) error {
 	return db.DeleteTransaction(t.Id)
 }
+
+func All() ([]domain.Transaction, error) {
+	return db.AllTransactions()
+}

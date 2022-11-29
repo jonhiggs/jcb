@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"errors"
+	"fmt"
+	"jcb/lib/transaction"
 	"strconv"
 
 	gc "github.com/rthornton128/goncurses"
@@ -30,6 +33,8 @@ func initTransactions() error {
 	mainWin.MovePrint(2, 49, "AMOUNT")
 	mainWin.MovePrint(2, 57, "BALANCE")
 	mainWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+
+	updateTransactions()
 
 	transactionMenu.Post()
 
@@ -73,35 +78,40 @@ func selectedTransactionId() int64 {
 //	transactionMenu.Post()
 //	return err
 //}
-//
-//func updateTransactions() error {
-//	var menuNames []string
-//	var menuDescriptions []string
-//
-//	for _, r := range db.AllTransactions() {
-//		date := uiStringify.FormatDate(r.Date)
-//		description := uiStringify.FormatDescription(r.Description)
-//		cents := uiStringify.FormatCents(r.Cents)
-//		itemStr := fmt.Sprintf("%s  %-30s  %s", date, description, cents)
-//		menuNames = append(menuNames, itemStr)
-//		menuDescriptions = append(menuDescriptions, strconv.FormatInt(r.Id, 10))
-//	}
-//
-//	transactionMenuItems = make([]*gc.MenuItem, len(menuNames))
-//	for i, n := range menuNames {
-//		transactionMenuItems[i], _ = gc.NewItem(n, menuDescriptions[i])
-//	}
-//
-//	if len(transactionMenuItems) == 0 {
-//		return errors.New("No data to show. Press ? for help.")
-//	}
-//
-//	transactionMenu.UnPost()
-//	err := transactionMenu.SetItems(transactionMenuItems)
-//	transactionMenu.Post()
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
-//
+
+func updateTransactions() error {
+	transactions, err := transaction.All()
+	if err != nil {
+		return err
+	}
+
+	//var menuNames []string
+	//var menuDescriptions []string
+	//for _, r := range transactionAll() {
+	//	date := uiStringify.FormatDate(r.Date)
+	//	description := uiStringify.FormatDescription(r.Description)
+	//	cents := uiStringify.FormatCents(r.Cents)
+	//	itemStr := fmt.Sprintf("%s  %-30s  %s", date, description, cents)
+	//	menuNames = append(menuNames, itemStr)
+	//	menuDescriptions = append(menuDescriptions, strconv.FormatInt(r.Id, 10))
+	//}
+
+	transactionMenuItems = make([]*gc.MenuItem, len(transactions))
+	for i, n := range transactions {
+		ft := formatTransaction(n)
+		str := fmt.Sprintf("%s  %s  %s", ft.Date, ft.Description, ft.Amount)
+		transactionMenuItems[i], _ = gc.NewItem(str, ft.Id)
+	}
+
+	if len(transactionMenuItems) == 0 {
+		return errors.New("No data to show. Press ? for help.")
+	}
+
+	transactionMenu.UnPost()
+	err = transactionMenu.SetItems(transactionMenuItems)
+	transactionMenu.Post()
+	if err != nil {
+		return err
+	}
+	return nil
+}

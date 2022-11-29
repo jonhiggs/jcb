@@ -68,10 +68,10 @@ func SaveTransaction(t domain.Transaction) error {
 	}
 }
 
-func AllTransactions() []domain.Transaction {
+func AllTransactions() ([]domain.Transaction, error) {
 	rows, err := db.Query("SELECT * FROM transactions")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	defer rows.Close()
@@ -87,14 +87,14 @@ func AllTransactions() []domain.Transaction {
 
 		err = rows.Scan(&id, &date, &desc, &cents)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		dateTime, _ := time.Parse(timeLayout, date)
 		records = append(records, domain.Transaction{id, dateTime, desc, cents})
 	}
 
-	return records
+	return records, nil
 }
 
 func DeleteTransaction(id int64) error {
