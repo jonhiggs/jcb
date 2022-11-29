@@ -79,6 +79,8 @@ func renderTransactionInsert() {
 		}
 	}
 
+	clearError()
+
 	mainWin.Touch()
 	mainWin.Refresh()
 	footerWin.Touch()
@@ -93,11 +95,12 @@ func transactionInsertRead() (domain.Transaction, error) {
 	}
 
 	t := unformatTransaction(FormattedTransaction{
-		"0",
-		transactionInsertFormFields[0].Buffer(),
-		transactionInsertFormFields[1].Buffer(),
-		transactionInsertFormFields[2].Buffer(),
+		"0",                                     // id
+		transactionInsertFormFields[0].Buffer(), // date
+		transactionInsertFormFields[1].Buffer(), // description
+		transactionInsertFormFields[2].Buffer(), // amount
 	})
 
-	return transaction.Validate(t)
+	err = transaction.Validate(t)
+	return t, err
 }

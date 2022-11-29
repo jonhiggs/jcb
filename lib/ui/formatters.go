@@ -15,6 +15,7 @@ type FormattedTransaction struct {
 	Amount      string
 }
 
+// convert a struct of date to a struct of strings
 func formatTransaction(t domain.Transaction) FormattedTransaction {
 	id := fmt.Sprintf("%s", t.Id)
 	date := t.Date.Format("2006-01-02")
@@ -24,6 +25,7 @@ func formatTransaction(t domain.Transaction) FormattedTransaction {
 	return FormattedTransaction{id, date, description, amount}
 }
 
+// convert a struct of strings to real data
 func unformatTransaction(t FormattedTransaction) domain.Transaction {
 	id, _ := strconv.ParseInt(t.Id, 10, 64)
 	date, _ := time.Parse("2006-01-02", t.Date)

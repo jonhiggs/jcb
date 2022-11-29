@@ -51,3 +51,11 @@ func printError(e error) {
 		footerWin.Refresh()
 	}
 }
+
+func clearError() {
+	footerWin.ColorOn(1)
+	footerWin.AttrOn(gc.ColorPair(1))
+	footerWin.MovePrint(0, 0, "[Min Balance: 2022-09-24 $203.33]")
+	footerWin.AttrOff(gc.ColorPair(1))
+	footerWin.Refresh()
+}
