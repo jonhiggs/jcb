@@ -33,15 +33,9 @@ func Start() {
 		printError(err)
 	}
 
-	InitTransactions()
+	initTransactions()
 
 	scanMain()
-}
-
-func initColorPairs() {
-	gc.InitPair(0, gc.C_BLACK, gc.C_WHITE)
-	gc.InitPair(1, gc.C_BLACK, gc.C_CYAN)
-	gc.InitPair(1, gc.C_RED, gc.C_BLACK)
 }
 
 func printError(e error) {
@@ -51,12 +45,3 @@ func printError(e error) {
 		footerWin.Refresh()
 	}
 }
-
-//func newWindow() {
-//	Window, err := gc.NewWindow(Height-1, Width-2, 0, 1)
-//	if err != nil {
-//		PrintError(err)
-//	}
-//	mainWin.Keypad(true)
-//}
-//
