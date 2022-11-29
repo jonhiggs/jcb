@@ -15,7 +15,6 @@ func renderTransactionAdd() {
 
 	gc.Cursor(1)
 	transactionAddWin, _ = gc.NewWindow(9, 60, 8, 10)
-	transactionAddWin.Keypad(true)
 
 	defer gc.Cursor(0)
 	defer transactionAddWin.Delete()
