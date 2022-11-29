@@ -98,6 +98,25 @@ func scanTransactionAdd() {
 	for {
 		ch := transactionAddWin.GetChar()
 		switch ch {
+		case 1: // ctrl-a
+			transactionAddForm.Driver(gc.REQ_BEG_FIELD)
+		case 5: // ctrl-e
+			transactionAddForm.Driver(gc.REQ_END_FIELD)
+		case 11: // ctrl-k
+			transactionAddForm.Driver(gc.REQ_DEL_LINE)
+		case 4, 33: // ctrl-d, delete
+			transactionAddForm.Driver(gc.REQ_DEL_CHAR)
+		case 23, 27: // ctrl-w, esc/alt-backspace
+			transactionAddForm.Driver(gc.REQ_DEL_WORD)
+		case gc.KEY_BACKSPACE:
+			transactionAddForm.Driver(gc.REQ_DEL_PREV)
+		case gc.KEY_DOWN, gc.KEY_TAB:
+			transactionAddForm.Driver(gc.REQ_NEXT_FIELD)
+			transactionAddForm.Driver(gc.REQ_END_LINE)
+		case 2, gc.KEY_LEFT:
+			transactionAddForm.Driver(gc.REQ_LEFT_CHAR)
+		case 6, gc.KEY_RIGHT:
+			transactionAddForm.Driver(gc.REQ_RIGHT_CHAR)
 		case 'q', 3:
 			return
 		default:
