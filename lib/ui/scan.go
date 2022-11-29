@@ -69,9 +69,7 @@ func scanMain() bool {
 	//	//for i := len(items) - 1; items[i].Index() != uiTransaction.TransactionMenu.Current(nil).Index(); i = i - 1 {
 	//	//}
 	case '?':
-		ui.Help()
-		ui.MainWindow.Touch()
-		ui.MainWindow.Refresh()
+		renderHelp()
 	case 'q':
 		return false
 	case 3:
@@ -80,4 +78,9 @@ func scanMain() bool {
 		return true //transactionMenu.Driver(gc.DriverActions[ch])
 	}
 	return true
+}
+
+func scanHelp() bool {
+	helpWin.GetChar()
+	return false
 }
