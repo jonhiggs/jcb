@@ -1,6 +1,11 @@
 package ui
 
-import gc "github.com/rthornton128/goncurses"
+import (
+	"jcb/lib/transaction"
+	"strconv"
+
+	gc "github.com/rthornton128/goncurses"
+)
 
 func scanMain() {
 	mainWin.Keypad(true)
@@ -8,14 +13,13 @@ func scanMain() {
 	for {
 		ch := transactionWin.GetChar()
 		switch ch {
-		//case 'x':
-		//	idStr := transactionMenu.Current(nil).Description()
-		//	id, _ := strconv.ParseInt(idStr, 10, 64)
-		//	db.DeleteTransaction(id)
-		//	err := uiTransaction.DeleteTransactionMenuItem(id)
-		//	if err != nil {
-		//		ui.PrintError(err)
-		//	}
+		case 'x':
+			idStr := transactionMenu.Current(nil).Description()
+			id, _ := strconv.ParseInt(idStr, 10, 64)
+			err := transaction.Delete(id)
+			if err != nil {
+				printError(err)
+			}
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 		//	if err != nil {
