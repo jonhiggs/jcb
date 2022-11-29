@@ -108,7 +108,7 @@ func scanTransactionInsert() int {
 		case 6, gc.KEY_RIGHT:
 			transactionInsertForm.Driver(gc.REQ_RIGHT_CHAR)
 		case 'q', 3:
-			return 0
+			return ABORT
 		default:
 			transactionInsertForm.Driver(ch)
 		}

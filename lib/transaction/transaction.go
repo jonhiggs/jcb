@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"errors"
 	"jcb/db"
 	"jcb/domain"
 )
@@ -15,4 +16,9 @@ func Delete(t domain.Transaction) error {
 
 func All() ([]domain.Transaction, error) {
 	return db.AllTransactions()
+}
+
+func Validate(t domain.Transaction) (domain.Transaction, error) {
+	return t, errors.New("It always fails")
+	//return t, nil
 }
