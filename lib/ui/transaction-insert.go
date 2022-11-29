@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"jcb/domain"
 	"jcb/lib/transaction"
 	"time"
@@ -10,6 +11,7 @@ import (
 
 var transactionInsertWin *gc.Window
 var transactionInsertForm gc.Form
+var transactionInsertFormFields []*gc.Field
 
 func renderTransactionInsert() {
 	t := formatTransaction(domain.Transaction{0, time.Now(), "", 0})
@@ -21,27 +23,27 @@ func renderTransactionInsert() {
 	defer transactionInsertWin.Delete()
 
 	// date field
-	fields := make([]*gc.Field, 4)
-	fields[0], _ = gc.NewField(1, 10, 3, 17, 0, 0)
-	fields[0].SetBuffer(t.Date)
-	defer fields[0].Free()
+	transactionInsertFormFields = make([]*gc.Field, 4)
+	transactionInsertFormFields[0], _ = gc.NewField(1, 10, 3, 17, 0, 0)
+	transactionInsertFormFields[0].SetBuffer(t.Date)
+	defer transactionInsertFormFields[0].Free()
 
 	// description field
-	fields[1], _ = gc.NewField(1, 30, 4, 17, 0, 0)
-	fields[1].SetBuffer(t.Description)
-	defer fields[1].Free()
+	transactionInsertFormFields[1], _ = gc.NewField(1, 30, 4, 17, 0, 0)
+	transactionInsertFormFields[1].SetBuffer(t.Description)
+	defer transactionInsertFormFields[1].Free()
 
 	// amount field
-	fields[2], _ = gc.NewField(1, 8, 5, 17, 0, 0)
-	fields[2].SetBuffer(t.Amount)
-	defer fields[1].Free()
+	transactionInsertFormFields[2], _ = gc.NewField(1, 8, 5, 17, 0, 0)
+	transactionInsertFormFields[2].SetBuffer(t.Amount)
+	defer transactionInsertFormFields[1].Free()
 
 	// repetition field
-	fields[3], _ = gc.NewField(1, 10, 6, 17, 0, 0)
-	fields[3].SetBuffer("0d")
-	defer fields[3].Free()
+	transactionInsertFormFields[3], _ = gc.NewField(1, 10, 6, 17, 0, 0)
+	transactionInsertFormFields[3].SetBuffer("0d")
+	defer transactionInsertFormFields[3].Free()
 
-	transactionInsertForm, _ = gc.NewForm(fields)
+	transactionInsertForm, _ = gc.NewForm(transactionInsertFormFields)
 	defer transactionInsertForm.UnPost()
 	defer transactionInsertForm.Free()
 	transactionInsertForm.SetSub(transactionInsertWin)
@@ -58,13 +60,23 @@ func renderTransactionInsert() {
 
 	transactionInsertWin.Box(0, 0)
 
-	var err error
-	switch scanTransactionInsert() {
-	case INSERT:
-		err = transactionInsert(fields)
-	}
-	if err != nil {
-		printError(err)
+	action := CONTINUE
+	for action == CONTINUE {
+		action = scanTransactionInsert()
+		switch action {
+		case ABORT:
+			printError(errors.New("aborting"))
+			break
+		case INSERT:
+			t, err := transactionInsertRead()
+			if err == nil {
+				transaction.Save(t)
+				break
+			} else {
+				printError(err)
+				action = CONTINUE
+			}
+		}
 	}
 
 	mainWin.Touch()
@@ -73,18 +85,19 @@ func renderTransactionInsert() {
 	footerWin.Refresh()
 }
 
-func transactionInsert(fields []*gc.Field) error {
+// construct a domain.Transaction from the data in the form
+func transactionInsertRead() (domain.Transaction, error) {
 	err := transactionInsertForm.Driver(gc.REQ_VALIDATION)
 	if err != nil {
-		return err
+		return domain.Transaction{}, err
 	}
 
 	t := unformatTransaction(FormattedTransaction{
 		"0",
-		fields[0].Buffer(),
-		fields[1].Buffer(),
-		fields[2].Buffer(),
+		transactionInsertFormFields[0].Buffer(),
+		transactionInsertFormFields[1].Buffer(),
+		transactionInsertFormFields[2].Buffer(),
 	})
 
-	return transaction.Save(t)
+	return transaction.Validate(t)
 }

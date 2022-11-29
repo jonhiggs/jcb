@@ -9,7 +9,9 @@ var maxX int
 var mainWin *gc.Window
 
 const (
-	INSERT = 1
+	CONTINUE = 0
+	ABORT    = 1
+	INSERT   = 2
 )
 
 func Start() {
