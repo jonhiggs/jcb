@@ -15,9 +15,9 @@ type FormattedTransaction struct {
 	Amount      string
 }
 
-// convert a struct of date to a struct of strings
+// convert a struct of data to a struct of strings
 func formatTransaction(t domain.Transaction) FormattedTransaction {
-	id := fmt.Sprintf("%s", t.Id)
+	id := fmt.Sprintf("%d", t.Id)
 	date := t.Date.Format("2006-01-02")
 	description := t.Description
 	amount := formatCents(t.Cents)
