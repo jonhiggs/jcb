@@ -36,8 +36,7 @@ func Start() {
 
 	InitTransactions()
 
-	for scanMain() {
-	}
+	scanMain()
 }
 
 func initColorPairs() {
