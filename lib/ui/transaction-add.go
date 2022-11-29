@@ -1,7 +1,7 @@
 package ui
 
 import (
-	model "jcb/lib/model"
+	"jcb/domain"
 	"time"
 
 	gc "github.com/rthornton128/goncurses"
@@ -11,7 +11,7 @@ var transactionAddWin *gc.Window
 var transactionAddForm gc.Form
 
 func renderTransactionAdd() {
-	t := formatTransaction(model.Transaction{0, time.Now(), "", 0})
+	t := formatTransaction(domain.Transaction{0, time.Now(), "", 0})
 
 	gc.Cursor(1)
 	transactionAddWin, _ = gc.NewWindow(9, 60, 8, 10)
