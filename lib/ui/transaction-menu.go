@@ -20,7 +20,7 @@ func initTransactions() error {
 		printError(err)
 	}
 
-	transactionWin = mainWin.Derived(0, maxY-3, 3, 1)
+	transactionWin = mainWin.Derived(0, 0, 3, 1)
 	transactionMenu.SubWindow(transactionWin)
 	transactionMenu.Format(maxY-4, 1)
 	transactionMenu.Mark("")
@@ -84,17 +84,6 @@ func updateTransactions() error {
 	if err != nil {
 		return err
 	}
-
-	//var menuNames []string
-	//var menuDescriptions []string
-	//for _, r := range transactionAll() {
-	//	date := uiStringify.FormatDate(r.Date)
-	//	description := uiStringify.FormatDescription(r.Description)
-	//	cents := uiStringify.FormatCents(r.Cents)
-	//	itemStr := fmt.Sprintf("%s  %-30s  %s", date, description, cents)
-	//	menuNames = append(menuNames, itemStr)
-	//	menuDescriptions = append(menuDescriptions, strconv.FormatInt(r.Id, 10))
-	//}
 
 	transactionMenuItems = make([]*gc.MenuItem, len(transactions))
 	for i, n := range transactions {
