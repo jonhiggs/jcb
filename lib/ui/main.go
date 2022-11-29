@@ -32,7 +32,6 @@ func Start() {
 	if err != nil {
 		printError(err)
 	}
-	mainWin.Keypad(true)
 
 	InitTransactions()
 
