@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	model "jcb/lib/model"
+	"jcb/domain"
 )
 
 type FormattedTransaction struct {
@@ -12,7 +12,7 @@ type FormattedTransaction struct {
 	Amount      string
 }
 
-func formatTransaction(t model.Transaction) FormattedTransaction {
+func formatTransaction(t domain.Transaction) FormattedTransaction {
 	id := fmt.Sprintf("%s", t.Id)
 	date := t.Date.Format("2006-01-02")
 	description := t.Description
