@@ -27,7 +27,8 @@ func renderTransactionInsert() {
 	// date field
 	transactionInsertFormFields = make([]*gc.Field, 4)
 	transactionInsertFormFields[0], _ = gc.NewField(1, 10, 3, 17, 0, 0)
-	transactionInsertFormFields[0].SetBuffer(t.Date)
+	transactionInsertFormFields[0].SetOptionsOn(gc.FO_BLANK)
+	transactionInsertFormFields[0].SetBuffer(t.Date[0:8])
 	defer transactionInsertFormFields[0].Free()
 
 	// description field
@@ -37,7 +38,6 @@ func renderTransactionInsert() {
 
 	// amount field
 	transactionInsertFormFields[2], _ = gc.NewField(1, 8, 5, 17, 0, 0)
-	transactionInsertFormFields[2].SetBuffer(t.Amount)
 	defer transactionInsertFormFields[1].Free()
 
 	// repetition field
