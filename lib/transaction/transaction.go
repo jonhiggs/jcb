@@ -30,6 +30,11 @@ func Validate(t domain.Transaction) error {
 		return err
 	}
 
+	err = validateDescription(t)
+	if err != nil {
+		return err
+	}
+
 	err = validateAmount(t)
 	if err != nil {
 		return err
@@ -45,6 +50,13 @@ func validateDate(t domain.Transaction) error {
 	}
 	if year < 2000 {
 		return errors.New("Invalid Year")
+	}
+	return nil
+}
+
+func validateDescription(t domain.Transaction) error {
+	if len(t.Description) <= 0 {
+		return errors.New("Description cannot be empty")
 	}
 	return nil
 }
