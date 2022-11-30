@@ -49,6 +49,8 @@ func printError(e error) {
 		footerWin.Clear()
 		footerWin.MovePrint(0, 0, e)
 		footerWin.Refresh()
+		footerWin.GetChar()
+		clearError()
 	}
 }
 
