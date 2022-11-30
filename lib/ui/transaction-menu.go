@@ -35,7 +35,10 @@ func initTransactions() error {
 	mainWin.MovePrint(2, 56, "BALANCE")
 	mainWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
-	updateTransactions()
+	err = updateTransactions()
+	if err != nil {
+		printError(err)
+	}
 
 	transactionMenu.Post()
 

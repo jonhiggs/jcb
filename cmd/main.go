@@ -3,9 +3,13 @@ package main
 import (
 	"jcb/db"
 	"jcb/lib/ui"
+	"log"
 )
 
 func main() {
-	db.Init()
+	err := db.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 	ui.Start()
 }

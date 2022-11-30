@@ -22,19 +22,19 @@ func Init() error {
 	sts := `
 	    CREATE TABLE IF NOT EXISTS transactions(
 	        id INTEGER PRIMARY KEY AUTOINCREMENT,
-	        date TEXT, description TEXT, cents INTEGER,
+	        date TEXT, 
+			description TEXT, 
+			cents INTEGER,
 	        UNIQUE(date, description, cents)
 	    );
-	    CREATE TABLE IF NOT EXISTS tags(
-	        id INTEGER PRIMARY KEY AUTOINCREMENT,
-	        name TEXT,
-	        UNIQUE(name)
-	    );
-	    CREATE TABLE IF NOT EXISTS tag_associations(
-	        transaction_id INTEGER,
-	        tag_id INTEGER,
-	        UNIQUE(transaction_id, tag_id)
-	    );
+		CREATE TABLE IF NOT EXISTS opening_balance(
+			year INTEGER,
+			cents INTEGER,
+			UNIQUE(year)
+		);
+		CREATE TABLE IF NOT EXISTS locks(
+			id INTEGER
+		);
 	`
 	_, err = db.Exec(sts)
 	return err
@@ -73,7 +73,7 @@ func SaveTransaction(t domain.Transaction) (int64, error) {
 }
 
 func AllTransactions() ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT * FROM transactions ORDER BY date ASC")
+	rows, err := db.Query("SELECT id, date, description, cents FROM transactions ORDER BY date ASC")
 	if err != nil {
 		return nil, err
 	}
