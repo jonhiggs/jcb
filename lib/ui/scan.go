@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"jcb/lib/transaction"
 
 	gc "github.com/rthornton128/goncurses"
@@ -21,6 +22,11 @@ func scanMain() {
 			if err != nil {
 				printError(err)
 			}
+			transactionMenu.Driver(gc.DriverActions[gc.KEY_UP])
+			updateTransactions()
+		case 'U':
+			updateTransactions()
+			printError(errors.New("updating"))
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 		//	if err != nil {
