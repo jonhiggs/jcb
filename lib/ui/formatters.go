@@ -2,10 +2,9 @@ package ui
 
 import (
 	"jcb/domain"
+	dform "jcb/lib/ui/formatter/data"
 	sform "jcb/lib/ui/formatter/string"
 	"strconv"
-	"strings"
-	"time"
 )
 
 type FormattedTransaction struct {
@@ -28,9 +27,9 @@ func formatTransaction(t domain.Transaction) FormattedTransaction {
 // convert a struct of strings to real data
 func unformatTransaction(t FormattedTransaction) domain.Transaction {
 	id, _ := strconv.ParseInt(t.Id, 10, 64)
-	date, _ := time.Parse("2006-01-02", strings.Trim(t.Date, " "))
-	description := strings.Trim(t.Description, " ")
-	cents, _ := strconv.ParseInt(strings.Replace(strings.Trim(t.Amount, " "), ".", "", 1), 10, 64)
+	date := dform.Date(t.Date)
+	description := dform.Description(t.Description)
+	cents := dform.Cents(t.Amount)
 
 	return domain.Transaction{id, date, description, cents}
 }
