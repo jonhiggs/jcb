@@ -39,6 +39,7 @@ func Start() {
 		printError(err)
 	}
 
+	initOpeningBalance()
 	initTransactions()
 
 	scanMain()
