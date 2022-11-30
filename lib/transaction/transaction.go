@@ -11,7 +11,7 @@ func Find(id int64) (domain.Transaction, error) {
 	return db.FindTransaction(id)
 }
 
-func Save(t domain.Transaction) error {
+func Save(t domain.Transaction) (int64, error) {
 	return db.SaveTransaction(t)
 }
 

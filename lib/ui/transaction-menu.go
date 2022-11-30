@@ -105,3 +105,12 @@ func updateTransactions() error {
 	}
 	return nil
 }
+
+func selectTransaction(id int64) {
+	for _, item := range transactionMenu.Items() {
+		desc, _ := strconv.ParseInt(item.Description(), 10, 64)
+		if desc == id {
+			transactionMenu.Current(item)
+		}
+	}
+}
