@@ -31,8 +31,8 @@ func initTransactions() error {
 	mainWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 	mainWin.MovePrint(2, 1, "DATE")
 	mainWin.MovePrint(2, 13, "DESCRIPTION")
-	mainWin.MovePrint(2, 49, "AMOUNT")
-	mainWin.MovePrint(2, 57, "BALANCE")
+	mainWin.MovePrint(2, 47, "AMOUNT")
+	mainWin.MovePrint(2, 56, "BALANCE")
 	mainWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	updateTransactions()
@@ -57,7 +57,7 @@ func updateTransactions() error {
 	transactionMenuItems = make([]*gc.MenuItem, len(transactions))
 	for i, n := range transactions {
 		ft := formatTransaction(n)
-		str := fmt.Sprintf("%s  %s  %s", ft.Date, ft.Description, ft.Amount)
+		str := fmt.Sprintf("%s  %-30s  %8s", ft.Date, ft.Description, ft.Amount)
 		transactionMenuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
