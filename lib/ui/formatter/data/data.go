@@ -1,9 +1,9 @@
-// convert data from string to data
+// convert data to strings
 
 package dataFormatter
 
 import (
-	"fmt"
+	"jcb/domain"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +23,16 @@ func Description(s string) string {
 	return strings.Trim(s, " ")
 }
 
-func Id(d int64) string {
-	return fmt.Sprintf("%d", d)
+func Id(d string) int64 {
+	r, _ := strconv.ParseInt(d, 10, 64)
+	return r
+}
+
+func Transaction(d domain.Transaction) domain.StringTransaction {
+	return domain.Transaction{
+		Id(d.Id),
+		Date(d.Date),
+		Description(d.Description),
+		Cents(d.Cents),
+	}
 }
