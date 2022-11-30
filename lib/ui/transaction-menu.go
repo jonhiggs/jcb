@@ -48,38 +48,6 @@ func selectedTransaction() (domain.Transaction, error) {
 	return transaction.Find(i)
 }
 
-//func deletetransactionMenuItem(id int64) error {
-//	var newtransactionMenuItems []*gc.MenuItem
-//	found := false
-//	var pos *gc.MenuItem
-//
-//	for _, item := range transactionMenuItems {
-//		i, _ := strconv.ParseInt(item.Description(), 10, 64)
-//		if i != id {
-//			newtransactionMenuItems = append(newtransactionMenuItems, item)
-//		} else {
-//			found = true
-//			pos = transactionMenuItems[item.Index()-1]
-//			item.Free()
-//		}
-//	}
-//
-//	if !found {
-//		return errors.New("Failed to delete any items")
-//	}
-//
-//	transactionMenu.UnPost()
-//	transactionMenuItems = newtransactionMenuItems
-//	err := transactionMenu.SetItems(transactionMenuItems)
-//	if err != nil {
-//		return err
-//	}
-//	transactionMenu.Current(pos)
-//
-//	transactionMenu.Post()
-//	return err
-//}
-
 func updateTransactions() error {
 	transactions, err := transaction.All()
 	if err != nil {
@@ -97,9 +65,11 @@ func updateTransactions() error {
 		return errors.New("No data to show. Press ? for help.")
 	}
 
+	st, _ := selectedTransaction()
 	transactionMenu.UnPost()
 	err = transactionMenu.SetItems(transactionMenuItems)
 	transactionMenu.Post()
+	selectTransaction(st.Id)
 	if err != nil {
 		return err
 	}
