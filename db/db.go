@@ -51,21 +51,24 @@ func FindTransaction(id int64) (domain.Transaction, error) {
 	return domain.Transaction{id, parseDate(date), description, cents}, err
 }
 
-func SaveTransaction(t domain.Transaction) error {
+func SaveTransaction(t domain.Transaction) (int64, error) {
 	if t.Id == 0 {
 		statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (date, description, cents) VALUES (?, ?, ?)")
 		if err != nil {
-			return err
+			return -1, err
 		}
-		_, err = statement.Exec(t.Date, t.Description, t.Cents)
-		return err
+		res, err := statement.Exec(t.Date, t.Description, t.Cents)
+		if err != nil {
+			return -1, err
+		}
+		return res.LastInsertId()
 	} else {
 		statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ? WHERE id = ?")
 		if err != nil {
-			return err
+			return -1, err
 		}
 		_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Id)
-		return err
+		return t.Id, err
 	}
 }
 

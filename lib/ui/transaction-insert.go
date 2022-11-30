@@ -72,7 +72,13 @@ func renderTransactionInsert() {
 		case INSERT:
 			t, err := transactionInsertRead()
 			if err == nil {
-				transaction.Save(t)
+				id, err := transaction.Save(t)
+				if err != nil {
+					printError(err)
+				} else {
+					updateTransactions()
+					selectTransaction(id)
+				}
 				break
 			} else {
 				printError(err)
