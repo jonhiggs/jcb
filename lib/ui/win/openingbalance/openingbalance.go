@@ -1,4 +1,4 @@
-package ui
+package openingbalance
 
 import (
 	gc "github.com/rthornton128/goncurses"
