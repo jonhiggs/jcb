@@ -40,9 +40,9 @@ func Start() {
 	}
 
 	initOpeningBalance()
-	initTransactions()
 
-	scanMain()
+	//initTransactions()
+	//scanMain()
 }
 
 func printError(e error) {

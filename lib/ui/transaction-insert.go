@@ -18,7 +18,7 @@ var transactionInsertForm gc.Form
 var transactionInsertFormFields []*gc.Field
 
 func renderTransactionInsert() {
-	t := sformat.Transaction(domain.Transaction{0, time.Now(), "", 0})
+	t, _ := sformat.Transaction(domain.Transaction{0, time.Now(), "", 0})
 
 	gc.Cursor(1)
 	transactionInsertWin, _ = gc.NewWindow(9, 60, 8, 10)
@@ -117,7 +117,7 @@ func transactionInsertRead() (domain.Transaction, error) {
 		return domain.Transaction{}, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
 	}
 
-	t := dformat.Transaction(StringTransaction{idStr, dateStr, descriptionStr, amountStr})
+	t, _ := dformat.Transaction(domain.StringTransaction{idStr, dateStr, descriptionStr, amountStr})
 
 	err = transaction.Validate(t)
 	return t, err
