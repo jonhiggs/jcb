@@ -1,7 +1,8 @@
 package ui
 
 import (
-	openingBalance "jcb/lib/ui/win/openingbalance"
+	openingBalance "jcb/lib/openingbalance"
+	openingBalanceWin "jcb/lib/ui/win/openingbalance"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -41,7 +42,11 @@ func Start() {
 		printError(err)
 	}
 
-	openingBalance.Show()
+	_, err = openingBalance.Find(2022)
+	if err != nil {
+		openingBalanceWin.Show()
+		printError(err)
+	}
 
 	//initTransactions()
 	//scanMain()
