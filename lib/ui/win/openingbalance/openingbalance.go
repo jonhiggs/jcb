@@ -1,4 +1,4 @@
-package openingBalance
+package openingBalanceWin
 
 import (
 	"errors"

@@ -115,3 +115,12 @@ func parseDate(timeStr string) time.Time {
 	dateTime, _ := time.Parse(timeLayout, timeStr)
 	return dateTime
 }
+
+func FindOpeningBalance(year int64) (int64, error) {
+	var cents int64
+
+	statement, _ := db.Prepare("SELECT cents FROM opening_balance WHERE year = ?")
+	err := statement.QueryRow(year).Scan(&cents)
+
+	return cents, err
+}
