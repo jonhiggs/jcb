@@ -4,6 +4,7 @@ import (
 	openingBalance "jcb/lib/openingbalance"
 	openingBalanceWin "jcb/ui/win/openingbalance"
 	statusWin "jcb/ui/win/status"
+	transactionMenuWin "jcb/ui/win/transaction/menu"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -31,17 +32,12 @@ func Start() {
 	initColorPairs()
 	statusWin.Show(maxY, maxX)
 
-	var err error
-	mainWin, err = gc.NewWindow(maxY-1, maxX-2, 0, 1)
-	if err != nil {
-		statusWin.PrintError(err)
-	}
-
-	_, err = openingBalance.Find(2022)
+	_, err := openingBalance.Find(2022)
 	if err != nil {
 		openingBalanceWin.Show()
 	}
 
-	initTransactions()
-	scanMain()
+	transactionMenuWin.Show(maxY, maxX)
+
+	stdscr.GetChar()
 }
