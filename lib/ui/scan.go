@@ -3,6 +3,7 @@ package ui
 import (
 	"errors"
 	"jcb/lib/transaction"
+	helpWin "jcb/lib/ui/win/help"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -71,18 +72,17 @@ func scanMain() {
 		case 'i':
 			renderTransactionInsert()
 		case '?':
-			renderHelp()
+			helpWin.Show()
+			mainWin.Touch()
+			mainWin.Refresh()
+			footerWin.Touch()
+			footerWin.Refresh()
 		case 3, 'q':
 			return
 		default:
 			continue //transactionMenu.Driver(gc.DriverActions[ch])
 		}
 	}
-}
-
-func scanHelp() bool {
-	helpWin.GetChar()
-	return false
 }
 
 func scanTransactionInsert() int {
