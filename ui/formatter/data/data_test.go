@@ -20,6 +20,24 @@ func TestCents(t *testing.T) {
 		t.Error(fmt.Sprintf("no error expected for %d", expect))
 	}
 
+	got, err = Cents("30")
+	expect = 3000
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
+	got, err = Cents("30.40")
+	expect = 3040
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
 	got, err = Cents("0.2345")
 	expect = 0
 	if got != expect {
