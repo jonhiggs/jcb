@@ -1,38 +1,57 @@
-// convert data to strings
+// convert strings to data
 
 package dataFormatter
 
 import (
+	"errors"
 	"jcb/domain"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func Cents(s string) int64 {
-	cents, _ := strconv.ParseInt(strings.Replace(strings.Trim(s, " "), ".", "", 1), 10, 64)
-	return cents
+func Cents(s string) (int64, error) {
+	return strconv.ParseInt(strings.Replace(strings.Trim(s, " "), ".", "", 1), 10, 64)
 }
 
-func Date(s string) time.Time {
-	time, _ := time.Parse("2006-01-02", strings.Trim(s, " "))
-	return time
+func Date(s string) (time.Time, error) {
+	return time.Parse("2006-01-02", strings.Trim(s, " "))
 }
 
-func Description(s string) string {
-	return strings.Trim(s, " ")
+func Description(s string) (string, error) {
+	return strings.Trim(s, " "), nil
 }
 
-func Id(d string) int64 {
-	r, _ := strconv.ParseInt(d, 10, 64)
-	return r
-}
-
-func Transaction(d domain.Transaction) domain.StringTransaction {
-	return domain.Transaction{
-		Id(d.Id),
-		Date(d.Date),
-		Description(d.Description),
-		Cents(d.Cents),
+func Id(d string) (int64, error) {
+	id, err := strconv.ParseInt(d, 10, 64)
+	if id < 0 {
+		id = 0
+		err = errors.New("Id cannot be less than 0")
 	}
+	return id, err
+}
+
+func Transaction(d domain.StringTransaction) (domain.Transaction, error) {
+	r := domain.Transaction{}
+	id, err := Id(d.Id)
+	if err != nil {
+		return r, err
+	}
+
+	date, err := Date(d.Date)
+	if err != nil {
+		return r, err
+	}
+
+	description, err := Description(d.Description)
+	if err != nil {
+		return r, err
+	}
+
+	cents, err := Cents(d.Cents)
+	if err != nil {
+		return r, err
+	}
+
+	return domain.Transaction{id, date, description, cents}, nil
 }

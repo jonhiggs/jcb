@@ -8,3 +8,10 @@ type Transaction struct {
 	Description string
 	Cents       int64
 }
+
+type StringTransaction struct {
+	Id          string
+	Date        string
+	Description string
+	Cents       string
+}
