@@ -163,7 +163,7 @@ func updateTransactions() error {
 	for i, n := range transactions {
 		ft, _ := stringf.Transaction(n)
 		cents, _ := dataf.Cents(ft.Cents)
-		balance = balance - cents
+		balance = balance + cents
 		balanceStr, _ = stringf.Cents(balance)
 		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i+1], _ = gc.NewItem(str, ft.Id)
