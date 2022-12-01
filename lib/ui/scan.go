@@ -4,6 +4,7 @@ import (
 	"errors"
 	"jcb/lib/transaction"
 	helpWin "jcb/lib/ui/win/help"
+	statusWin "jcb/lib/ui/win/status"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -17,17 +18,17 @@ func scanMain() {
 		case 'x':
 			t, err := selectedTransaction()
 			if err != nil {
-				printError(err)
+				statusWin.PrintError(err)
 			}
 			err = transaction.Delete(t)
 			if err != nil {
-				printError(err)
+				statusWin.PrintError(err)
 			}
 			transactionMenu.Driver(gc.DriverActions[gc.KEY_UP])
 			updateTransactions()
 		case 'U':
 			updateTransactions()
-			printError(errors.New("updating"))
+			statusWin.PrintError(errors.New("updating"))
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 		//	if err != nil {
@@ -75,8 +76,7 @@ func scanMain() {
 			helpWin.Show()
 			mainWin.Touch()
 			mainWin.Refresh()
-			footerWin.Touch()
-			footerWin.Refresh()
+			statusWin.Refresh()
 		case 3, 'q':
 			return
 		default:

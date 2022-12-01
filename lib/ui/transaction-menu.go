@@ -6,6 +6,7 @@ import (
 	"jcb/domain"
 	"jcb/lib/transaction"
 	sformat "jcb/lib/ui/formatter/string"
+	statusWin "jcb/lib/ui/win/status"
 	"strconv"
 
 	gc "github.com/rthornton128/goncurses"
@@ -19,7 +20,7 @@ func initTransactions() error {
 	var err error
 	transactionMenu, err = gc.NewMenu(make([]*gc.MenuItem, 0))
 	if err != nil {
-		printError(err)
+		statusWin.PrintError(err)
 	}
 
 	transactionWin = mainWin.Derived(0, 0, 3, 1)
@@ -38,7 +39,7 @@ func initTransactions() error {
 
 	err = updateTransactions()
 	if err != nil {
-		printError(err)
+		statusWin.PrintError(err)
 	}
 
 	transactionMenu.Post()
