@@ -17,6 +17,10 @@ func Delete(t domain.Transaction) error {
 	return db.DeleteTransaction(t.Id)
 }
 
+func DeleteId(id int64) error {
+	return db.DeleteTransaction(id)
+}
+
 func All() ([]domain.Transaction, error) {
 	return db.AllTransactions()
 }
