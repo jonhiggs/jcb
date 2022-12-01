@@ -34,6 +34,12 @@ func TestCents(t *testing.T) {
 	if got != expect {
 		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
 	}
+
+	got, _ = Cents(-1)
+	expect = "-0.01"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
 }
 
 func TestDate(t *testing.T) {

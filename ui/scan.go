@@ -3,9 +3,9 @@ package ui
 import (
 	"errors"
 	"jcb/lib/transaction"
-	helpWin "jcb/lib/ui/win/help"
-	statusWin "jcb/lib/ui/win/status"
-	transactionInsertWin "jcb/lib/ui/win/transaction/insert"
+	helpWin "jcb/ui/win/help"
+	statusWin "jcb/ui/win/status"
+	transactionInsertWin "jcb/ui/win/transaction/insert"
 
 	gc "github.com/rthornton128/goncurses"
 )

@@ -2,7 +2,7 @@ package openingBalanceWin
 
 import (
 	openingBalance "jcb/lib/openingbalance"
-	dataf "jcb/lib/ui/formatter/data"
+	dataf "jcb/ui/formatter/data"
 
 	gc "github.com/rthornton128/goncurses"
 )
