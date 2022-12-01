@@ -20,7 +20,6 @@ func Show() {
 	fields = make([]*gc.Field, 4)
 	fields[0], _ = gc.NewField(1, 8, 6, 17, 0, 0)
 	fields[0].SetBuffer("0.00")
-	fields[0].SetOptionsOn(gc.FO_BLANK)
 	defer fields[0].Free()
 
 	form, _ = gc.NewForm(fields)
