@@ -116,6 +116,7 @@ func scan() error {
 		//	//}
 		case 'i':
 			transactionInsertWin.Show()
+			updateTransactions()
 			win.Touch()
 			win.Refresh()
 			statusWin.Refresh()
