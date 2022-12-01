@@ -1,7 +1,9 @@
 package openingBalanceWin
 
 import (
-	"errors"
+	openingBalance "jcb/lib/openingbalance"
+	fieldReader "jcb/lib/ui/fieldreader"
+	dataFormatter "jcb/lib/ui/formatter/data"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -17,7 +19,8 @@ func Show() {
 
 	fields = make([]*gc.Field, 4)
 	fields[0], _ = gc.NewField(1, 8, 6, 17, 0, 0)
-	fields[0].SetBuffer("hi")
+	fields[0].SetBuffer("0.00")
+	fields[0].SetOptionsOn(gc.FO_BLANK)
 	defer fields[0].Free()
 
 	form, _ = gc.NewForm(fields)
@@ -37,9 +40,10 @@ func Show() {
 
 	win.Box(0, 0)
 
-	r := scan()
-	for r != nil {
-		r = scan()
+	err := scan()
+	for err != nil {
+		win.MovePrint(0, 0, err)
+		err = scan()
 	}
 }
 
@@ -54,8 +58,20 @@ func scan() error {
 		ch := win.GetChar()
 		switch ch {
 		case gc.KEY_RETURN:
-			win.MovePrint(0, 0, "saving")
-			return errors.New("no good")
+			err := form.Driver(gc.REQ_VALIDATION)
+			s, err := fieldReader.AsAmount(fields[0])
+			if err != nil {
+				return err
+			}
+
+			i, err := dataFormatter.Cents(s)
+			if err != nil {
+				return err
+			}
+
+			win.MovePrint(0, 0, s)
+
+			return openingBalance.Save(i, 2022)
 		case 1: // ctrl-a
 			form.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
