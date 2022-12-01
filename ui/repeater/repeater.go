@@ -6,9 +6,9 @@ import (
 	"time"
 )
 
-func Expand(date time.Time, rule string) ([]time.Time, error) {
+func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, error) {
 	var timestamps []time.Time
-	currentYear := date.Year()
+	currentYear := startDate.Year()
 
 	u, err := unit(rule)
 	if err != nil {
@@ -24,9 +24,9 @@ func Expand(date time.Time, rule string) ([]time.Time, error) {
 	case "d":
 		for i := 0; true; i += f {
 			var ts time.Time
-			ts = date.AddDate(0, 0, i)
+			ts = startDate.AddDate(0, 0, i)
 
-			if ts.Year() == currentYear {
+			if ts.Unix() <= endDate.Unix() {
 				timestamps = append(timestamps, ts)
 			} else {
 				break
@@ -36,7 +36,7 @@ func Expand(date time.Time, rule string) ([]time.Time, error) {
 	case "w":
 		for i := 0; true; i += f * 7 {
 			var ts time.Time
-			ts = date.AddDate(0, 0, i)
+			ts = startDate.AddDate(0, 0, i)
 
 			if ts.Year() == currentYear {
 				timestamps = append(timestamps, ts)
@@ -47,7 +47,7 @@ func Expand(date time.Time, rule string) ([]time.Time, error) {
 	case "m":
 		for i := 0; true; i += f {
 			var ts time.Time
-			ts = date.AddDate(0, i, 0)
+			ts = startDate.AddDate(0, i, 0)
 
 			if ts.Year() == currentYear {
 				timestamps = append(timestamps, ts)
