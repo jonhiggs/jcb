@@ -2,7 +2,7 @@ package main
 
 import (
 	"jcb/db"
-	"jcb/lib/ui"
+	"jcb/ui"
 	"log"
 )
 

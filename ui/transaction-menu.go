@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
-	sformat "jcb/lib/ui/formatter/string"
-	statusWin "jcb/lib/ui/win/status"
+	sformat "jcb/ui/formatter/string"
+	statusWin "jcb/ui/win/status"
 	"strconv"
 
 	gc "github.com/rthornton128/goncurses"

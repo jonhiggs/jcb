@@ -2,8 +2,8 @@
 
 test:
 	#go test ./lib/ui
-	go test ./lib/ui/formatter/data
-	go test ./lib/ui/formatter/string
+	go test ./ui/formatter/data
+	go test ./ui/formatter/string
 
 build:
 	go build  -o jcb ./cmd/main.go

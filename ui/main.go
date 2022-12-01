@@ -2,8 +2,8 @@ package ui
 
 import (
 	openingBalance "jcb/lib/openingbalance"
-	openingBalanceWin "jcb/lib/ui/win/openingbalance"
-	statusWin "jcb/lib/ui/win/status"
+	openingBalanceWin "jcb/ui/win/openingbalance"
+	statusWin "jcb/ui/win/status"
 
 	gc "github.com/rthornton128/goncurses"
 )
