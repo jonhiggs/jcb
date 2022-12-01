@@ -38,6 +38,4 @@ func Start() {
 	}
 
 	transactionMenuWin.Show(maxY, maxX)
-
-	stdscr.GetChar()
 }
