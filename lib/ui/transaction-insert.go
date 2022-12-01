@@ -7,6 +7,7 @@ import (
 	"jcb/lib/transaction"
 	dformat "jcb/lib/ui/formatter/data"
 	sformat "jcb/lib/ui/formatter/string"
+	statusWin "jcb/lib/ui/win/status"
 	"strings"
 	"time"
 
@@ -69,32 +70,31 @@ func renderTransactionInsert() {
 		action = scanTransactionInsert()
 		switch action {
 		case ABORT:
-			printError(errors.New("aborting"))
+			statusWin.PrintError(errors.New("aborting"))
 			break
 		case INSERT:
 			t, err := transactionInsertRead()
 			if err == nil {
 				id, err := transaction.Save(t)
 				if err != nil {
-					printError(err)
+					statusWin.PrintError(err)
 				} else {
 					updateTransactions()
 					selectTransaction(id)
 				}
 				break
 			} else {
-				printError(err)
+				statusWin.PrintError(err)
 				action = CONTINUE
 			}
 		}
 	}
 
-	clearError()
+	statusWin.Clear()
 
 	mainWin.Touch()
 	mainWin.Refresh()
-	footerWin.Touch()
-	footerWin.Refresh()
+	statusWin.Refresh()
 }
 
 // construct a domain.Transaction from the data in the form

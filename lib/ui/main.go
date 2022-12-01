@@ -3,6 +3,7 @@ package ui
 import (
 	openingBalance "jcb/lib/openingbalance"
 	openingBalanceWin "jcb/lib/ui/win/openingbalance"
+	statusWin "jcb/lib/ui/win/status"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -34,12 +35,12 @@ func Start() {
 	stdscr.Keypad(true)
 
 	initColorPairs()
-	initFooter()
+	statusWin.Show(maxY, maxX)
 
 	var err error
 	mainWin, err = gc.NewWindow(maxY-1, maxX-2, 0, 1)
 	if err != nil {
-		printError(err)
+		statusWin.PrintError(err)
 	}
 
 	_, err = openingBalance.Find(2022)
@@ -49,22 +50,4 @@ func Start() {
 
 	initTransactions()
 	scanMain()
-}
-
-func printError(e error) {
-	if e != nil {
-		footerWin.Clear()
-		footerWin.MovePrint(0, 0, e)
-		footerWin.Refresh()
-		footerWin.GetChar()
-		clearError()
-	}
-}
-
-func clearError() {
-	footerWin.ColorOn(1)
-	footerWin.AttrOn(gc.ColorPair(1))
-	footerWin.MovePrint(0, 0, "[Min Balance: 2022-09-24 $203.33]")
-	footerWin.AttrOff(gc.ColorPair(1))
-	footerWin.Refresh()
 }
