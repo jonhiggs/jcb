@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
+	sformat "jcb/lib/ui/formatter/string"
 	"strconv"
 
 	gc "github.com/rthornton128/goncurses"
@@ -59,8 +60,8 @@ func updateTransactions() error {
 
 	transactionMenuItems = make([]*gc.MenuItem, len(transactions))
 	for i, n := range transactions {
-		ft := formatTransaction(n)
-		str := fmt.Sprintf("%s  %-30s  %8s", ft.Date, ft.Description, ft.Amount)
+		ft, _ := sformat.Transaction(n)
+		str := fmt.Sprintf("%s  %-30s  %8s", ft.Date, ft.Description, ft.Cents)
 		transactionMenuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
