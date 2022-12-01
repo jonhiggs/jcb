@@ -124,3 +124,13 @@ func FindOpeningBalance(year int64) (int64, error) {
 
 	return cents, err
 }
+
+func SaveOpeningBalance(cents int64, year int64) error {
+	statement, err := db.Prepare("INSERT INTO opening_balance (year, cents) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+
+	_, err = statement.Exec(year, cents)
+	return err
+}

@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"errors"
+	"fmt"
 	openingBalance "jcb/lib/openingbalance"
 	openingBalanceWin "jcb/lib/ui/win/openingbalance"
 
@@ -42,10 +44,10 @@ func Start() {
 		printError(err)
 	}
 
-	_, err = openingBalance.Find(2022)
+	bal, err := openingBalance.Find(2022)
+	printError(errors.New(fmt.Sprintf("%d", bal)))
 	if err != nil {
 		openingBalanceWin.Show()
-		printError(err)
 	}
 
 	//initTransactions()
