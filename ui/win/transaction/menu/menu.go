@@ -115,8 +115,9 @@ func scan() error {
 		//	//for i := len(items) - 1; items[i].Index() != menu.Current(nil).Index(); i = i - 1 {
 		//	//}
 		case 'i':
-			transactionInsertWin.Show()
+			id := transactionInsertWin.Show()
 			updateTransactions()
+			selectTransaction(id)
 			win.Touch()
 			win.Refresh()
 			statusWin.Refresh()
@@ -174,15 +175,19 @@ func updateTransactions() error {
 		return errors.New("No data to show. Press ? for help.")
 	}
 
-	//st, _ := selectedTransaction()
+	id, _ := selectedTransaction()
 	menu.UnPost()
 	err = menu.SetItems(menuItems)
 	menu.Post()
-	//selectTransaction(st.Id)
+	selectTransaction(id)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func selectedTransaction() (int64, error) {
+	return dataf.Id(menu.Current(nil).Description())
 }
 
 func selectTransaction(id int64) {

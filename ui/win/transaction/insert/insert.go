@@ -14,7 +14,7 @@ var win *gc.Window
 var form gc.Form
 var fields []*gc.Field
 
-func Show() {
+func Show() int64 {
 	gc.Cursor(1)
 	defer gc.Cursor(0)
 	win, _ = gc.NewWindow(9, 60, 8, 10)
@@ -57,13 +57,14 @@ func Show() {
 
 	win.Box(0, 0)
 
-	err := scan()
+	id, err := scan()
 	for err != nil {
 		statusWin.PrintError(err)
-		err = scan()
+		id, err = scan()
 	}
 
 	statusWin.Clear()
+	return id
 }
 
 func readForm() (domain.Transaction, error) {
@@ -90,7 +91,7 @@ func readForm() (domain.Transaction, error) {
 	return domain.Transaction{0, date, description, cents}, err
 }
 
-func scan() error {
+func scan() (int64, error) {
 	win.Keypad(true)
 	win.Refresh()
 
@@ -101,9 +102,11 @@ func scan() error {
 		ch := win.GetChar()
 		switch ch {
 		case gc.KEY_RETURN:
+			var id int64
+			var err error
 			t, err := readForm()
 			if err == nil {
-				_, err := transaction.Save(t)
+				id, err = transaction.Save(t)
 				if err != nil {
 					statusWin.PrintError(err)
 					//} else {
@@ -111,7 +114,7 @@ func scan() error {
 					//	selectTransaction(id)
 				}
 			}
-			return err
+			return id, err
 		case 1: // ctrl-a
 			form.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
@@ -132,7 +135,7 @@ func scan() error {
 		case 6, gc.KEY_RIGHT:
 			form.Driver(gc.REQ_RIGHT_CHAR)
 		case 'q', 3:
-			return nil
+			return -1, nil
 		default:
 			form.Driver(ch)
 		}
