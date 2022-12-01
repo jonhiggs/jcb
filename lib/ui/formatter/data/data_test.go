@@ -1,19 +1,21 @@
 package dataFormatter
 
 import (
+	"fmt"
+	"jcb/domain"
 	"testing"
 )
 
 func TestCents(t *testing.T) {
-	testA := Cents("0")
+	testA, _ := Cents("0")
 
 	if testA != 0 {
 		t.Error("testA")
 	}
 }
 
-func TestTime(t *testing.T) {
-	testA := Date("2022-04-30")
+func TestDate(t *testing.T) {
+	testA, _ := Date("2022-04-30")
 
 	if testA.Format("2006-01-02") != "2022-04-30" {
 		t.Error("testA")
@@ -21,7 +23,7 @@ func TestTime(t *testing.T) {
 }
 
 func TestDescription(t *testing.T) {
-	testA := Description("   testing    ")
+	testA, _ := Description("   testing    ")
 
 	if testA != "testing" {
 		t.Error("testA")
@@ -29,9 +31,32 @@ func TestDescription(t *testing.T) {
 }
 
 func TestId(t *testing.T) {
-	testA := Id("042")
+	var got int64
+	var expect int64
+	var err error
 
-	if testA != 42 {
-		t.Error("testA")
+	got, err = Id("042")
+	expect = 42
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
+	got, err = Id("-42")
+	expect = 0
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err == nil {
+		t.Error(fmt.Sprintf("error expected for %d", -42))
+	}
+}
+
+func TestTransaction(t *testing.T) {
+	_, err := Transaction(domain.StringTransaction{"1", "2022-03-22", "testing", "12.00"})
+	if err != nil {
+		t.Error("no error expected")
 	}
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
+	dformat "jcb/lib/ui/formatter/data"
+	sformat "jcb/lib/ui/formatter/string"
 	"strings"
 	"time"
 
@@ -16,7 +18,7 @@ var transactionInsertForm gc.Form
 var transactionInsertFormFields []*gc.Field
 
 func renderTransactionInsert() {
-	t := formatTransaction(domain.Transaction{0, time.Now(), "", 0})
+	t := sformat.Transaction(domain.Transaction{0, time.Now(), "", 0})
 
 	gc.Cursor(1)
 	transactionInsertWin, _ = gc.NewWindow(9, 60, 8, 10)
@@ -115,7 +117,7 @@ func transactionInsertRead() (domain.Transaction, error) {
 		return domain.Transaction{}, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
 	}
 
-	t := unformatTransaction(FormattedTransaction{idStr, dateStr, descriptionStr, amountStr})
+	t := dformat.Transaction(StringTransaction{idStr, dateStr, descriptionStr, amountStr})
 
 	err = transaction.Validate(t)
 	return t, err
