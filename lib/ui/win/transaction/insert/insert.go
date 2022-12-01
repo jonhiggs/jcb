@@ -1,6 +1,9 @@
 package transactionInsertWin
 
 import (
+	"jcb/domain"
+	"jcb/lib/transaction"
+	dataf "jcb/lib/ui/formatter/data"
 	statusWin "jcb/lib/ui/win/status"
 	"time"
 
@@ -56,11 +59,35 @@ func Show() {
 
 	err := scan()
 	for err != nil {
-		win.MovePrint(0, 0, err)
+		statusWin.PrintError(err)
 		err = scan()
 	}
 
 	statusWin.Clear()
+}
+
+func readForm() (domain.Transaction, error) {
+	err := form.Driver(gc.REQ_VALIDATION)
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+
+	date, err := dataf.Date(fields[0].Buffer())
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+
+	description, err := dataf.Description(fields[1].Buffer())
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+
+	cents, err := dataf.Cents(fields[2].Buffer())
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+
+	return domain.Transaction{0, date, description, cents}, err
 }
 
 func scan() error {
@@ -74,7 +101,17 @@ func scan() error {
 		ch := win.GetChar()
 		switch ch {
 		case gc.KEY_RETURN:
-			return nil
+			t, err := readForm()
+			if err == nil {
+				_, err := transaction.Save(t)
+				if err != nil {
+					statusWin.PrintError(err)
+					//} else {
+					//	updateTransactions()
+					//	selectTransaction(id)
+				}
+			}
+			return err
 		case 1: // ctrl-a
 			form.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e

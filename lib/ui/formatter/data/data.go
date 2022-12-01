@@ -4,6 +4,7 @@ package dataFormatter
 
 import (
 	"errors"
+	"fmt"
 	"jcb/domain"
 	"strconv"
 	"strings"
@@ -11,7 +12,16 @@ import (
 )
 
 func Cents(s string) (int64, error) {
-	return strconv.ParseInt(strings.Replace(strings.Trim(s, " "), ".", "", 1), 10, 64)
+	s = strings.Trim(s, " ")
+	amountSplit := strings.Split(s, ".")
+	if len(amountSplit) > 2 {
+		return 0, errors.New("Amount has too many dots")
+	}
+	if len(amountSplit) == 2 && len(amountSplit[1]) > 2 {
+		return 0, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
+	}
+
+	return strconv.ParseInt(strings.Replace(s, ".", "", 1), 10, 64)
 }
 
 func Date(s string) (time.Time, error) {
