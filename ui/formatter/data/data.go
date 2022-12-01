@@ -20,6 +20,9 @@ func Cents(s string) (int64, error) {
 	if len(amountSplit) == 2 && len(amountSplit[1]) > 2 {
 		return 0, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
 	}
+	if len(amountSplit) == 1 {
+		s = fmt.Sprintf("%s.00", s)
+	}
 
 	return strconv.ParseInt(strings.Replace(s, ".", "", 1), 10, 64)
 }
