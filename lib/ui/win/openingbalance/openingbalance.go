@@ -2,8 +2,7 @@ package openingBalanceWin
 
 import (
 	openingBalance "jcb/lib/openingbalance"
-	fieldReader "jcb/lib/ui/fieldreader"
-	dataFormatter "jcb/lib/ui/formatter/data"
+	dataf "jcb/lib/ui/formatter/data"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -58,19 +57,12 @@ func scan() error {
 		switch ch {
 		case gc.KEY_RETURN:
 			err := form.Driver(gc.REQ_VALIDATION)
-			s, err := fieldReader.AsAmount(fields[0])
+			cents, err := dataf.Cents(fields[0].Buffer())
 			if err != nil {
 				return err
 			}
 
-			i, err := dataFormatter.Cents(s)
-			if err != nil {
-				return err
-			}
-
-			win.MovePrint(0, 0, s)
-
-			return openingBalance.Save(i, 2022)
+			return openingBalance.Save(cents, 2022)
 		case 1: // ctrl-a
 			form.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e

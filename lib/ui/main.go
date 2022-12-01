@@ -12,12 +12,6 @@ var maxY int
 var maxX int
 var mainWin *gc.Window
 
-const (
-	CONTINUE = 0
-	ABORT    = 1
-	INSERT   = 2
-)
-
 func Start() {
 	stdscr, _ := gc.Init()
 	defer gc.End()

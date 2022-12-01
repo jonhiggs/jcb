@@ -7,10 +7,35 @@ import (
 )
 
 func TestCents(t *testing.T) {
-	testA, _ := Cents("0")
+	var got int64
+	var expect int64
+	var err error
 
-	if testA != 0 {
-		t.Error("testA")
+	got, err = Cents("0")
+	expect = 0
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
+	got, err = Cents("0.2345")
+	expect = 0
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err == nil {
+		t.Error(fmt.Sprintf("error expected for %d", expect))
+	}
+
+	got, err = Cents("0.23.45")
+	expect = 0
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err == nil {
+		t.Error(fmt.Sprintf("error expected for %d", expect))
 	}
 }
 
