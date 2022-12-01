@@ -123,8 +123,3 @@ func scanTransactionInsert() int {
 		}
 	}
 }
-
-func scanOpeningBalance() bool {
-	openingBalanceWin.GetChar()
-	return false
-}

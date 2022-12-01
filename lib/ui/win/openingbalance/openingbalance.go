@@ -1,135 +1,84 @@
-package openingbalance
+package openingBalance
 
 import (
+	"errors"
+
 	gc "github.com/rthornton128/goncurses"
 )
 
-var openingBalanceWin *gc.Window
+var win *gc.Window
 
-var openingBalanceForm gc.Form
-var openingBalanceFormFields []*gc.Field
+var form gc.Form
+var fields []*gc.Field
 
-func renderOpeningBalance() {
-	openingBalanceWin, _ = gc.NewWindow(9, 45, 6, 10)
-	defer openingBalanceWin.Delete()
+func Show() {
+	win, _ = gc.NewWindow(9, 45, 6, 10)
+	defer win.Delete()
 
-	openingBalanceFormFields = make([]*gc.Field, 4)
-	openingBalanceFormFields[0], _ = gc.NewField(1, 8, 6, 17, 0, 0)
-	openingBalanceFormFields[0].SetBuffer("hi")
-	defer openingBalanceFormFields[0].Free()
+	fields = make([]*gc.Field, 4)
+	fields[0], _ = gc.NewField(1, 8, 6, 17, 0, 0)
+	fields[0].SetBuffer("hi")
+	defer fields[0].Free()
 
-	openingBalanceForm, _ = gc.NewForm(openingBalanceFormFields)
-	defer openingBalanceForm.UnPost()
-	defer openingBalanceForm.Free()
-	openingBalanceForm.SetSub(openingBalanceWin)
-	openingBalanceForm.Post()
+	form, _ = gc.NewForm(fields)
+	defer form.UnPost()
+	defer form.Free()
+	form.SetSub(win)
+	form.Post()
 
-	openingBalanceWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-	openingBalanceWin.MovePrint(1, 2, "Opening Balance 2022")
-	openingBalanceWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.MovePrint(1, 2, "Opening Balance 2022")
+	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
-	openingBalanceWin.MovePrint(3, 4, "Please enter the opening balance to")
-	openingBalanceWin.MovePrint(4, 4, "begin budgeting for the year of 2022.")
+	win.MovePrint(3, 4, "Please enter the opening balance to")
+	win.MovePrint(4, 4, "begin budgeting for the year of 2022.")
 
-	openingBalanceWin.MovePrint(6, 2, "Balance:")
+	win.MovePrint(6, 2, "Balance:")
 
-	openingBalanceWin.Box(0, 0)
+	win.Box(0, 0)
 
-	scanOpeningBalance()
-
-	mainWin.Touch()
-	mainWin.Refresh()
-	footerWin.Touch()
-	footerWin.Refresh()
+	r := scan()
+	for r != nil {
+		r = scan()
+	}
 }
 
-func initOpeningBalance() error {
+func scan() error {
+	win.Keypad(true)
+	win.Refresh()
 
-	renderOpeningBalance()
+	form.Driver(gc.REQ_FIRST_FIELD)
+	form.Driver(gc.REQ_END_LINE)
 
-	return nil
+	for {
+		ch := win.GetChar()
+		switch ch {
+		case gc.KEY_RETURN:
+			win.MovePrint(0, 0, "saving")
+			return errors.New("no good")
+		case 1: // ctrl-a
+			form.Driver(gc.REQ_BEG_FIELD)
+		case 5: // ctrl-e
+			form.Driver(gc.REQ_END_FIELD)
+		case 11: // ctrl-k
+			form.Driver(gc.REQ_DEL_LINE)
+		case 4, 33: // ctrl-d, delete
+			form.Driver(gc.REQ_DEL_CHAR)
+		case 23, 27: // ctrl-w, esc/alt-backspace
+			form.Driver(gc.REQ_DEL_WORD)
+		case gc.KEY_BACKSPACE:
+			form.Driver(gc.REQ_DEL_PREV)
+		case gc.KEY_DOWN, gc.KEY_TAB:
+			form.Driver(gc.REQ_NEXT_FIELD)
+			form.Driver(gc.REQ_END_LINE)
+		case 2, gc.KEY_LEFT:
+			form.Driver(gc.REQ_LEFT_CHAR)
+		case 6, gc.KEY_RIGHT:
+			form.Driver(gc.REQ_RIGHT_CHAR)
+		case 'q', 3:
+			return nil
+		default:
+			form.Driver(ch)
+		}
+	}
 }
-
-//func renderOpeningBalanceSet() {
-//	gc.Cursor(1)
-//	openingBalanceSetWin, _ = gc.NewWindow(9, 60, 8, 10)
-//
-//	defer gc.Cursor(0)
-//	defer openingBalanceSetWin.Delete()
-//
-//	openingBalanceSetFormFields = make([]*gc.Field, 4)
-//	openingBalanceSetFormFields[0], _ = gc.NewField(1, 8, 5, 17, 0, 0)
-//	defer openingBalanceSetFormFields[0].Free()
-//
-//	openingBalanceSetForm, _ = gc.NewForm(openingBalanceSetFormFields)
-//	defer openingBalanceSetForm.UnPost()
-//	defer openingBalanceSetForm.Free()
-//	openingBalanceSetForm.SetSub(openingBalanceSetWin)
-//	openingBalanceSetForm.Post()
-//
-//	openingBalanceSetWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-//	openingBalanceSetWin.MovePrint(1, 2, "Opening Balance")
-//	openingBalanceSetWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-//
-//	openingBalanceSetWin.MovePrint(3, 2, "Amount:")
-//
-//	openingBalanceSetWin.Box(0, 0)
-//
-//	action := CONTINUE
-//	for action == CONTINUE {
-//		action = scanTransactionInsert()
-//		switch action {
-//		case ABORT:
-//			printError(errors.New("aborting"))
-//			break
-//		case INSERT:
-//			//t, err := openingBalanceSetRead()
-//			//if err == nil {
-//			//	id, err := transaction.Save(t)
-//			//	if err != nil {
-//			//		printError(err)
-//			//	} else {
-//			//		updateTransactions()
-//			//		selectTransaction(id)
-//			//	}
-//			//	break
-//			//} else {
-//			//	printError(err)
-//			//	action = CONTINUE
-//			//}
-//		}
-//	}
-//
-//	clearError()
-//
-//	mainWin.Touch()
-//	mainWin.Refresh()
-//	footerWin.Touch()
-//	footerWin.Refresh()
-//}
-//
-//// construct a domain.Transaction from the data in the form
-//func openingBalanceSetRead() (domain.Transaction, error) {
-//	err := openingBalanceSetForm.Driver(gc.REQ_VALIDATION)
-//	if err != nil {
-//		return domain.Transaction{}, err
-//	}
-//
-//	idStr := "0"
-//	dateStr := openingBalanceSetFormFields[0].Buffer()
-//	descriptionStr := openingBalanceSetFormFields[1].Buffer()
-//	amountStr := strings.Trim(openingBalanceSetFormFields[2].Buffer(), " ")
-//
-//	amountSplit := strings.Split(amountStr, ".")
-//	if len(amountSplit) > 2 {
-//		return domain.Transaction{}, errors.New("Amount has too many dots")
-//	}
-//	if len(amountSplit) == 2 && len(amountSplit[1]) > 2 {
-//		return domain.Transaction{}, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
-//	}
-//
-//	t := unformatTransaction(FormattedTransaction{idStr, dateStr, descriptionStr, amountStr})
-//
-//	err = transaction.Validate(t)
-//	return t, err
-//}
