@@ -59,17 +59,15 @@ func scan() error {
 	for {
 		ch := win.GetChar()
 		switch ch {
-		//case 'x':
-		//	t, err := selectedTransaction()
-		//	if err != nil {
-		//		statusWin.PrintError(err)
-		//	}
-		//	err = transaction.Delete(t)
-		//	if err != nil {
-		//		statusWin.PrintError(err)
-		//	}
-		//	menu.Driver(gc.DriverActions[gc.KEY_UP])
-		//	updateTransactions()
+		case 'x':
+			id, _ := selectedTransaction()
+			err := transaction.DeleteId(id)
+			if err != nil {
+				statusWin.PrintError(err)
+			} else {
+				menu.Driver(gc.DriverActions[gc.KEY_UP])
+				updateTransactions()
+			}
 		//case 'U':
 		//	updateTransactions()
 		//	statusWin.PrintError(errors.New("updating"))
