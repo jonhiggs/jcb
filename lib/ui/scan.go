@@ -5,6 +5,7 @@ import (
 	"jcb/lib/transaction"
 	helpWin "jcb/lib/ui/win/help"
 	statusWin "jcb/lib/ui/win/status"
+	transactionInsertWin "jcb/lib/ui/win/transaction/insert"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -71,7 +72,10 @@ func scanMain() {
 		//	//for i := len(items) - 1; items[i].Index() != transactionMenu.Current(nil).Index(); i = i - 1 {
 		//	//}
 		case 'i':
-			renderTransactionInsert()
+			transactionInsertWin.Show()
+			mainWin.Touch()
+			mainWin.Refresh()
+			statusWin.Refresh()
 		case '?':
 			helpWin.Show()
 			mainWin.Touch()
@@ -81,45 +85,6 @@ func scanMain() {
 			return
 		default:
 			continue //transactionMenu.Driver(gc.DriverActions[ch])
-		}
-	}
-}
-
-func scanTransactionInsert() int {
-	transactionInsertWin.Keypad(true)
-	transactionInsertWin.Refresh()
-
-	transactionInsertForm.Driver(gc.REQ_FIRST_FIELD)
-	transactionInsertForm.Driver(gc.REQ_END_LINE)
-
-	for {
-		ch := transactionInsertWin.GetChar()
-		switch ch {
-		case gc.KEY_RETURN:
-			return INSERT
-		case 1: // ctrl-a
-			transactionInsertForm.Driver(gc.REQ_BEG_FIELD)
-		case 5: // ctrl-e
-			transactionInsertForm.Driver(gc.REQ_END_FIELD)
-		case 11: // ctrl-k
-			transactionInsertForm.Driver(gc.REQ_DEL_LINE)
-		case 4, 33: // ctrl-d, delete
-			transactionInsertForm.Driver(gc.REQ_DEL_CHAR)
-		case 23, 27: // ctrl-w, esc/alt-backspace
-			transactionInsertForm.Driver(gc.REQ_DEL_WORD)
-		case gc.KEY_BACKSPACE:
-			transactionInsertForm.Driver(gc.REQ_DEL_PREV)
-		case gc.KEY_DOWN, gc.KEY_TAB:
-			transactionInsertForm.Driver(gc.REQ_NEXT_FIELD)
-			transactionInsertForm.Driver(gc.REQ_END_LINE)
-		case 2, gc.KEY_LEFT:
-			transactionInsertForm.Driver(gc.REQ_LEFT_CHAR)
-		case 6, gc.KEY_RIGHT:
-			transactionInsertForm.Driver(gc.REQ_RIGHT_CHAR)
-		case 'q', 3:
-			return ABORT
-		default:
-			transactionInsertForm.Driver(ch)
 		}
 	}
 }
