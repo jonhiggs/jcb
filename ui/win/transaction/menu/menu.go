@@ -28,7 +28,7 @@ func Show(y int, x int) error {
 		statusWin.PrintError(err)
 	}
 
-	win, err = gc.NewWindow(y-4, x-1, 3, 1)
+	win, err = gc.NewWindow(y-2, x-1, 1, 1)
 	menu.SubWindow(win)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
@@ -40,7 +40,7 @@ func Show(y int, x int) error {
 	}
 
 	menu.UnPost()
-	menu.Format(y-4, 1)
+	menu.Format(y-2, 1)
 	menu.Post()
 
 	err = scan(y, x)
@@ -146,10 +146,10 @@ func heading(y int, x int) {
 	}
 
 	headingWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-	headingWin.MovePrint(2, 0, "DATE")
-	headingWin.MovePrint(2, 12, "DESCRIPTION")
-	headingWin.MovePrint(2, 46, "AMOUNT")
-	headingWin.MovePrint(2, 55, "BALANCE")
+	headingWin.MovePrint(0, 0, "DATE")
+	headingWin.MovePrint(0, 12, "DESCRIPTION")
+	headingWin.MovePrint(0, 46, "AMOUNT")
+	headingWin.MovePrint(0, 55, "BALANCE")
 	headingWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.Refresh()
 }
