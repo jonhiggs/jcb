@@ -95,31 +95,25 @@ func scan(y int, x int) error {
 				menu.Driver(gc.DriverActions[gc.KEY_UP])
 			}
 		case 'j':
-			for i := 0; i < (y / 2); i++ {
-				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
-			}
 			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 		case 'k':
 			menu.Driver(gc.DriverActions[gc.KEY_UP])
-		//case 'J':
-		//	curItem := menu.Current(nil)
-		//	curMonth, _ := strconv.ParseInt(curItem.Name()[5:7], 10, 64)
-		//	for _, item := range menu.Items() {
-		//		thisMonth, _ := strconv.ParseInt(item.Name()[5:7], 10, 64)
-		//		if thisMonth > curMonth {
-		//			menu.Current(item)
-		//			ui.MainWindow.MovePrint(0, 0, item.Index())
-		//			break
-		//		}
-		//	}
-		//case 'K':
-		//	//curDate := uiStringify.Date(menu.Current(nil).Name())
-		//	//items := menu.Items()
-		//	//ui.MainWindow.MovePrint(0, 0, thisMonth)
-		//	//ui.MainWindow.MovePrint(1, 0, curMonth)
-		//	//ui.MainWindow.MovePrint(2, 0, i)
-		//	//for i := len(items) - 1; items[i].Index() != menu.Current(nil).Index(); i = i - 1 {
-		//	//}
+		case 'J':
+			curMonth := menu.Current(nil).Name()[0:7]
+			for curMonth == menu.Current(nil).Name()[0:7] {
+				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
+				if menu.Current(nil).Index() == menu.Count()-1 {
+					break
+				}
+			}
+		case 'K':
+			curMonth := menu.Current(nil).Name()[0:7]
+			for curMonth == menu.Current(nil).Name()[0:7] {
+				menu.Driver(gc.DriverActions[gc.KEY_UP])
+				if menu.Current(nil).Index() == menu.Count()-1 {
+					break
+				}
+			}
 		case 'i':
 			id := transactionInsertWin.Show()
 			updateTransactions()
