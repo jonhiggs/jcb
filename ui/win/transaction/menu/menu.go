@@ -66,7 +66,11 @@ func scan(y int, x int) error {
 			if err != nil {
 				statusWin.PrintError(err)
 			} else {
-				menu.Driver(gc.DriverActions[gc.KEY_UP])
+				if menu.Current(nil).Index() == menu.Count()-1 {
+					menu.Driver(gc.DriverActions[gc.KEY_UP])
+				} else {
+					menu.Driver(gc.DriverActions[gc.KEY_DOWN])
+				}
 				updateTransactions()
 			}
 		//case 'U':
