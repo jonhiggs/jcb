@@ -33,6 +33,10 @@ func Init() error {
 			UNIQUE(year)
 		);
 		CREATE TABLE IF NOT EXISTS locks(
+			id INTEGER,
+			UNIQUE(id)
+		);
+		CREATE TABLE IF NOT EXISTS locks(
 			id INTEGER
 		);
 	`
@@ -132,5 +136,14 @@ func SaveOpeningBalance(cents int64, year int64) error {
 	}
 
 	_, err = statement.Exec(year, cents)
+	return err
+}
+
+func LockTransactionId(id int64) error {
+	statement, err := db.Prepare("INSERT OR IGNORE INTO locks (id) VALUES (?)")
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(id)
 	return err
 }

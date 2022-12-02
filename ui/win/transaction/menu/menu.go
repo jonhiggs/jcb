@@ -62,8 +62,7 @@ func scan() error {
 		ch := win.GetChar()
 		switch ch {
 		case 'x':
-			id, _ := selectedTransaction()
-			err := transaction.DeleteId(id)
+			err := transaction.DeleteId(selectedTransaction())
 			if err != nil {
 				statusWin.PrintError(err)
 			} else {
@@ -121,6 +120,9 @@ func scan() error {
 			win.Touch()
 			win.Refresh()
 			statusWin.Refresh()
+		case 'L':
+			transaction.Lock(selectedTransaction())
+			updateTransactions()
 		case '?':
 			helpWin.Show()
 			win.Touch()
@@ -175,7 +177,7 @@ func updateTransactions() error {
 		return errors.New("No data to show. Press ? for help.")
 	}
 
-	id, _ := selectedTransaction()
+	id := selectedTransaction()
 	menu.UnPost()
 	err = menu.SetItems(menuItems)
 	menu.Post()
@@ -186,8 +188,9 @@ func updateTransactions() error {
 	return nil
 }
 
-func selectedTransaction() (int64, error) {
-	return dataf.Id(menu.Current(nil).Description())
+func selectedTransaction() int64 {
+	id, _ := dataf.Id(menu.Current(nil).Description())
+	return id
 }
 
 func selectTransaction(id int64) {
