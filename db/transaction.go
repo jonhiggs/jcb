@@ -89,6 +89,12 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 	return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
 }
 
+func CommitTransaction(id int64, balance int64) error {
+	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = date('now') WHERE id = ? AND committedAt IS NULL")
+	_, err := statement.Exec(balance, id)
+	return err
+}
+
 func FindTransaction(id int64) (domain.Transaction, error) {
 	var date string
 	var description string

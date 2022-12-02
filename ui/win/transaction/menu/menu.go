@@ -10,6 +10,7 @@ import (
 	statusWin "jcb/ui/win/status"
 	transactionInsertWin "jcb/ui/win/transaction/insert"
 	"strconv"
+	"strings"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -73,6 +74,15 @@ func scan(y int, x int) error {
 				}
 				updateTransactions()
 			}
+		case 'C':
+			id, _ := dataf.Id(menu.Current(nil).Description())
+			fields := strings.Fields(menu.Current(nil).Name())
+			balance, err := dataf.Cents(fields[len(fields)-1])
+			if err != nil {
+				return err
+			}
+			transaction.Commit(id, balance)
+
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 		//	if err != nil {
@@ -173,8 +183,21 @@ func updateTransactions() error {
 		}
 	}
 
+	menuItems = make([]*gc.MenuItem, len(committed)+len(uncommitted))
+
+	// committed transactions
+	for i, n := range committed {
+		ft, err := stringf.Transaction(n)
+		if err != nil {
+			return err
+		}
+		balance, _ = transaction.Balance(n.Id)
+		balanceStr, _ := stringf.Cents(balance)
+		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		menuItems[i], _ = gc.NewItem(str, ft.Id)
+	}
+
 	// uncommitted transactions
-	menuItems = make([]*gc.MenuItem, len(uncommitted))
 	for i, n := range uncommitted {
 		ft, err := stringf.Transaction(n)
 		if err != nil {

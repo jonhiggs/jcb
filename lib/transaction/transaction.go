@@ -29,8 +29,22 @@ func Committed() ([]domain.Transaction, error) {
 	return db.CommittedTransactions()
 }
 
+func Commit(id int64, balance int64) error {
+	set, err := commitSet(id)
+
+	for i := len(set) - 1; i != 0; i-- {
+		err = db.CommitTransaction(set[i].Id, balance)
+		if err != nil {
+			return err
+		}
+
+		balance -= set[i].Cents
+	}
+	return nil
+}
+
 // set of transactions that need to be committed before committing provided id
-func CommitSet(id int64, balance int64) ([]domain.Transaction, error) {
+func commitSet(id int64) ([]domain.Transaction, error) {
 	var set []domain.Transaction
 	uncommitted, err := db.UncommittedTransactions()
 	if err != nil {
@@ -44,6 +58,8 @@ func CommitSet(id int64, balance int64) ([]domain.Transaction, error) {
 		}
 
 	}
+
+	//return set, errors.New(fmt.Sprintf("%d", len(set)))
 
 	return set, nil
 }
