@@ -2,10 +2,8 @@ package menuWin
 
 import (
 	"errors"
-	"fmt"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
-	stringf "jcb/ui/formatter/string"
 	helpWin "jcb/ui/win/help"
 	statusWin "jcb/ui/win/status"
 	transactionInsertWin "jcb/ui/win/transaction/insert"
@@ -152,17 +150,17 @@ func heading(y int, x int) {
 }
 
 func updateTransactions() error {
-	transactions, err := transaction.All()
-	if err != nil {
-		return err
-	}
+	//uncommitted, err := transaction.Uncommitted()
+	//if err != nil {
+	//	return err
+	//}
 
-	menuItems = make([]*gc.MenuItem, len(transactions))
-	for i, n := range transactions {
-		ft, _ := stringf.Transaction(n)
-		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents)
-		menuItems[i+1], _ = gc.NewItem(str, ft.Id)
-	}
+	//menuItems = make([]*gc.MenuItem, len(uncommitted))
+	//for i, n := range uncommitted {
+	//	ft, _ := stringf.Transaction(n)
+	//	str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents)
+	//	menuItems[i+1], _ = gc.NewItem(str, ft.Id)
+	//}
 
 	if len(menuItems) == 0 {
 		return errors.New("No data to show. Press ? for help.")
@@ -170,7 +168,7 @@ func updateTransactions() error {
 
 	id := selectedTransaction()
 	menu.UnPost()
-	err = menu.SetItems(menuItems)
+	err := menu.SetItems(menuItems)
 	menu.Post()
 	selectTransaction(id)
 	if err != nil {
