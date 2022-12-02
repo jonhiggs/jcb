@@ -95,6 +95,9 @@ func scan(y int, x int) error {
 				menu.Driver(gc.DriverActions[gc.KEY_UP])
 			}
 		case 'j':
+			for i := 0; i < (y / 2); i++ {
+				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
+			}
 			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 		case 'k':
 			menu.Driver(gc.DriverActions[gc.KEY_UP])
