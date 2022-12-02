@@ -113,7 +113,7 @@ func readForm() ([]domain.Transaction, error) {
 	}
 
 	for _, ts := range timestamps {
-		trans = append(trans, domain.Transaction{0, ts, description, cents})
+		trans = append(trans, domain.Transaction{-1, ts, description, cents})
 	}
 
 	return trans, err
