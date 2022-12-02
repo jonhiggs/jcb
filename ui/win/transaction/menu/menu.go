@@ -73,9 +73,6 @@ func scan(y int, x int) error {
 				}
 				updateTransactions()
 			}
-		//case 'U':
-		//	updateTransactions()
-		//	statusWin.PrintError(errors.New("updating"))
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
 		//	if err != nil {
