@@ -13,10 +13,6 @@ func Save(t domain.Transaction) (int64, error) {
 	return db.SaveTransaction(t)
 }
 
-func Lock(id int64) error {
-	return db.LockTransactionId(id)
-}
-
 func Delete(t domain.Transaction) error {
 	return db.DeleteTransaction(t.Id)
 }
