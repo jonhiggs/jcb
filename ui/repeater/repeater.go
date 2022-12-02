@@ -1,8 +1,7 @@
 package repeater
 
 import (
-	"errors"
-	"strconv"
+	dataf "jcb/ui/formatter/data"
 	"time"
 )
 
@@ -10,12 +9,12 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 	var timestamps []time.Time
 	currentYear := startDate.Year()
 
-	u, err := unit(rule)
+	u, err := dataf.RepeatRuleUnit(rule)
 	if err != nil {
 		return timestamps, err
 	}
 
-	f, err := frequency(rule)
+	f, err := dataf.RepeatRuleFrequency(rule)
 	if err != nil {
 		return timestamps, err
 	}
@@ -58,17 +57,4 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 	}
 
 	return timestamps, nil
-}
-
-func frequency(rule string) (int, error) {
-	s := rule[0 : len(rule)-1]
-	return strconv.Atoi(s)
-}
-
-func unit(rule string) (string, error) {
-	u := rule[len(rule)-1:]
-	if u != "d" && u != "w" && u != "m" {
-		return "x", errors.New("Invalid unit of frequency. Expects 'd', 'w' or 'm'.")
-	}
-	return u, nil
 }

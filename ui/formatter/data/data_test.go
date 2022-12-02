@@ -103,3 +103,111 @@ func TestTransaction(t *testing.T) {
 		t.Error("no error expected")
 	}
 }
+
+func TestRepeatRule(t *testing.T) {
+	var got string
+	var expect string
+	var err error
+
+	got, err = RepeatRule("0d")
+	expect = "0d"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+
+	got, err = RepeatRule("32w")
+	expect = "32w"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+
+	got, err = RepeatRule("2m")
+	expect = "2m"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+
+	got, err = RepeatRule("0x")
+	expect = "0x"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err == nil {
+		t.Error(fmt.Sprintf("error expected for %s", expect))
+	}
+}
+
+func TestRepeatRuleUnit(t *testing.T) {
+	var got string
+	var expect string
+	var err error
+
+	got, err = RepeatRuleUnit("0d")
+	expect = "d"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+
+	got, err = RepeatRuleUnit("7w")
+	expect = "w"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+
+	got, err = RepeatRuleUnit("3m")
+	expect = "m"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+}
+
+func TestRepeatRuleFrequency(t *testing.T) {
+	var got int
+	var expect int
+	var err error
+
+	got, err = RepeatRuleFrequency("0d")
+	expect = 0
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
+	got, err = RepeatRuleFrequency("7w")
+	expect = 7
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+
+	got, err = RepeatRuleFrequency("3m")
+	expect = 3
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %d", expect))
+	}
+}

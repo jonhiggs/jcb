@@ -4,6 +4,7 @@ import (
 	"jcb/domain"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
+	"jcb/ui/repeater"
 	statusWin "jcb/ui/win/status"
 	"time"
 
@@ -17,8 +18,8 @@ var fields []*gc.Field
 func Show() int64 {
 	gc.Cursor(1)
 	defer gc.Cursor(0)
-	win, _ = gc.NewWindow(9, 60, 8, 10)
-	fields = make([]*gc.Field, 4)
+	win, _ = gc.NewWindow(10, 60, 8, 10)
+	fields = make([]*gc.Field, 5)
 
 	// date field
 	fields[0], _ = gc.NewField(1, 10, 3, 17, 0, 0)
@@ -35,10 +36,16 @@ func Show() int64 {
 	fields[2], _ = gc.NewField(1, 8, 5, 17, 0, 0)
 	defer fields[1].Free()
 
-	// repetition field
+	// repeat pattern
 	fields[3], _ = gc.NewField(1, 10, 6, 17, 0, 0)
 	fields[3].SetBuffer("0d")
 	defer fields[3].Free()
+
+	// repeat until
+	fields[4], _ = gc.NewField(1, 10, 7, 17, 0, 0)
+	fields[4].SetBuffer(time.Date(time.Now().Year(), 12, 31, 23, 59, 59, 59, time.UTC).Format("2006-01-02"))
+
+	defer fields[4].Free()
 
 	form, _ = gc.NewForm(fields)
 	defer form.UnPost()
@@ -53,7 +60,8 @@ func Show() int64 {
 	win.MovePrint(3, 2, "Date:")
 	win.MovePrint(4, 2, "Description:")
 	win.MovePrint(5, 2, "Amount:")
-	win.MovePrint(6, 2, "Repeat every")
+	win.MovePrint(6, 2, "Repeat every:")
+	win.MovePrint(7, 2, "Repeat until:")
 
 	win.Box(0, 0)
 
@@ -67,28 +75,48 @@ func Show() int64 {
 	return id
 }
 
-func readForm() (domain.Transaction, error) {
+func readForm() ([]domain.Transaction, error) {
+	var trans []domain.Transaction
 	err := form.Driver(gc.REQ_VALIDATION)
 	if err != nil {
-		return domain.Transaction{}, err
+		return trans, err
 	}
 
 	date, err := dataf.Date(fields[0].Buffer())
 	if err != nil {
-		return domain.Transaction{}, err
+		return trans, err
 	}
 
 	description, err := dataf.Description(fields[1].Buffer())
 	if err != nil {
-		return domain.Transaction{}, err
+		return trans, err
 	}
 
 	cents, err := dataf.Cents(fields[2].Buffer())
 	if err != nil {
-		return domain.Transaction{}, err
+		return trans, err
 	}
 
-	return domain.Transaction{0, date, description, cents}, err
+	rule, err := dataf.RepeatRule(fields[3].Buffer())
+	if err != nil {
+		return trans, err
+	}
+
+	repeatUntil, err := dataf.Date(fields[4].Buffer())
+	if err != nil {
+		return trans, err
+	}
+
+	timestamps, err := repeater.Expand(date, repeatUntil, rule)
+	if err != nil {
+		return trans, err
+	}
+
+	for _, ts := range timestamps {
+		trans = append(trans, domain.Transaction{0, ts, description, cents})
+	}
+
+	return trans, err
 }
 
 func scan() (int64, error) {
@@ -104,14 +132,16 @@ func scan() (int64, error) {
 		case gc.KEY_RETURN:
 			var id int64
 			var err error
-			t, err := readForm()
+			transactions, err := readForm()
 			if err == nil {
-				id, err = transaction.Save(t)
-				if err != nil {
-					statusWin.PrintError(err)
-					//} else {
-					//	updateTransactions()
-					//	selectTransaction(id)
+				for _, t := range transactions {
+					id, err = transaction.Save(t)
+					if err != nil {
+						statusWin.PrintError(err)
+						//} else {
+						//	updateTransactions()
+						//	selectTransaction(id)
+					}
 				}
 			}
 			return id, err
