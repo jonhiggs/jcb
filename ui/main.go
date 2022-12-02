@@ -1,8 +1,6 @@
 package ui
 
 import (
-	openingBalance "jcb/lib/openingbalance"
-	openingBalanceWin "jcb/ui/win/openingbalance"
 	statusWin "jcb/ui/win/status"
 	transactionMenuWin "jcb/ui/win/transaction/menu"
 
@@ -31,11 +29,6 @@ func Start() {
 
 	initColorPairs()
 	statusWin.Show(maxY, maxX)
-
-	_, err := openingBalance.Find(2022)
-	if err != nil {
-		openingBalanceWin.Show()
-	}
 
 	transactionMenuWin.Show(maxY, maxX)
 }

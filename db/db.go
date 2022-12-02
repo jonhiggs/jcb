@@ -27,18 +27,6 @@ func Init() error {
 			cents INTEGER,
 	        UNIQUE(date, description, cents)
 	    );
-		CREATE TABLE IF NOT EXISTS opening_balance(
-			year INTEGER,
-			cents INTEGER,
-			UNIQUE(year)
-		);
-		CREATE TABLE IF NOT EXISTS locks(
-			id INTEGER,
-			UNIQUE(id)
-		);
-		CREATE TABLE IF NOT EXISTS locks(
-			id INTEGER
-		);
 	`
 	_, err = db.Exec(sts)
 	return err
@@ -118,45 +106,4 @@ func parseDate(timeStr string) time.Time {
 	const timeLayout = "2006-01-02 03:04:05-07:00"
 	dateTime, _ := time.Parse(timeLayout, timeStr)
 	return dateTime
-}
-
-func FindOpeningBalance(year int64) (int64, error) {
-	var cents int64
-
-	statement, _ := db.Prepare("SELECT cents FROM opening_balance WHERE year = ?")
-	err := statement.QueryRow(year).Scan(&cents)
-
-	return cents, err
-}
-
-func SaveOpeningBalance(cents int64, year int64) error {
-	statement, err := db.Prepare("INSERT INTO opening_balance (year, cents) VALUES (?, ?)")
-	if err != nil {
-		return err
-	}
-
-	_, err = statement.Exec(year, cents)
-	return err
-}
-
-func LockCreateId(id int64) error {
-	statement, err := db.Prepare("INSERT OR IGNORE INTO locks (id) VALUES (?)")
-	if err != nil {
-		return err
-	}
-	_, err = statement.Exec(id)
-	if err != nil {
-		return err
-	}
-
-	return LockClearId(id + 1)
-}
-
-func LockClearId(id int64) error {
-	statement, err := db.Prepare("DELETE FROM locks WHERE id >= ?")
-	if err != nil {
-		return err
-	}
-	_, err = statement.Exec(id)
-	return err
 }
