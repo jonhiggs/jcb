@@ -30,7 +30,6 @@ func Show(y int, x int) error {
 
 	win, err = gc.NewWindow(y-4, x-1, 3, 1)
 	menu.SubWindow(win)
-	menu.Format(y-4, 1)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
 	menu.SetWindow(win)
@@ -40,13 +39,16 @@ func Show(y int, x int) error {
 		statusWin.PrintError(err)
 	}
 
+	menu.UnPost()
+	menu.Format(y-4, 1)
+	menu.Post()
+
 	err = scan()
 	for err != nil {
 		statusWin.PrintError(err)
 		err = scan()
 	}
 
-	menu.Post()
 	win.Refresh()
 
 	return nil
