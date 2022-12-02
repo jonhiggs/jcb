@@ -77,7 +77,7 @@ func SaveTransaction(t domain.Transaction) (int64, error) {
 }
 
 func AllTransactions() ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT id, date, description, cents FROM transactions ORDER BY date ASC")
+	rows, err := db.Query("SELECT id, date, description, cents FROM transactions ORDER BY date, id ASC")
 	if err != nil {
 		return nil, err
 	}
