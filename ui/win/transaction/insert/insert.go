@@ -135,7 +135,7 @@ func scan() (int64, error) {
 			transactions, err := readForm()
 			if err == nil {
 				for _, t := range transactions {
-					id, err = transaction.Save(t)
+					id, err = transaction.Insert(t)
 					if err != nil {
 						statusWin.PrintError(err)
 						//} else {
