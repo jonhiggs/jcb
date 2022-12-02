@@ -1,6 +1,8 @@
 package transaction
 
 import (
+	"errors"
+	"fmt"
 	"jcb/db"
 	"jcb/domain"
 )
@@ -31,8 +33,11 @@ func Committed() ([]domain.Transaction, error) {
 
 func Commit(id int64, balance int64) error {
 	set, err := commitSet(id)
+	if err != nil {
+		return err
+	}
 
-	for i := len(set) - 1; i != 0; i-- {
+	for i := len(set) - 1; i >= 0; i-- {
 		err = db.CommitTransaction(set[i].Id, balance)
 		if err != nil {
 			return err
@@ -46,6 +51,7 @@ func Commit(id int64, balance int64) error {
 // set of transactions that need to be committed before committing provided id
 func commitSet(id int64) ([]domain.Transaction, error) {
 	var set []domain.Transaction
+	var found bool
 	uncommitted, err := db.UncommittedTransactions()
 	if err != nil {
 		return set, err
@@ -54,14 +60,16 @@ func commitSet(id int64) ([]domain.Transaction, error) {
 		set = append(set, t)
 
 		if t.Id == id {
+			found = true
 			break
 		}
-
 	}
 
-	//return set, errors.New(fmt.Sprintf("%d", len(set)))
-
-	return set, nil
+	if found {
+		return set, nil
+	} else {
+		return []domain.Transaction{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
+	}
 }
 
 func Balance(id int64) (int64, error) {
