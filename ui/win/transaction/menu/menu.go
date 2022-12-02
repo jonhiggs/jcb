@@ -81,7 +81,10 @@ func scan(y int, x int) error {
 			if err != nil {
 				return err
 			}
-			transaction.Commit(id, balance)
+			err = transaction.Commit(id, balance)
+			if err != nil {
+				return err
+			}
 
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
@@ -206,7 +209,7 @@ func updateTransactions() error {
 		balance += n.Cents
 		balanceStr, _ := stringf.Cents(balance)
 		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
-		menuItems[i], _ = gc.NewItem(str, ft.Id)
+		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
 	if len(menuItems) == 0 {
