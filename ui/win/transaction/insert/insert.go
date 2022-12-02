@@ -164,7 +164,7 @@ func scan() (int64, error) {
 			form.Driver(gc.REQ_LEFT_CHAR)
 		case 6, gc.KEY_RIGHT:
 			form.Driver(gc.REQ_RIGHT_CHAR)
-		case 'q', 3:
+		case 3:
 			return -1, nil
 		default:
 			form.Driver(ch)
