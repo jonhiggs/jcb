@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const timeLayout = "2006-01-02 03:04:05.999999999-07:00"
+const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 func CommittedTransactions() ([]domain.Transaction, error) {
 	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC")
@@ -16,8 +16,6 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 	}
 
 	defer rows.Close()
-
-	const timeLayout = "2006-01-02 03:04:05-07:00"
 
 	var records []domain.Transaction
 	for rows.Next() {
@@ -46,8 +44,6 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 	}
 
 	defer rows.Close()
-
-	const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 	var records []domain.Transaction
 	for rows.Next() {
@@ -90,8 +86,8 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 }
 
 func CommitTransaction(id int64, balance int64) error {
-	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = date('now') WHERE id = ? AND committedAt IS NULL")
-	_, err := statement.Exec(balance, id)
+	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ? WHERE id = ? AND committedAt IS NULL")
+	_, err := statement.Exec(balance, time.Now().Format(timeLayout), id)
 	return err
 }
 
