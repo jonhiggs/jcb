@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"jcb/domain"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -37,9 +36,8 @@ func Cents(i int64) (string, error) {
 }
 
 func Date(d time.Time) (string, error) {
-	year, err := strconv.ParseInt(d.Format("2006"), 10, 64)
-	if err != nil || year < 2000 {
-		return "", errors.New("Invalid date")
+	if d.Year() < 2000 {
+		return "", errors.New(fmt.Sprintf("Date is too old [%d]", d.Year()))
 	}
 	return d.Format("2006-01-02"), nil
 }

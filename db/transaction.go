@@ -47,7 +47,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 	defer rows.Close()
 
-	const timeLayout = "2006-01-02 03:04:05-07:00"
+	const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 	var records []domain.Transaction
 	for rows.Next() {
@@ -56,7 +56,11 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 		err = rows.Scan(&t.Id, &date, &t.Description, &t.Cents)
 
-		ts, _ := time.Parse(timeLayout, date)
+		ts, err := time.Parse(timeLayout, date)
+		if err != nil {
+			return nil, err
+		}
+
 		t.Date = ts
 
 		if err != nil {
