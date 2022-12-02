@@ -30,6 +30,10 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 			} else {
 				break
 			}
+
+			if f == 0 {
+				break
+			}
 		}
 
 	case "w":

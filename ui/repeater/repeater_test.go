@@ -6,6 +6,29 @@ import (
 	"time"
 )
 
+func TestExpandSingle(t *testing.T) {
+	var res []time.Time
+	var err error
+	var got string
+
+	startDate := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2022, 12, 31, 23, 59, 59, 59, time.UTC)
+
+	res, err = Expand(startDate, endDate, "0d")
+	got = res[0].Format("2006-01-02")
+	if got != "2022-01-01" {
+		t.Error(fmt.Sprintf("first element expected 2022-01-01 but was %s", got))
+	}
+
+	if len(res) != 1 {
+		t.Error(fmt.Sprintf("expected 1 element, got %d.", len(res)))
+	}
+
+	if err != nil {
+		t.Error("error was not expected")
+	}
+}
+
 func TestExpandOneDay(t *testing.T) {
 	var res []time.Time
 	var err error
