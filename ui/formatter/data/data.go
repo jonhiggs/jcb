@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"jcb/domain"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -42,6 +43,41 @@ func Id(d string) (int64, error) {
 		err = errors.New("Id cannot be less than 0")
 	}
 	return id, err
+}
+
+func RepeatRule(rule string) (string, error) {
+	rule = strings.Trim(rule, " ")
+	re := regexp.MustCompile(`^[0-9]+[dwm]$`)
+
+	if re.MatchString(rule) {
+		return rule, nil
+	} else {
+		return rule, errors.New("Invalid rule")
+	}
+
+}
+
+func RepeatRuleUnit(rule string) (string, error) {
+	_, err := RepeatRule(rule)
+	if err != nil {
+		return rule, err
+	}
+
+	u := rule[len(rule)-1:]
+	if u != "d" && u != "w" && u != "m" {
+		return "x", errors.New(fmt.Sprintf("Invalid unit of frequency [%s]. Expects 'd', 'w' or 'm'.", rule))
+	}
+	return u, nil
+}
+
+func RepeatRuleFrequency(rule string) (int, error) {
+	_, err := RepeatRule(rule)
+	if err != nil {
+		return -1, err
+	}
+
+	s := rule[0 : len(rule)-1]
+	return strconv.Atoi(s)
 }
 
 func Transaction(d domain.StringTransaction) (domain.Transaction, error) {
