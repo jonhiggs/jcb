@@ -106,8 +106,23 @@ func TestId(t *testing.T) {
 }
 
 func TestTransaction(t *testing.T) {
-	_, err := Transaction(domain.Transaction{1, time.Now(), "testing", 1200})
+	var got domain.StringTransaction
+	var expect string
+	var err error
+
+	got, err = Transaction(domain.Transaction{1, time.Now(), "testing", 1200})
 	if err != nil {
 		t.Error("no error expected")
 	}
+
+	expect = "testing"
+	if got.Description != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got.Description, expect))
+	}
+
+	expect = "12.00"
+	if got.Cents != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got.Cents, expect))
+	}
+
 }
