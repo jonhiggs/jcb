@@ -3,7 +3,6 @@ package menuWin
 import (
 	"errors"
 	"fmt"
-	"jcb/lib/lock"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
 	stringf "jcb/ui/formatter/string"
@@ -123,9 +122,6 @@ func scan(y int, x int) error {
 			win.Touch()
 			win.Refresh()
 			statusWin.Refresh()
-		case 'L':
-			lock.Create(selectedTransaction())
-			updateTransactions()
 		case '?':
 			helpWin.Show()
 			win.Touch()
@@ -161,18 +157,10 @@ func updateTransactions() error {
 		return err
 	}
 
-	menuItems = make([]*gc.MenuItem, len(transactions)+1)
-	var balance int64
-	balance = 12345
-	balanceStr, _ := stringf.Cents(balance)
-	str := fmt.Sprintf("%s  %-30s  %8s  %8s", "2022-01-01", "Opening Balance", balanceStr, balanceStr)
-	menuItems[0], _ = gc.NewItem(str, "opening_balance")
+	menuItems = make([]*gc.MenuItem, len(transactions))
 	for i, n := range transactions {
 		ft, _ := stringf.Transaction(n)
-		cents, _ := dataf.Cents(ft.Cents)
-		balance = balance + cents
-		balanceStr, _ = stringf.Cents(balance)
-		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents)
 		menuItems[i+1], _ = gc.NewItem(str, ft.Id)
 	}
 
