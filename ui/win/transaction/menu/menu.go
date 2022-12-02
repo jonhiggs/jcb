@@ -3,6 +3,7 @@ package menuWin
 import (
 	"errors"
 	"fmt"
+	"jcb/lib/lock"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
 	stringf "jcb/ui/formatter/string"
@@ -123,7 +124,7 @@ func scan(y int, x int) error {
 			win.Refresh()
 			statusWin.Refresh()
 		case 'L':
-			transaction.Lock(selectedTransaction())
+			lock.Create(selectedTransaction())
 			updateTransactions()
 		case '?':
 			helpWin.Show()

@@ -139,8 +139,21 @@ func SaveOpeningBalance(cents int64, year int64) error {
 	return err
 }
 
-func LockTransactionId(id int64) error {
+func LockCreateId(id int64) error {
 	statement, err := db.Prepare("INSERT OR IGNORE INTO locks (id) VALUES (?)")
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return LockClearId(id + 1)
+}
+
+func LockClearId(id int64) error {
+	statement, err := db.Prepare("DELETE FROM locks WHERE id >= ?")
 	if err != nil {
 		return err
 	}
