@@ -43,10 +43,10 @@ func Show(y int, x int) error {
 	menu.Format(y-4, 1)
 	menu.Post()
 
-	err = scan()
+	err = scan(y, x)
 	for err != nil {
 		statusWin.PrintError(err)
-		err = scan()
+		err = scan(y, x)
 	}
 
 	win.Refresh()
@@ -54,7 +54,7 @@ func Show(y int, x int) error {
 	return nil
 }
 
-func scan() error {
+func scan(y int, x int) error {
 	win.Keypad(true)
 	win.Refresh()
 
@@ -87,9 +87,13 @@ func scan() error {
 		case 'G':
 			menu.Driver(gc.DriverActions[gc.KEY_END])
 		case 'd':
-			menu.Driver(gc.DriverActions[gc.KEY_PAGEDOWN])
+			for i := 0; i < (y / 2); i++ {
+				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
+			}
 		case 'u':
-			menu.Driver(gc.DriverActions[gc.KEY_PAGEUP])
+			for i := 0; i < (y / 2); i++ {
+				menu.Driver(gc.DriverActions[gc.KEY_UP])
+			}
 		case 'j':
 			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 		case 'k':
