@@ -25,6 +25,10 @@ func Uncommitted() ([]domain.Transaction, error) {
 	return db.UncommittedTransactions()
 }
 
+func Committed() ([]domain.Transaction, error) {
+	return db.CommittedTransactions()
+}
+
 // set of transactions that need to be committed before committing provided id
 func CommitSet(id int64, balance int64) ([]domain.Transaction, error) {
 	var set []domain.Transaction
@@ -42,4 +46,8 @@ func CommitSet(id int64, balance int64) ([]domain.Transaction, error) {
 	}
 
 	return set, nil
+}
+
+func Balance(id int64) (int64, error) {
+	return db.TransactionBalance(id)
 }
