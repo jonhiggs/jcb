@@ -109,3 +109,15 @@ func DeleteTransaction(id int64) error {
 	_, err = statement.Exec(id)
 	return err
 }
+
+func TransactionBalance(id int64) (int64, error) {
+	var balance int64
+
+	statement, _ := db.Prepare("SELECT balance FROM transactions WHERE id = ? AND committedAt NOT NULL")
+	err := statement.QueryRow(id).Scan(&balance)
+	if err != nil {
+		return -1, err
+	}
+
+	return balance, err
+}
