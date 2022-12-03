@@ -166,6 +166,7 @@ func heading(y int, x int) {
 
 func updateTransactions() error {
 	var balance int64
+	balance = 0
 
 	uncommitted, err := transaction.Uncommitted()
 	if err != nil {
@@ -175,15 +176,6 @@ func updateTransactions() error {
 	committed, err := transaction.Committed()
 	if err != nil {
 		return err
-	}
-
-	if len(committed) == 0 {
-		balance = 0
-	} else {
-		balance, err = transaction.Balance(committed[len(committed)-1].Id)
-		if err != nil {
-			return err
-		}
 	}
 
 	menuItems = make([]*gc.MenuItem, len(committed)+len(uncommitted))
@@ -200,7 +192,6 @@ func updateTransactions() error {
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
-	// uncommitted transactions
 	for i, n := range uncommitted {
 		ft, err := stringf.Transaction(n)
 		if err != nil {

@@ -32,32 +32,33 @@ func Committed() ([]domain.Transaction, error) {
 }
 
 func Commit(id int64, balance int64) error {
-	set, err := commitSet(id)
+	tset, bset, err := commitSet(id, balance)
 	if err != nil {
 		return err
 	}
 
-	for i := len(set) - 1; i >= 0; i-- {
-		err = db.CommitTransaction(set[i].Id, balance)
+	for i, t := range tset {
+		err = db.CommitTransaction(t.Id, bset[i])
 		if err != nil {
 			return err
 		}
-
-		balance -= set[i].Cents
 	}
+
 	return nil
 }
 
 // set of transactions that need to be committed before committing provided id
-func commitSet(id int64) ([]domain.Transaction, error) {
-	var set []domain.Transaction
+func commitSet(id int64, balance int64) ([]domain.Transaction, []int64, error) {
 	var found bool
+
 	uncommitted, err := db.UncommittedTransactions()
 	if err != nil {
-		return set, err
+		return []domain.Transaction{}, []int64{}, err
 	}
+
+	var tset []domain.Transaction
 	for _, t := range uncommitted {
-		set = append(set, t)
+		tset = append(tset, t)
 
 		if t.Id == id {
 			found = true
@@ -65,10 +66,19 @@ func commitSet(id int64) ([]domain.Transaction, error) {
 		}
 	}
 
+	bset := make([]int64, len(tset))
+	for i := len(tset) - 1; i >= 0; i-- {
+		if i == len(tset)-1 {
+			bset[i] = balance
+		} else {
+			bset[i] = bset[i+1] - tset[i].Cents
+		}
+	}
+
 	if found {
-		return set, nil
+		return tset, bset, nil
 	} else {
-		return []domain.Transaction{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
+		return []domain.Transaction{}, []int64{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
 	}
 }
 
