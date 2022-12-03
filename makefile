@@ -1,7 +1,7 @@
 .DEFAULT_GOAL = run
 
 test:
-	#go test ./lib/ui
+	go test ./lib/transaction
 	go test ./ui/formatter/data
 	go test ./ui/formatter/string
 	go test ./ui/repeater
