@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jcb/db"
 	"jcb/domain"
+	"time"
 )
 
 func Find(id int64) (domain.Transaction, error) {
@@ -45,6 +46,10 @@ func Commit(id int64, balance int64) error {
 	}
 
 	return nil
+}
+
+func CommittedUntil() (time.Time, error) {
+	return db.TransactionCommittedUntil()
 }
 
 // set of transactions that need to be committed before committing provided id

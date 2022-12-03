@@ -123,3 +123,16 @@ func TransactionBalance(id int64) (int64, error) {
 
 	return balance, err
 }
+
+func TransactionCommittedUntil() (time.Time, error) {
+	var date string
+	statement, _ := db.Prepare("SELECT date FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
+	err := statement.QueryRow().Scan(&date)
+	if err != nil {
+		return time.Unix(0, 0), err
+	}
+
+	ts, _ := time.Parse(timeLayout, date)
+
+	return ts, err
+}
