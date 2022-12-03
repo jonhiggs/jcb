@@ -30,7 +30,7 @@ func Show() {
 	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(12, 25, "i    Create")
-	win.MovePrint(13, 25, "l    Lock")
+	win.MovePrint(13, 25, "C    Commit")
 	win.MovePrint(14, 25, "L    Unlock")
 	win.MovePrint(15, 25, "x    Delete")
 	win.MovePrint(16, 25, "e    Edit")
