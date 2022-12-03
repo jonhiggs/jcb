@@ -91,6 +91,17 @@ func CommitTransaction(id int64, balance int64) error {
 	return err
 }
 
+func UncommitTransaction(id int64) error {
+	var committedAt string
+	statement, _ := db.Prepare("SELECT committedAt FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&committedAt)
+	ts, _ := time.Parse(timeLayout, committedAt)
+
+	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, balance = NULL WHERE committedAt > ?")
+	_, err = statement.Exec(ts)
+	return err
+}
+
 func FindTransaction(id int64) (domain.Transaction, error) {
 	var date string
 	var description string

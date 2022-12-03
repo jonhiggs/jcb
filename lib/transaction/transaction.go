@@ -48,6 +48,10 @@ func Commit(id int64, balance int64) error {
 	return nil
 }
 
+func Uncommit(id int64) error {
+	return db.UncommitTransaction(id)
+}
+
 func CommittedUntil() (time.Time, error) {
 	return db.TransactionCommittedUntil()
 }
