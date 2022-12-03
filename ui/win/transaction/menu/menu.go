@@ -19,6 +19,8 @@ var headingWin *gc.Window
 var win *gc.Window
 var menuItems []*gc.MenuItem
 var menu *gc.Menu
+var y int
+var x int
 
 func Show(y int, x int) error {
 	heading(y, x)
@@ -64,7 +66,7 @@ func scan(y int, x int) error {
 		switch ch {
 		case 'x':
 			if selectedTransactionCommitted() {
-				return nil
+				statusWin.PrintError(errors.New("Cannot delete committed transactions"))
 			}
 			err := transaction.DeleteId(selectedTransaction())
 			if err != nil {
@@ -79,12 +81,13 @@ func scan(y int, x int) error {
 			}
 		case 'C':
 			id, _ := dataf.Id(menu.Current(nil).Description())
+			fields := strings.Fields(menu.Current(nil).Name())
+			balance, err := dataf.Cents(fields[len(fields)-1])
+
 			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 			if selectedTransactionCommitted() {
 				transaction.Uncommit(id)
 			} else {
-				fields := strings.Fields(menu.Current(nil).Name())
-				balance, err := dataf.Cents(fields[len(fields)-1])
 				if err != nil {
 					return err
 				}
@@ -223,6 +226,7 @@ func updateTransactions() error {
 	id := selectedTransaction()
 	menu.UnPost()
 	err = menu.SetItems(menuItems)
+	menu.Format(y-2, 1)
 	menu.Post()
 	selectTransaction(id)
 	if err != nil {

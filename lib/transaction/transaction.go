@@ -56,6 +56,10 @@ func CommittedUntil() (time.Time, error) {
 	return db.TransactionCommittedUntil()
 }
 
+func Balance(id int64) (int64, error) {
+	return db.TransactionBalance(id)
+}
+
 // set of transactions that need to be committed before committing provided id
 func commitSet(id int64, balance int64) ([]domain.Transaction, []int64, error) {
 	var found bool
@@ -75,22 +79,22 @@ func commitSet(id int64, balance int64) ([]domain.Transaction, []int64, error) {
 		}
 	}
 
-	bset := make([]int64, len(tset))
-	for i := len(tset) - 1; i >= 0; i-- {
-		if i == len(tset)-1 {
-			bset[i] = balance
-		} else {
-			bset[i] = bset[i+1] - tset[i].Cents
-		}
-	}
-
 	if found {
-		return tset, bset, nil
+		return tset, balanceSet(tset, balance), nil
 	} else {
 		return []domain.Transaction{}, []int64{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
 	}
 }
 
-func Balance(id int64) (int64, error) {
-	return db.TransactionBalance(id)
+func balanceSet(tset []domain.Transaction, finalBalance int64) []int64 {
+	bset := make([]int64, len(tset))
+	for i := len(tset) - 1; i >= 0; i-- {
+		if i == len(tset)-1 {
+			bset[i] = finalBalance
+		} else {
+			bset[i] = bset[i+1] - tset[i].Cents
+		}
+	}
+
+	return bset
 }
