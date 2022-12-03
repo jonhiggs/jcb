@@ -1,6 +1,11 @@
 package win
 
-import gc "github.com/rthornton128/goncurses"
+import (
+	"fmt"
+	"jcb/config"
+
+	gc "github.com/rthornton128/goncurses"
+)
 
 var win *gc.Window
 
@@ -49,7 +54,7 @@ func Show() {
 	win.MovePrint(8, 25, "^F   Forward")
 
 	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD)
-	win.MovePrint(21, 33, "jcb v0.0.0")
+	win.MovePrint(21, 38-len(config.VERSION), fmt.Sprintf("jcb v%s", config.VERSION))
 	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD)
 
 	scan()
