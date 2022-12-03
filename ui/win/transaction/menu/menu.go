@@ -128,6 +128,9 @@ func scan(y int, x int) error {
 				if menu.Current(nil).Index() == menu.Count()-1 {
 					break
 				}
+				if menu.Current(nil).Index() == 0 {
+					break
+				}
 			}
 		case 'i':
 			id := transactionInsertWin.Show()
