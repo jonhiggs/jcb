@@ -23,7 +23,6 @@ func PrintError(e error) {
 		win.Clear()
 		win.MovePrint(0, 0, e)
 		win.Refresh()
-		win.GetChar()
 		win.Clear()
 	}
 }
