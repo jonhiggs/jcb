@@ -1,4 +1,5 @@
-.DEFAULT_GOAL = run
+run: test build
+	./jcb
 
 test:
 	go test ./lib/transaction
@@ -9,5 +10,3 @@ test:
 build:
 	go build  -o jcb ./cmd/main.go
 
-run: test build
-	./jcb
