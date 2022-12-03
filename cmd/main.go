@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"jcb/config"
 	"jcb/db"
 	"jcb/ui"
 	"log"
@@ -9,8 +10,6 @@ import (
 
 	"nullprogram.com/x/optparse"
 )
-
-const VERSION = "0.0.0"
 
 func usage() {
 	fmt.Println("Usage:")
@@ -29,7 +28,7 @@ func main() {
 		{"version", 'v', optparse.KindNone},
 	}
 
-	var file string
+	file := config.DefaultFile()
 
 	results, _, err := optparse.Parse(options, os.Args)
 	if err != nil {
@@ -44,13 +43,9 @@ func main() {
 		case "file":
 			file = result.Optarg
 		case "version":
-			println(VERSION)
+			println(config.VERSION)
 			return
 		}
-	}
-
-	if len(file) == 0 {
-		file = "test.db"
 	}
 
 	err = db.Init(file)
