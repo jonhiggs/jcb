@@ -9,9 +9,9 @@ import (
 
 var db *sql.DB
 
-func Init() error {
+func Init(file string) error {
 	var err error
-	db, err = sql.Open("sqlite3", "test.db")
+	db, err = sql.Open("sqlite3", file)
 
 	if err != nil {
 		log.Fatal(err)
@@ -20,8 +20,8 @@ func Init() error {
 	sts := `
 	    CREATE TABLE IF NOT EXISTS transactions(
 	        id INTEGER PRIMARY KEY AUTOINCREMENT,
-	        date TEXT, 
-			description TEXT, 
+	        date TEXT,
+			description TEXT,
 			cents INTEGER,
 			balance INTEGER,
 			committedAt TEXT
