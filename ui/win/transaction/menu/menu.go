@@ -63,6 +63,9 @@ func scan(y int, x int) error {
 		ch := win.GetChar()
 		switch ch {
 		case 'x':
+			if selectedTransactionCommitted() {
+				return nil
+			}
 			err := transaction.DeleteId(selectedTransaction())
 			if err != nil {
 				statusWin.PrintError(err)
@@ -76,15 +79,21 @@ func scan(y int, x int) error {
 			}
 		case 'C':
 			id, _ := dataf.Id(menu.Current(nil).Description())
-			fields := strings.Fields(menu.Current(nil).Name())
-			balance, err := dataf.Cents(fields[len(fields)-1])
-			if err != nil {
-				return err
+			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
+			if selectedTransactionCommitted() {
+				transaction.Uncommit(id)
+			} else {
+				fields := strings.Fields(menu.Current(nil).Name())
+				balance, err := dataf.Cents(fields[len(fields)-1])
+				if err != nil {
+					return err
+				}
+				err = transaction.Commit(id, balance)
+				if err != nil {
+					return err
+				}
 			}
-			err = transaction.Commit(id, balance)
-			if err != nil {
-				return err
-			}
+			selectTransaction(id)
 			updateTransactions()
 
 		//case 'e':
@@ -234,4 +243,8 @@ func selectTransaction(id int64) {
 			menu.Current(item)
 		}
 	}
+}
+
+func selectedTransactionCommitted() bool {
+	return strings.HasPrefix(menu.Current(nil).Name(), "*")
 }
