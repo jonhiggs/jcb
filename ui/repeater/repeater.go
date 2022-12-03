@@ -5,9 +5,8 @@ import (
 	"time"
 )
 
-func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, error) {
+func Expand(date time.Time, startDate time.Time, endDate time.Time, rule string) ([]time.Time, error) {
 	var timestamps []time.Time
-	currentYear := startDate.Year()
 
 	u, err := dataf.RepeatRuleUnit(rule)
 	if err != nil {
@@ -23,9 +22,11 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 	case "d":
 		for i := 0; true; i += f {
 			var ts time.Time
-			ts = startDate.AddDate(0, 0, i)
+			ts = date.AddDate(0, 0, i)
 
-			if ts.Unix() <= endDate.Unix() {
+			if ts.Unix() < startDate.Unix() {
+				continue
+			} else if ts.Unix() <= endDate.Unix() {
 				timestamps = append(timestamps, ts)
 			} else {
 				break
@@ -39,9 +40,11 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 	case "w":
 		for i := 0; true; i += f * 7 {
 			var ts time.Time
-			ts = startDate.AddDate(0, 0, i)
+			ts = date.AddDate(0, 0, i)
 
-			if ts.Year() == currentYear {
+			if ts.Unix() < startDate.Unix() {
+				continue
+			} else if ts.Unix() <= endDate.Unix() {
 				timestamps = append(timestamps, ts)
 			} else {
 				break
@@ -50,9 +53,11 @@ func Expand(startDate time.Time, endDate time.Time, rule string) ([]time.Time, e
 	case "m":
 		for i := 0; true; i += f {
 			var ts time.Time
-			ts = startDate.AddDate(0, i, 0)
+			ts = date.AddDate(0, i, 0)
 
-			if ts.Year() == currentYear {
+			if ts.Unix() < startDate.Unix() {
+				continue
+			} else if ts.Unix() <= endDate.Unix() {
 				timestamps = append(timestamps, ts)
 			} else {
 				break

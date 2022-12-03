@@ -107,7 +107,9 @@ func readForm() ([]domain.Transaction, error) {
 		return trans, err
 	}
 
-	timestamps, err := repeater.Expand(date, repeatUntil, rule)
+	repeatFrom, err := transaction.CommittedUntil()
+
+	timestamps, err := repeater.Expand(date, repeatFrom, repeatUntil, rule)
 	if err != nil {
 		return trans, err
 	}
