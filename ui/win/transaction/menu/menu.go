@@ -126,16 +126,16 @@ func scan(y int, x int) error {
 		case 'k':
 			menu.Driver(gc.DriverActions[gc.KEY_UP])
 		case 'J':
-			curMonth := menu.Current(nil).Name()[0:7]
-			for curMonth == menu.Current(nil).Name()[0:7] {
+			curMonth := menu.Current(nil).Name()[2:9]
+			for curMonth == menu.Current(nil).Name()[2:9] {
 				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 				if menu.Current(nil).Index() == menu.Count()-1 {
 					break
 				}
 			}
 		case 'K':
-			curMonth := menu.Current(nil).Name()[0:7]
-			for curMonth == menu.Current(nil).Name()[0:7] {
+			curMonth := menu.Current(nil).Name()[2:9]
+			for curMonth == menu.Current(nil).Name()[2:9] {
 				menu.Driver(gc.DriverActions[gc.KEY_UP])
 				if menu.Current(nil).Index() == menu.Count()-1 {
 					break
