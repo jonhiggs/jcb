@@ -1,12 +1,12 @@
 package transactionInsertWin
 
 import (
+	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
 	"jcb/ui/repeater"
 	statusWin "jcb/ui/win/status"
-	"time"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -19,33 +19,43 @@ func Show() int64 {
 	gc.Cursor(1)
 	defer gc.Cursor(0)
 	win, _ = gc.NewWindow(10, 60, 8, 10)
-	fields = make([]*gc.Field, 5)
+	fields = make([]*gc.Field, 7)
 
-	// date field
-	fields[0], _ = gc.NewField(1, 10, 3, 17, 0, 0)
+	// month field
+	fields[0], _ = gc.NewField(1, 2, 3, 22, 0, 0)
 	fields[0].SetOptionsOn(gc.FO_BLANK)
-	fields[0].SetBuffer(time.Now().Format("2006-01-"))
 	defer fields[0].Free()
 
-	// description field
-	fields[1], _ = gc.NewField(1, 30, 4, 17, 0, 0)
-	//fields[1].SetBuffer(t.Description)
+	// day field
+	fields[1], _ = gc.NewField(1, 2, 3, 25, 0, 0)
+	fields[1].SetOptionsOn(gc.FO_BLANK)
 	defer fields[1].Free()
+
+	// description field
+	fields[2], _ = gc.NewField(1, 30, 4, 17, 0, 0)
+	//fields[1].SetBuffer(t.Description)
+	defer fields[2].Free()
 
 	// amount field
-	fields[2], _ = gc.NewField(1, 8, 5, 17, 0, 0)
-	defer fields[1].Free()
+	fields[3], _ = gc.NewField(1, 8, 5, 17, 0, 0)
+	defer fields[2].Free()
 
 	// repeat pattern
-	fields[3], _ = gc.NewField(1, 10, 6, 17, 0, 0)
-	fields[3].SetBuffer("0d")
-	defer fields[3].Free()
-
-	// repeat until
-	fields[4], _ = gc.NewField(1, 10, 7, 17, 0, 0)
-	fields[4].SetBuffer(time.Date(time.Now().Year(), 12, 31, 23, 59, 59, 59, time.UTC).Format("2006-01-02"))
-
+	fields[4], _ = gc.NewField(1, 10, 6, 17, 0, 0)
+	fields[4].SetBuffer("0d")
 	defer fields[4].Free()
+
+	// repeat until month
+	fields[5], _ = gc.NewField(1, 2, 7, 22, 0, 0)
+	fields[5].SetBuffer("12")
+	fields[5].SetOptionsOn(gc.FO_BLANK)
+	defer fields[5].Free()
+
+	// repeat until day
+	fields[6], _ = gc.NewField(1, 2, 7, 25, 0, 0)
+	fields[6].SetBuffer("31")
+	fields[6].SetOptionsOn(gc.FO_BLANK)
+	defer fields[6].Free()
 
 	form, _ = gc.NewForm(fields)
 	defer form.UnPost()
@@ -58,10 +68,14 @@ func Show() int64 {
 	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(3, 2, "Date:")
+	win.MovePrint(3, 17, "2022-")
+	win.MovePrint(3, 24, "-")
 	win.MovePrint(4, 2, "Description:")
 	win.MovePrint(5, 2, "Amount:")
 	win.MovePrint(6, 2, "Repeat every:")
 	win.MovePrint(7, 2, "Repeat until:")
+	win.MovePrint(7, 17, "2022-")
+	win.MovePrint(7, 24, "-")
 
 	win.Box(0, 0)
 
@@ -82,27 +96,32 @@ func readForm() ([]domain.Transaction, error) {
 		return trans, err
 	}
 
-	date, err := dataf.Date(fields[0].Buffer())
+	// date
+	dateMonth := fields[0].Buffer()
+	dateDay := fields[1].Buffer()
+	date, err := dataf.Date(fmt.Sprintf("2022-%s-%s", dateMonth, dateDay))
 	if err != nil {
 		return trans, err
 	}
 
-	description, err := dataf.Description(fields[1].Buffer())
+	description, err := dataf.Description(fields[2].Buffer())
 	if err != nil {
 		return trans, err
 	}
 
-	cents, err := dataf.Cents(fields[2].Buffer())
+	cents, err := dataf.Cents(fields[3].Buffer())
 	if err != nil {
 		return trans, err
 	}
 
-	rule, err := dataf.RepeatRule(fields[3].Buffer())
+	rule, err := dataf.RepeatRule(fields[4].Buffer())
 	if err != nil {
 		return trans, err
 	}
 
-	repeatUntil, err := dataf.Date(fields[4].Buffer())
+	repeatUntilMonth := fields[5].Buffer()
+	repeatUntilDay := fields[6].Buffer()
+	repeatUntil, err := dataf.Date(fmt.Sprintf("2022-%s-%s", repeatUntilMonth, repeatUntilDay))
 	if err != nil {
 		return trans, err
 	}
