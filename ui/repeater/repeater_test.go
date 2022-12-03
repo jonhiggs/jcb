@@ -6,27 +6,54 @@ import (
 	"time"
 )
 
-func TestNextDateDay(t *testing.T) {
+func TestRelativeDateDay(t *testing.T) {
 	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	res, _ := nextDate(date, "1d")
+	res, _ := relativeDate(date, "1d")
 	got := res.Format("2006-01-02")
 	if got != "2022-01-02" {
 		t.Error(fmt.Sprintf("expected 2022-01-02 but got %s", got))
 	}
 }
 
-func TestNextDateWeek(t *testing.T) {
+func TestRelativeDate4Day(t *testing.T) {
 	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	res, _ := nextDate(date, "1w")
+	res, _ := relativeDate(date, "4d")
+	got := res.Format("2006-01-02")
+	if got != "2022-01-05" {
+		t.Error(fmt.Sprintf("expected 2022-01-05 but got %s", got))
+	}
+}
+
+func TestRelativeDate0Day(t *testing.T) {
+	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	res, _ := relativeDate(date, "0d")
+	got := res.Format("2006-01-02")
+	if got != "2022-01-01" {
+		t.Error(fmt.Sprintf("expected 2022-01-01 but got %s", got))
+	}
+}
+
+func TestRelativeDateN1Day(t *testing.T) {
+	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	res, _ := relativeDate(date, "-1d")
+	got := res.Format("2006-01-02")
+	if got != "2021-12-31" {
+		t.Error(fmt.Sprintf("expected 2021-12-31 but got %s", got))
+	}
+}
+
+func TestRelativeDateWeek(t *testing.T) {
+	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	res, _ := relativeDate(date, "1w")
 	got := res.Format("2006-01-02")
 	if got != "2022-01-08" {
 		t.Error(fmt.Sprintf("expected 2022-01-08 but got %s", got))
 	}
 }
 
-func TestNextDateMonth(t *testing.T) {
+func TestRelativeDateMonth(t *testing.T) {
 	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
-	res, _ := nextDate(date, "1m")
+	res, _ := relativeDate(date, "1m")
 	got := res.Format("2006-01-02")
 	if got != "2022-02-01" {
 		t.Error(fmt.Sprintf("expected 2022-02-01 but got %s", got))

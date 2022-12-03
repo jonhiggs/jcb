@@ -2,7 +2,7 @@ package repeater
 
 import (
 	"errors"
-	dataf "jcb/ui/formatter/data"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -17,7 +17,7 @@ func Expand(date time.Time, startDate time.Time, endDate time.Time, rule string)
 	} else {
 		timestamps := []time.Time{date}
 		for date.Unix() >= startDate.Unix() && date.Unix() < endDate.Unix() {
-			date, err := nextDate(date, rule)
+			date, err := relativeDate(date, rule)
 			if err != nil {
 				return timestamps, err
 			}
@@ -27,16 +27,12 @@ func Expand(date time.Time, startDate time.Time, endDate time.Time, rule string)
 	}
 }
 
-func nextDate(date time.Time, rule string) (time.Time, error) {
-	u, err := dataf.RepeatRuleUnit(rule)
+func relativeDate(date time.Time, rule string) (time.Time, error) {
+	f, err := strconv.Atoi(rule[0 : len(rule)-1])
 	if err != nil {
 		return date, err
 	}
-
-	f, err := dataf.RepeatRuleFrequency(rule)
-	if err != nil {
-		return date, err
-	}
+	u := rule[len(rule)-1 : len(rule)]
 
 	if f == 0 {
 		return date, errors.New("Pattern doesn't repeat")
@@ -44,11 +40,11 @@ func nextDate(date time.Time, rule string) (time.Time, error) {
 
 	switch u {
 	case "d":
-		return date.AddDate(0, 0, 1), nil
+		return date.AddDate(0, 0, 1*f), nil
 	case "w":
-		return date.AddDate(0, 0, 7), nil
+		return date.AddDate(0, 0, 7*f), nil
 	case "m":
-		return date.AddDate(0, 1, 0), nil
+		return date.AddDate(0, 1, 0*f), nil
 	}
 
 	return date, errors.New("Shouldn't have got here.")
