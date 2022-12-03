@@ -85,6 +85,7 @@ func scan(y int, x int) error {
 			if err != nil {
 				return err
 			}
+			updateTransactions()
 
 		//case 'e':
 		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
@@ -156,10 +157,10 @@ func heading(y int, x int) {
 	}
 
 	headingWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-	headingWin.MovePrint(0, 0, "DATE")
-	headingWin.MovePrint(0, 12, "DESCRIPTION")
-	headingWin.MovePrint(0, 46, "AMOUNT")
-	headingWin.MovePrint(0, 55, "BALANCE")
+	headingWin.MovePrint(0, 2, "DATE")
+	headingWin.MovePrint(0, 14, "DESCRIPTION")
+	headingWin.MovePrint(0, 48, "AMOUNT")
+	headingWin.MovePrint(0, 57, "BALANCE")
 	headingWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.Refresh()
 }
@@ -188,7 +189,7 @@ func updateTransactions() error {
 		}
 		balance, _ = transaction.Balance(n.Id)
 		balanceStr, _ := stringf.Cents(balance)
-		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("* %s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
@@ -199,7 +200,7 @@ func updateTransactions() error {
 		}
 		balance += n.Cents
 		balanceStr, _ := stringf.Cents(balance)
-		str := fmt.Sprintf("%s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("  %s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
