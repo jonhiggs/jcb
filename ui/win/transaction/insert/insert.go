@@ -145,6 +145,8 @@ func scan() (int64, error) {
 						//	selectTransaction(id)
 					}
 				}
+			} else {
+				return -1, err
 			}
 			return id, err
 		case 1: // ctrl-a
