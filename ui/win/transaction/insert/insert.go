@@ -38,7 +38,7 @@ func Show() int64 {
 
 	// amount field
 	fields[3], _ = gc.NewField(1, 8, 5, 17, 0, 0)
-	defer fields[2].Free()
+	defer fields[3].Free()
 
 	// repeat pattern
 	fields[4], _ = gc.NewField(1, 10, 6, 17, 0, 0)
