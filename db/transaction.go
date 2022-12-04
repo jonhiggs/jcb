@@ -97,7 +97,7 @@ func UncommitTransaction(id int64) error {
 	err := statement.QueryRow(id).Scan(&committedAt)
 	ts, _ := time.Parse(timeLayout, committedAt)
 
-	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, balance = NULL WHERE committedAt > ?")
+	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, balance = NULL WHERE committedAt >= ?")
 	_, err = statement.Exec(ts)
 	return err
 }
