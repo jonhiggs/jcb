@@ -38,27 +38,27 @@ func TestBalanceSetB(t *testing.T) {
 	got := balanceSet(set, 100)
 
 	if got[0].Id != 0 {
-		t.Error(fmt.Sprintf("expected id 1 but got %d", got[0].Id))
+		t.Error(fmt.Sprintf("[0] expected id 1 but got %d", got[0].Id))
 	}
 
 	if got[0].Cents != -100 {
-		t.Error(fmt.Sprintf("expected cents of -100, got %d", got[0].Cents))
+		t.Error(fmt.Sprintf("[0] expected cents of -100, got %d", got[0].Cents))
 	}
 
-	if got[0].Balance != 0 {
-		t.Error(fmt.Sprintf("expected balance of 0, got %d", got[0].Balance))
+	if got[0].Balance != 200 {
+		t.Error(fmt.Sprintf("[0] expected balance of 200, got %d", got[0].Balance))
 	}
 
 	if got[1].Id != 1 {
-		t.Error(fmt.Sprintf("expected id 1 but got %d", got[1].Id))
+		t.Error(fmt.Sprintf("[1] expected id 1 but got %d", got[1].Id))
 	}
 
 	if got[1].Cents != -100 {
-		t.Error(fmt.Sprintf("expected cents of -100, got %d", got[1].Cents))
+		t.Error(fmt.Sprintf("[1] expected cents of -100, got %d", got[1].Cents))
 	}
 
 	if got[1].Balance != 100 {
-		t.Error(fmt.Sprintf("expected balance of 100, got %d", got[1].Balance))
+		t.Error(fmt.Sprintf("[1] expected balance of 100, got %d", got[1].Balance))
 	}
 
 	if len(got) != 2 {
@@ -66,63 +66,63 @@ func TestBalanceSetB(t *testing.T) {
 	}
 }
 
-//func TestBalanceSetC(t *testing.T) {
-//	set := make([]domain.Transaction, 3)
-//	set[0] = domain.Transaction{1, time.Now(), "one", -1343}
-//	set[1] = domain.Transaction{1, time.Now(), "two", -80}
-//	set[2] = domain.Transaction{1, time.Now(), "three", -100}
-//
-//	got := balanceSet(set, 1000)
-//
-//	if got[0] != 820 {
-//		t.Error(fmt.Sprintf("expected 820 but got %d", got[0]))
-//	}
-//
-//	if got[1] != 900 {
-//		t.Error(fmt.Sprintf("expected 900 but got %d", got[1]))
-//	}
-//
-//	if got[2] != 1000 {
-//		t.Error(fmt.Sprintf("expected 1000 but got %d", got[2]))
-//	}
-//
-//	if len(got) != 3 {
-//		t.Error(fmt.Sprintf("expected 1 element but got %d", len(got)))
-//	}
-//}
-//
-//func TestBalanceSetD(t *testing.T) {
-//	set := make([]domain.Transaction, 6)
-//	set[0] = domain.Transaction{1, time.Now(), "one", -20}
-//	set[1] = domain.Transaction{1, time.Now(), "two", -20}
-//	set[2] = domain.Transaction{1, time.Now(), "three", -20}
-//	set[3] = domain.Transaction{1, time.Now(), "one", -10}
-//	set[4] = domain.Transaction{1, time.Now(), "two", -10}
-//	set[5] = domain.Transaction{1, time.Now(), "three", -10}
-//
-//	got := balanceSet(set, 100)
-//
-//	if got[0] != 30 {
-//		t.Error(fmt.Sprintf("expected 30 but got %d", got[0]))
-//	}
-//
-//	if got[1] != 50 {
-//		t.Error(fmt.Sprintf("expected 50 but got %d", got[1]))
-//	}
-//
-//	if got[2] != 70 {
-//		t.Error(fmt.Sprintf("expected 70 but got %d", got[2]))
-//	}
-//
-//	if got[3] != 80 {
-//		t.Error(fmt.Sprintf("expected 80 but got %d", got[3]))
-//	}
-//
-//	if got[4] != 90 {
-//		t.Error(fmt.Sprintf("expected 90 but got %d", got[4]))
-//	}
-//
-//	if got[5] != 100 {
-//		t.Error(fmt.Sprintf("expected 100 but got %d", got[5]))
-//	}
-//}
+func TestBalanceSetC(t *testing.T) {
+	set := make([]domain.Transaction, 6)
+	set[0] = domain.Transaction{1, time.Now(), "one", -10}
+	set[1] = domain.Transaction{1, time.Now(), "two", -20}
+	set[2] = domain.Transaction{1, time.Now(), "three", -30}
+	set[3] = domain.Transaction{1, time.Now(), "four", 40}
+	set[4] = domain.Transaction{1, time.Now(), "five", -50}
+	set[5] = domain.Transaction{1, time.Now(), "six", -60}
+
+	got := balanceSet(set, 300)
+
+	if got[0].Cents != -10 {
+		t.Error(fmt.Sprintf("[0] expected cents of -20, got %d", got[0].Cents))
+	}
+
+	if got[0].Balance != 420 {
+		t.Error(fmt.Sprintf("[0] expected balance of 420, got %d", got[0].Balance))
+	}
+
+	if got[1].Cents != -20 {
+		t.Error(fmt.Sprintf("[1] expected cents of -20, got %d", got[1].Cents))
+	}
+
+	if got[1].Balance != 400 {
+		t.Error(fmt.Sprintf("[1] expected balance of 400, got %d", got[1].Balance))
+	}
+
+	if got[2].Cents != -30 {
+		t.Error(fmt.Sprintf("[2] expected cents of -10, got %d", got[2].Cents))
+	}
+
+	if got[2].Balance != 370 {
+		t.Error(fmt.Sprintf("[2] expected balance of 370, got %d", got[2].Balance))
+	}
+
+	if got[3].Cents != 40 {
+		t.Error(fmt.Sprintf("[3] expected cents of -10, got %d", got[3].Cents))
+	}
+
+	if got[3].Balance != 410 {
+		t.Error(fmt.Sprintf("[3] expected balance of 410, got %d", got[3].Balance))
+	}
+
+	if got[4].Cents != -50 {
+		t.Error(fmt.Sprintf("[4] expected cents of -10, got %d", got[4].Cents))
+	}
+
+	if got[4].Balance != 360 {
+		t.Error(fmt.Sprintf("[4] expected balance of 360, got %d", got[4].Balance))
+	}
+
+	if got[5].Cents != -60 {
+		t.Error(fmt.Sprintf("[5] expected cents of -10, got %d", got[5].Cents))
+	}
+
+	if got[5].Balance != 300 {
+		t.Error(fmt.Sprintf("[5] expected balance of 100, got %d", got[5].Balance))
+	}
+
+}
