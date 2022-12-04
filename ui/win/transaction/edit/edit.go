@@ -125,7 +125,7 @@ func scan(id int64) error {
 		case 4, 33: // ctrl-d, delete
 			form.Driver(gc.REQ_DEL_CHAR)
 		case 23, 27: // ctrl-w, esc/alt-backspace
-			form.Driver(gc.REQ_DEL_WORD)
+			form.Driver(gc.REQ_DEL_WORD) // FIXME
 		case gc.KEY_BACKSPACE:
 			form.Driver(gc.REQ_DEL_PREV)
 		case gc.KEY_DOWN, gc.KEY_TAB:

@@ -36,11 +36,9 @@ func Show() {
 
 	win.MovePrint(12, 25, "i    Create")
 	win.MovePrint(13, 25, "C    Toggle Commit")
-	win.MovePrint(14, 25, "L    Unlock")
-	win.MovePrint(15, 25, "x    Delete")
-	win.MovePrint(16, 25, "e    Edit")
-	win.MovePrint(17, 25, "I    Import File")
-	win.MovePrint(18, 25, "W    Write")
+	win.MovePrint(14, 25, "x    Delete")
+	win.MovePrint(15, 25, "e    Edit")
+	win.MovePrint(16, 25, "W    Write")
 
 	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(01, 25, "Input")
