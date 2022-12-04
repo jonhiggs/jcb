@@ -92,12 +92,9 @@ func commitSet(id int64, balance int64) ([]domain.Transaction, []int64, error) {
 
 func balanceSet(tset []domain.Transaction, finalBalance int64) []int64 {
 	bset := make([]int64, len(tset))
-	for i := len(tset) - 1; i >= 0; i-- {
-		if i == len(tset)-1 {
-			bset[i] = finalBalance
-		} else {
-			bset[i] = bset[i+1] - tset[i].Cents
-		}
+	bset[len(tset)-1] = finalBalance
+	for i := len(tset) - 2; i >= 0; i-- {
+		bset[i] = bset[i+1] - tset[i].Cents
 	}
 
 	return bset
