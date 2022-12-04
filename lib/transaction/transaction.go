@@ -90,8 +90,6 @@ func commitSet(id int64, initialBalance int64) ([]balance, error) {
 
 	if found {
 		bset := balanceSet(tset, initialBalance)
-		errStr := fmt.Sprintln(bset)
-		return bset, errors.New(errStr)
 		return bset, nil
 	} else {
 		return []balance{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
@@ -101,37 +99,14 @@ func commitSet(id int64, initialBalance int64) ([]balance, error) {
 func balanceSet(tset []domain.Transaction, initialBalance int64) []balance {
 	bset := make([]balance, len(tset))
 	bset[len(tset)-1].Balance = initialBalance
-	bset[len(tset)-1].Cents = tset[len(tset)-1].Cents
-	bset[len(tset)-1].Id = tset[len(tset)-1].Id
 
 	for i := len(bset) - 1; i > 0; i-- {
-		bset[i-1].Id = tset[i-1].Id
-		bset[i-1].Cents = tset[i-1].Cents
-		bset[i-1].Balance = bset[i].Cents + tset[i].Cents
+		bset[i].Id = tset[i].Id
+		bset[i].Cents = tset[i].Cents
+		bset[i-1].Balance = bset[i].Balance - bset[i].Cents
 	}
-
-	//startingBalance := finalBalance
-	//for _, t := range tset {
-	//	startingBalance += t.Cents
-	//}
-	//for i, t := range tset {
-	//	if i == 0 {
-	//		//bset[i] = startingBalance
-	//		log.Printf("[%d]: %d", i, bset[i])
-	//	} else if i == len(tset) {
-	//		i[len(tset)] = finalBalance
-	//	} else {
-	//		bset[i-1] = bset[i-1] - t.Cents
-	//		log.Printf("[%d]: %d - %d = %d", i-1, bset[i-1], t.Cents, bset[i])
-	//	}
-	//}
-
-	//bset[len(tset)-1] = finalBalance
-	////log.Printf("setting balance to %d", bset[len(tset)-1])
-	//for i := len(tset) - 2; i >= 0; i-- {
-	//	bset[i] = bset[i+1] + tset[i].Cents
-	//	//log.Printf("[%d]: %d + %d = %d", i, bset[i+1], tset[i].Cents, bset[i])
-	//}
+	bset[0].Id = tset[0].Id
+	bset[0].Cents = tset[0].Cents
 
 	return bset
 }
