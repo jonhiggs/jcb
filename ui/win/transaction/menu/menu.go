@@ -84,7 +84,6 @@ func scan(y int, x int) error {
 			fields := strings.Fields(menu.Current(nil).Name())
 			balance, err := dataf.Cents(fields[len(fields)-1])
 
-			menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 			if selectedTransactionCommitted() {
 				transaction.Uncommit(id)
 			} else {
