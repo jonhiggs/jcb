@@ -67,7 +67,7 @@ func scan(y int, x int) error {
 		switch ch {
 		case 'x':
 			if selectedTransactionCommitted() {
-				statusWin.PrintError(errors.New("Cannot delete committed transactions"))
+				return errors.New("Cannot delete committed transactions")
 			}
 			err := transaction.DeleteId(selectedTransaction())
 			if err != nil {
