@@ -8,6 +8,7 @@ import (
 	stringf "jcb/ui/formatter/string"
 	helpWin "jcb/ui/win/help"
 	statusWin "jcb/ui/win/status"
+	transactionEditWin "jcb/ui/win/transaction/edit"
 	transactionInsertWin "jcb/ui/win/transaction/insert"
 	"strconv"
 	"strings"
@@ -97,17 +98,6 @@ func scan(y int, x int) error {
 			}
 			selectTransaction(id)
 			updateTransactions()
-
-		//case 'e':
-		//	err := ui.EditTransaction(uiTransaction.SelectedTransactionId())
-		//	if err != nil {
-		//		ui.PrintError(err)
-		//	}
-		//	uiTransaction.UpdateTransactions()
-		//	uiTransaction.TransactionWindow.Touch()
-		//	uiTransaction.TransactionWindow.Refresh()
-		//	ui.MainWindow.Touch()
-		//	ui.MainWindow.Refresh()
 		case 'g':
 			menu.Driver(gc.DriverActions[gc.KEY_HOME])
 		case 'G':
@@ -145,6 +135,17 @@ func scan(y int, x int) error {
 			}
 		case 'i':
 			id := transactionInsertWin.Show()
+			updateTransactions()
+			selectTransaction(id)
+			win.Touch()
+			win.Refresh()
+			statusWin.Refresh()
+		case 'e':
+			id, _ := dataf.Id(menu.Current(nil).Description())
+			if selectedTransactionCommitted() {
+				return errors.New("Cannot edit committed transaction")
+			}
+			transactionEditWin.Show(id)
 			updateTransactions()
 			selectTransaction(id)
 			win.Touch()

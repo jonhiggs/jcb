@@ -16,6 +16,10 @@ func Insert(t domain.Transaction) (int64, error) {
 	return db.InsertTransaction(t)
 }
 
+func Edit(t domain.Transaction) error {
+	return db.EditTransaction(t)
+}
+
 func Delete(t domain.Transaction) error {
 	return db.DeleteTransaction(t.Id)
 }
