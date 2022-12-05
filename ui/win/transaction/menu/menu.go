@@ -27,7 +27,7 @@ var y int
 var x int
 
 func Show(y int, x int) error {
-	heading(y, x)
+	header()
 	balanceWin, _ = gc.NewWindow(1, 22, y-1, 51)
 
 	var err error
@@ -36,7 +36,7 @@ func Show(y int, x int) error {
 		statusWin.PrintError(err)
 	}
 
-	win, err = gc.NewWindow(y-3, x-1, 1, 1)
+	win, err = gc.NewWindow(y-2, 72, 1, 1)
 	menu.SubWindow(win)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
@@ -50,6 +50,8 @@ func Show(y int, x int) error {
 	menu.UnPost()
 	menu.Format(y-3, 1)
 	menu.Post()
+
+	win.Border(' ', ' ', ' ', gc.ACS_HLINE, ' ', ' ', gc.ACS_HLINE, gc.ACS_HLINE)
 
 	selectFirstUncommitted()
 
@@ -191,9 +193,9 @@ func printLowBalance(date time.Time, balance int64) {
 	balanceWin.Refresh()
 }
 
-func heading(y int, x int) {
+func header() {
 	var err error
-	headingWin, err = gc.NewWindow(y-1, x-2, 0, 1)
+	headingWin, err = gc.NewWindow(1, 71, 0, 1)
 	if err != nil {
 		statusWin.PrintError(err)
 	}
@@ -252,6 +254,8 @@ func updateTransactions() error {
 	if len(menuItems) == 0 {
 		return errors.New("No data to show. Press ? for help.")
 	}
+
+	win.Border(' ', ' ', ' ', gc.ACS_HLINE, ' ', ' ', gc.ACS_HLINE, gc.ACS_HLINE)
 
 	err = menu.SetItems(menuItems)
 	if err != nil {
