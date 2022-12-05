@@ -173,12 +173,14 @@ func scan(y int, x int) error {
 }
 
 func printLowBalance(date time.Time, balance int64) {
-	d, _ := stringf.Date(date)
+	d := date.Format("01/02")
 	b, _ := stringf.Cents(balance)
 
-	balanceWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
-	balanceWin.MovePrint(0, 2, fmt.Sprintf("%s %s", b, d))
-	balanceWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	str := fmt.Sprintf("%s %s", b, d)
+
+	balanceWin.AttrOn(gc.ColorPair(1) | gc.A_BOLD | gc.A_UNDERLINE)
+	balanceWin.MovePrint(0, 22-len(str), str)
+	balanceWin.AttrOff(gc.ColorPair(1) | gc.A_BOLD | gc.A_UNDERLINE)
 	balanceWin.Refresh()
 }
 
@@ -189,12 +191,12 @@ func heading(y int, x int) {
 		statusWin.PrintError(err)
 	}
 
-	headingWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	headingWin.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.MovePrint(0, 2, "DATE")
 	headingWin.MovePrint(0, 14, "DESCRIPTION")
 	headingWin.MovePrint(0, 48, "AMOUNT")
 	headingWin.MovePrint(0, 57, "BALANCE")
-	headingWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	headingWin.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.Refresh()
 }
 

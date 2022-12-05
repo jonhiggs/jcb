@@ -14,9 +14,9 @@ func Show() {
 	defer win.Delete()
 	win.Box(0, 0)
 
-	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(1, 3, "General")
-	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(3, 3, "^C   Close")
 	win.MovePrint(4, 3, "j    Down")
 	win.MovePrint(5, 3, "k    Up")
@@ -31,9 +31,9 @@ func Show() {
 	win.MovePrint(14, 3, "G    End of Year")
 	win.MovePrint(15, 3, "0    Uncommitted")
 
-	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(10, 25, "Transaction")
-	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(12, 25, "i    Create")
 	win.MovePrint(13, 25, "C    Toggle Commit")
@@ -41,9 +41,9 @@ func Show() {
 	win.MovePrint(15, 25, "e    Edit")
 	win.MovePrint(16, 25, "W    Write")
 
-	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(01, 25, "Input")
-	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(3, 25, "^A   Begining")
 	win.MovePrint(4, 25, "^E   End")
@@ -52,9 +52,9 @@ func Show() {
 	win.MovePrint(7, 25, "^B   Backward")
 	win.MovePrint(8, 25, "^F   Forward")
 
-	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD)
+	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD)
 	win.MovePrint(21, 38-len(config.VERSION), fmt.Sprintf("jcb v%s", config.VERSION))
-	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD)
+	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD)
 
 	scan()
 }

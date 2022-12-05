@@ -64,9 +64,9 @@ func Show() int64 {
 	form.SetSub(win)
 	form.Post()
 
-	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(1, 2, "New Transaction")
-	win.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(3, 2, "Date:")
 	win.MovePrint(3, 17, "2022-")
