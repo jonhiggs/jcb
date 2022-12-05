@@ -198,7 +198,7 @@ func printLowBalance(date time.Time, balance int64) {
 
 func header() {
 	var err error
-	headingWin, err = gc.NewWindow(1, 71, 0, 1)
+	headingWin, err = gc.NewWindow(1, 72, 0, 1)
 	if err != nil {
 		statusWin.PrintError(err)
 	}
