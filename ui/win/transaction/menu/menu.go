@@ -26,7 +26,7 @@ var menu *gc.Menu
 var y int
 var x int
 
-func Show(y int, x int) error {
+func Show(y int) error {
 	header()
 	separator(y)
 	balanceWin, _ = gc.NewWindow(1, 22, y-1, 50)

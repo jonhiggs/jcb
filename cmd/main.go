@@ -7,6 +7,7 @@ import (
 	"jcb/ui"
 	"log"
 	"os"
+	"time"
 
 	"nullprogram.com/x/optparse"
 )
@@ -53,6 +54,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ui.Start()
+	ui.Start(time.Now().Year())
 
 }
