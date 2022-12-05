@@ -6,7 +6,7 @@ import (
 
 var win *gc.Window
 
-func Show(y int, x int) {
+func Show(y int) {
 	win, _ = gc.NewWindow(1, 50, y-1, 2)
 	win.ColorOn(1)
 	Clear()

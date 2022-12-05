@@ -8,15 +8,13 @@ import (
 	gc "github.com/rthornton128/goncurses"
 )
 
-var maxY int
-var maxX int
 var mainWin *gc.Window
 
-func Start() {
+func Start(year int) {
 	stdscr, _ := gc.Init()
 	defer gc.End()
 	stdscr.Refresh()
-	maxY, maxX = stdscr.MaxYX()
+	maxY, maxX := stdscr.MaxYX()
 	if maxX < 72 {
 		gc.End()
 		fmt.Println("Your terminal must be at least 72 chars wide.")
@@ -34,7 +32,7 @@ func Start() {
 	stdscr.Keypad(true)
 
 	initColorPairs()
-	statusWin.Show(maxY, maxX)
+	statusWin.Show(maxY)
 
-	transactionMenuWin.Show(maxY, maxX)
+	transactionMenuWin.Show(maxY)
 }
