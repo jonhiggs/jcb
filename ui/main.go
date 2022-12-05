@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	statusWin "jcb/ui/win/status"
 	transactionMenuWin "jcb/ui/win/transaction/menu"
 
@@ -16,6 +17,11 @@ func Start() {
 	defer gc.End()
 	stdscr.Refresh()
 	maxY, maxX = stdscr.MaxYX()
+	if maxX < 72 {
+		gc.End()
+		fmt.Println("Your terminal must be at least 72 chars wide.")
+		return
+	}
 
 	if gc.HasColors() {
 		gc.StartColor()

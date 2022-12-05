@@ -7,7 +7,6 @@ import (
 )
 
 const VERSION = "0.0.0"
-const WIDTH = 72
 
 func DefaultFile() string {
 	home, ok := os.LookupEnv("HOME")
