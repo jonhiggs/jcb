@@ -28,7 +28,8 @@ var x int
 
 func Show(y int, x int) error {
 	header()
-	balanceWin, _ = gc.NewWindow(1, 22, y-1, 51)
+	separator(y)
+	balanceWin, _ = gc.NewWindow(1, 22, y-1, 50)
 
 	var err error
 	menu, err = gc.NewMenu(make([]*gc.MenuItem, 0))
@@ -36,7 +37,7 @@ func Show(y int, x int) error {
 		statusWin.PrintError(err)
 	}
 
-	win, err = gc.NewWindow(y-2, 72, 1, 1)
+	win, err = gc.NewWindow(y-3, 72, 1, 0)
 	menu.SubWindow(win)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
@@ -50,8 +51,6 @@ func Show(y int, x int) error {
 	menu.UnPost()
 	menu.Format(y-3, 1)
 	menu.Post()
-
-	win.Border(' ', ' ', ' ', gc.ACS_HLINE, ' ', ' ', gc.ACS_HLINE, gc.ACS_HLINE)
 
 	selectFirstUncommitted()
 
@@ -178,8 +177,15 @@ func scan(y int, x int) error {
 }
 
 func printLowBalance(date time.Time, balance int64) {
-	d := date.Format("2006-01-02")
-	b, _ := stringf.Cents(balance)
+	var d string
+	var b string
+	if date.Year() < 2022 {
+		d = "unknown"
+		b = "unknown"
+	} else {
+		d = date.Format("2006-01-02")
+		b, _ = stringf.Cents(balance)
+	}
 
 	str := fmt.Sprintf("%s %s", d, b)
 
@@ -191,14 +197,14 @@ func printLowBalance(date time.Time, balance int64) {
 		defer balanceWin.AttrOff(gc.ColorPair(4))
 	}
 
+	balanceWin.Clear()
 	balanceWin.MovePrint(0, 22-len(str), str)
-
 	balanceWin.Refresh()
 }
 
 func header() {
 	var err error
-	headingWin, err = gc.NewWindow(1, 72, 0, 1)
+	headingWin, err = gc.NewWindow(1, 72, 0, 0)
 	if err != nil {
 		statusWin.PrintError(err)
 	}
@@ -210,6 +216,19 @@ func header() {
 	headingWin.MovePrint(0, 65, "BALANCE")
 	headingWin.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.Refresh()
+}
+
+func separator(y int) {
+	var err error
+	sWin, err := gc.NewWindow(1, 72, y-2, 0)
+	if err != nil {
+		statusWin.PrintError(err)
+	}
+
+	for i := 0; i < 72; i++ {
+		sWin.AddChar(gc.ACS_HLINE)
+	}
+	sWin.Refresh()
 }
 
 func updateTransactions() error {
@@ -257,8 +276,6 @@ func updateTransactions() error {
 	if len(menuItems) == 0 {
 		return errors.New("No data to show. Press ? for help.")
 	}
-
-	win.Border(' ', ' ', ' ', gc.ACS_HLINE, ' ', ' ', gc.ACS_HLINE, gc.ACS_HLINE)
 
 	err = menu.SetItems(menuItems)
 	if err != nil {
