@@ -10,12 +10,15 @@ import (
 	statusWin "jcb/ui/win/status"
 	transactionEditWin "jcb/ui/win/transaction/edit"
 	transactionInsertWin "jcb/ui/win/transaction/insert"
+	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	gc "github.com/rthornton128/goncurses"
 )
 
+var balanceWin *gc.Window
 var headingWin *gc.Window
 var win *gc.Window
 var menuItems []*gc.MenuItem
@@ -25,6 +28,7 @@ var x int
 
 func Show(y int, x int) error {
 	heading(y, x)
+	balanceWin, _ = gc.NewWindow(1, 22, y-1, 50)
 
 	var err error
 	menu, err = gc.NewMenu(make([]*gc.MenuItem, 0))
@@ -168,6 +172,16 @@ func scan(y int, x int) error {
 	}
 }
 
+func printLowBalance(date time.Time, balance int64) {
+	d, _ := stringf.Date(date)
+	b, _ := stringf.Cents(balance)
+
+	balanceWin.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	balanceWin.MovePrint(0, 2, fmt.Sprintf("%s %s", b, d))
+	balanceWin.AttrOff(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
+	balanceWin.Refresh()
+}
+
 func heading(y int, x int) {
 	var err error
 	headingWin, err = gc.NewWindow(y-1, x-2, 0, 1)
@@ -242,6 +256,7 @@ func updateTransactions() error {
 	}
 
 	selectTransaction(id)
+	printLowBalance(findLowestBalance())
 
 	return nil
 }
@@ -276,24 +291,28 @@ func selectFirstUncommitted() {
 	}
 }
 
-func findLowestBalance() (domain.Transaction, error) {
-	var lowId int64
+func findLowestBalance() (time.Time, int64) {
+	var lowDate time.Time
 	var lowBalance int64
-	for i, m := range menuItems {
-		id, _ := dataf.Id(m.Description())
+	found := false
+	for _, m := range menuItems {
 		if strings.HasPrefix(m.Name(), "*") {
 			continue
 		}
 
 		fields := strings.Fields(m.Name())
 		balance, _ := dataf.Cents(fields[len(fields)-1])
+		date, err := dataf.Date(fields[0])
+		if err != nil {
+			log.Fatal(err)
+		}
 
-		if i == 0 || balance < lowBalance {
-			lowId = id
+		if !found || balance < lowBalance {
+			found = true
+			lowDate = date
 			lowBalance = balance
-			continue
 		}
 	}
 
-	return transaction.Find(lowId)
+	return lowDate, lowBalance
 }

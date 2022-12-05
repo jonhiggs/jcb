@@ -1,20 +1,22 @@
 package statusWin
 
-import gc "github.com/rthornton128/goncurses"
+import (
+	gc "github.com/rthornton128/goncurses"
+)
 
 var win *gc.Window
 
 func Show(y int, x int) {
-	win, _ = gc.NewWindow(1, x-2, y-1, 2)
+	win, _ = gc.NewWindow(1, 50, y-1, 2)
 	win.ColorOn(1)
 	Clear()
 }
 
 func Clear() {
-	win.ColorOn(1)
-	win.AttrOn(gc.ColorPair(1))
-	win.MovePrint(0, 0, "[Min Balance: 2022-09-24 $203.33]")
-	win.AttrOff(gc.ColorPair(1))
+	//win.ColorOn(1)
+	//win.AttrOn(gc.ColorPair(1))
+	//win.MovePrint(0, 0, fmt.Sprintf("[Min Balance: %s %d]", lowTransaction.Date.Format("2006-01-02"), lowTransaction.Cents))
+	//win.AttrOff(gc.ColorPair(1))
 	win.Refresh()
 }
 
