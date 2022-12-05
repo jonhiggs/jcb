@@ -219,19 +219,25 @@ func updateTransactions() error {
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
+	menu.UnPost()
 	if len(menuItems) == 0 {
 		return errors.New("No data to show. Press ? for help.")
 	}
 
-	id := selectedTransaction()
-	menu.UnPost()
 	err = menu.SetItems(menuItems)
-	menu.Format(y-2, 1)
-	menu.Post()
-	selectTransaction(id)
 	if err != nil {
 		return err
 	}
+
+	menu.Format(y-2, 1)
+	err = menu.Post()
+	if err != nil {
+		return err
+	}
+
+	id := selectedTransaction()
+	selectTransaction(id)
+
 	return nil
 }
 
