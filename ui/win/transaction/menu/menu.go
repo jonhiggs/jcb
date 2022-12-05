@@ -47,6 +47,17 @@ func Show(y int, x int) error {
 	menu.Format(y-2, 1)
 	menu.Post()
 
+	// start at first uncommitted transaction
+	for _, m := range menuItems {
+		if strings.HasPrefix(m.Name(), "*") {
+			continue
+		} else {
+			id, _ := dataf.Id(m.Description())
+			selectTransaction(id)
+			break
+		}
+	}
+
 	err = scan(y, x)
 	for err != nil {
 		statusWin.PrintError(err)
