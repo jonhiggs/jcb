@@ -47,16 +47,7 @@ func Show(y int, x int) error {
 	menu.Format(y-2, 1)
 	menu.Post()
 
-	// start at first uncommitted transaction
-	for _, m := range menuItems {
-		if strings.HasPrefix(m.Name(), "*") {
-			continue
-		} else {
-			id, _ := dataf.Id(m.Description())
-			selectTransaction(id)
-			break
-		}
-	}
+	selectFirstUncommitted()
 
 	err = scan(y, x)
 	for err != nil {
@@ -113,6 +104,8 @@ func scan(y int, x int) error {
 			menu.Driver(gc.DriverActions[gc.KEY_HOME])
 		case 'G':
 			menu.Driver(gc.DriverActions[gc.KEY_END])
+		case '0':
+			selectFirstUncommitted()
 		case 'd':
 			for i := 0; i < (y / 2); i++ {
 				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
@@ -269,4 +262,16 @@ func selectTransaction(id int64) {
 
 func selectedTransactionCommitted() bool {
 	return strings.HasPrefix(menu.Current(nil).Name(), "*")
+}
+
+func selectFirstUncommitted() {
+	for _, m := range menuItems {
+		if strings.HasPrefix(m.Name(), "*") {
+			continue
+		} else {
+			id, _ := dataf.Id(m.Description())
+			selectTransaction(id)
+			break
+		}
+	}
 }

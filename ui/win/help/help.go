@@ -29,6 +29,7 @@ func Show() {
 	win.MovePrint(12, 3, "d    Page Down")
 	win.MovePrint(13, 3, "g    Start of Year")
 	win.MovePrint(14, 3, "G    End of Year")
+	win.MovePrint(15, 3, "0    Uncommitted")
 
 	win.AttrOn(gc.ColorPair(0) | gc.A_BOLD | gc.A_UNDERLINE)
 	win.MovePrint(10, 25, "Transaction")
