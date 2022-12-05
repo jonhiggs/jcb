@@ -219,6 +219,8 @@ func updateTransactions() error {
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
+	id := selectedTransaction()
+
 	menu.UnPost()
 	if len(menuItems) == 0 {
 		return errors.New("No data to show. Press ? for help.")
@@ -235,7 +237,6 @@ func updateTransactions() error {
 		return err
 	}
 
-	id := selectedTransaction()
 	selectTransaction(id)
 
 	return nil
