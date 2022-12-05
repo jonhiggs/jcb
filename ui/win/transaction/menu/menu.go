@@ -275,3 +275,25 @@ func selectFirstUncommitted() {
 		}
 	}
 }
+
+func findLowestBalance() (domain.Transaction, error) {
+	var lowId int64
+	var lowBalance int64
+	for i, m := range menuItems {
+		id, _ := dataf.Id(m.Description())
+		if strings.HasPrefix(m.Name(), "*") {
+			continue
+		}
+
+		fields := strings.Fields(m.Name())
+		balance, _ := dataf.Cents(fields[len(fields)-1])
+
+		if i == 0 || balance < lowBalance {
+			lowId = id
+			lowBalance = balance
+			continue
+		}
+	}
+
+	return transaction.Find(lowId)
+}
