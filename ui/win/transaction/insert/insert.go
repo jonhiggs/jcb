@@ -19,7 +19,7 @@ var fields []*gc.Field
 func Show() int64 {
 	gc.Cursor(1)
 	defer gc.Cursor(0)
-	win, _ = gc.NewWindow(10, 60, 8, 10)
+	win, _ = gc.NewWindow(10, 49, 4, 10)
 	fields = make([]*gc.Field, 7)
 
 	// month field

@@ -10,7 +10,7 @@ import (
 var win *gc.Window
 
 func Show() {
-	win, _ = gc.NewWindow(23, 45, 6, 10)
+	win, _ = gc.NewWindow(23, 45, 4, 10)
 	defer win.Delete()
 	win.Box(0, 0)
 

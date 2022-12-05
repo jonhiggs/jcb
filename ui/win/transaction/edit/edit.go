@@ -20,7 +20,7 @@ func Show(id int64) int64 {
 	tstr, _ := stringf.Transaction(t)
 	gc.Cursor(1)
 	defer gc.Cursor(0)
-	win, _ = gc.NewWindow(8, 60, 8, 10)
+	win, _ = gc.NewWindow(8, 49, 4, 10)
 	fields = make([]*gc.Field, 4)
 
 	// month field
