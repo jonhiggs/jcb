@@ -194,8 +194,8 @@ func heading(y int, x int) {
 	headingWin.AttrOn(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.MovePrint(0, 2, "DATE")
 	headingWin.MovePrint(0, 14, "DESCRIPTION")
-	headingWin.MovePrint(0, 48, "AMOUNT")
-	headingWin.MovePrint(0, 57, "BALANCE")
+	headingWin.MovePrint(0, 56, "AMOUNT")
+	headingWin.MovePrint(0, 65, "BALANCE")
 	headingWin.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 	headingWin.Refresh()
 }
@@ -224,7 +224,7 @@ func updateTransactions() error {
 		}
 		balance, _ = transaction.Balance(n.Id)
 		balanceStr, _ := stringf.Cents(balance)
-		str := fmt.Sprintf("* %s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
@@ -235,7 +235,7 @@ func updateTransactions() error {
 		}
 		balance += n.Cents
 		balanceStr, _ := stringf.Cents(balance)
-		str := fmt.Sprintf("  %s  %-30s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("  %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
