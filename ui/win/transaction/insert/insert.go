@@ -7,6 +7,7 @@ import (
 	dataf "jcb/ui/formatter/data"
 	"jcb/ui/repeater"
 	statusWin "jcb/ui/win/status"
+	"time"
 
 	gc "github.com/rthornton128/goncurses"
 )
@@ -122,6 +123,9 @@ func readForm() ([]domain.Transaction, error) {
 	repeatUntilMonth := fields[5].Buffer()
 	repeatUntilDay := fields[6].Buffer()
 	repeatUntil, err := dataf.Date(fmt.Sprintf("2022-%s-%s", repeatUntilMonth, repeatUntilDay))
+	repeatUntil = repeatUntil.Add(time.Hour * 23)
+	repeatUntil = repeatUntil.Add(time.Minute * 59)
+	repeatUntil = repeatUntil.Add(time.Second * 59)
 	if err != nil {
 		return trans, err
 	}
