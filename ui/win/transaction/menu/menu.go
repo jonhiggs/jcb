@@ -77,17 +77,20 @@ func scan(y int, x int) error {
 			if selectedTransactionCommitted() {
 				return errors.New("Cannot delete committed transactions")
 			}
-			err := transaction.DeleteId(selectedTransaction())
-			if err != nil {
-				statusWin.PrintError(err)
+			selection := selectedTransaction()
+
+			if menu.Current(nil).Index() == menu.Count()-1 {
+				menu.Driver(gc.DriverActions[gc.KEY_UP])
 			} else {
-				if menu.Current(nil).Index() == menu.Count()-1 {
-					menu.Driver(gc.DriverActions[gc.KEY_UP])
-				} else {
-					menu.Driver(gc.DriverActions[gc.KEY_DOWN])
-				}
-				updateTransactions()
+				menu.Driver(gc.DriverActions[gc.KEY_DOWN])
 			}
+
+			err := transaction.DeleteId(selection)
+			if err != nil {
+				return err
+			}
+
+			updateTransactions()
 		case 'C':
 			id, _ := dataf.Id(menu.Current(nil).Description())
 			fields := strings.Fields(menu.Current(nil).Name())
