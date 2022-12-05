@@ -14,14 +14,13 @@ import (
 
 func Cents(s string) (int64, error) {
 	s = strings.Trim(s, " ")
-	amountSplit := strings.Split(s, ".")
-	if len(amountSplit) > 2 {
-		return 0, errors.New("Amount has too many dots")
+	re := regexp.MustCompile(`^-?[0-9]+(\.[0-9]{1,2})?$`)
+
+	if !re.MatchString(s) {
+		return 0, errors.New("Invalid amount")
 	}
-	if len(amountSplit) == 2 && len(amountSplit[1]) > 2 {
-		return 0, errors.New(fmt.Sprintf("Amount has to many decimal places [%d]", len(amountSplit[1])))
-	}
-	if len(amountSplit) == 1 {
+
+	if len(strings.Split(s, ".")) == 1 {
 		s = fmt.Sprintf("%s.00", s)
 	}
 
@@ -29,7 +28,11 @@ func Cents(s string) (int64, error) {
 }
 
 func Date(s string) (time.Time, error) {
-	return time.Parse("2006-01-02", strings.Trim(s, " "))
+	r, e := time.Parse("2006-01-02", strings.Trim(s, " "))
+	if e != nil {
+		return r, errors.New("Invalid date")
+	}
+	return r, nil
 }
 
 func Description(s string) (string, error) {
@@ -52,7 +55,7 @@ func RepeatRule(rule string) (string, error) {
 	if re.MatchString(rule) {
 		return rule, nil
 	} else {
-		return rule, errors.New("Invalid rule")
+		return rule, errors.New("Invalid repeat rule")
 	}
 
 }
