@@ -28,7 +28,7 @@ var x int
 
 func Show(y int, x int) error {
 	heading(y, x)
-	balanceWin, _ = gc.NewWindow(1, 22, y-1, 50)
+	balanceWin, _ = gc.NewWindow(1, 22, y-1, 51)
 
 	var err error
 	menu, err = gc.NewMenu(make([]*gc.MenuItem, 0))
@@ -36,7 +36,7 @@ func Show(y int, x int) error {
 		statusWin.PrintError(err)
 	}
 
-	win, err = gc.NewWindow(y-2, x-1, 1, 1)
+	win, err = gc.NewWindow(y-3, x-1, 1, 1)
 	menu.SubWindow(win)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
@@ -48,7 +48,7 @@ func Show(y int, x int) error {
 	}
 
 	menu.UnPost()
-	menu.Format(y-2, 1)
+	menu.Format(y-3, 1)
 	menu.Post()
 
 	selectFirstUncommitted()
@@ -173,14 +173,21 @@ func scan(y int, x int) error {
 }
 
 func printLowBalance(date time.Time, balance int64) {
-	d := date.Format("01/02")
+	d := date.Format("2006-01-02")
 	b, _ := stringf.Cents(balance)
 
-	str := fmt.Sprintf("%s %s", b, d)
+	str := fmt.Sprintf("%s %s", d, b)
 
-	balanceWin.AttrOn(gc.ColorPair(1) | gc.A_BOLD | gc.A_UNDERLINE)
+	if balance < 0 {
+		balanceWin.AttrOn(gc.ColorPair(3))
+		defer balanceWin.AttrOff(gc.ColorPair(3))
+	} else {
+		balanceWin.AttrOn(gc.ColorPair(4))
+		defer balanceWin.AttrOff(gc.ColorPair(4))
+	}
+
 	balanceWin.MovePrint(0, 22-len(str), str)
-	balanceWin.AttrOff(gc.ColorPair(1) | gc.A_BOLD | gc.A_UNDERLINE)
+
 	balanceWin.Refresh()
 }
 
