@@ -16,9 +16,9 @@ func usage() {
 	fmt.Println("  jcb [OPTIONS]")
 	fmt.Println("")
 	fmt.Println("Options:")
-	fmt.Println("  -h, --help		This help.")
-	fmt.Println("  -f, --file		Set the savefile.")
-	fmt.Println("  -v, --version	Show the version.")
+	fmt.Println("  -h, --help       This help.")
+	fmt.Println("  -f, --file       Set the savefile.")
+	fmt.Println("  -v, --version    Show the version.")
 }
 
 func main() {

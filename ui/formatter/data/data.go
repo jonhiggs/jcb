@@ -57,7 +57,6 @@ func RepeatRule(rule string) (string, error) {
 	} else {
 		return rule, errors.New("Invalid repeat rule")
 	}
-
 }
 
 func RepeatRuleUnit(rule string) (string, error) {
