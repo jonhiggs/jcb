@@ -23,6 +23,16 @@ func Insert(t domain.Transaction) (int64, error) {
 }
 
 func Edit(t domain.Transaction) error {
+	if t.Id == 0 {
+		tOriginal, _ := Find(0)
+		u, _ := Uncommitted(tOriginal.Date.Year())
+		// using u[1] because u[0] is the opening balance.
+		if len(u) > 1 {
+			if t.Date.Unix() > u[1].Date.Unix() {
+				return errors.New(fmt.Sprintf("Opening balance must be before %s", u[1].Date.Format("2006-01-02")))
+			}
+		}
+	}
 	return db.EditTransaction(t)
 }
 
