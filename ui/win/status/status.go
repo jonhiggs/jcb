@@ -13,11 +13,7 @@ func Show(y int) {
 }
 
 func Clear() {
-	//win.ColorOn(1)
-	//win.AttrOn(gc.ColorPair(1))
-	//win.MovePrint(0, 0, fmt.Sprintf("[Min Balance: %s %d]", lowTransaction.Date.Format("2006-01-02"), lowTransaction.Cents))
-	//win.AttrOff(gc.ColorPair(1))
-	win.Refresh()
+	win.Clear()
 }
 
 func PrintError(e error) {
