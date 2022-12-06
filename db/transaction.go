@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"jcb/domain"
+	"strconv"
 	"time"
 )
 
@@ -156,4 +157,14 @@ func TransactionCommittedUntil() (time.Time, error) {
 	ts, _ := time.Parse(timeLayout, date)
 
 	return ts, err
+}
+
+func EarliestYear() (int, error) {
+	var year string
+	statement, _ := db.Prepare("SELECT DISTINCT substring(date,1,4) FROM transactions WHERE committedAt NOT NULL ORDER BY date LIMIT 1")
+	err := statement.QueryRow().Scan(&year)
+	if err != nil {
+		return -1, err
+	}
+	return strconv.Atoi(year)
 }

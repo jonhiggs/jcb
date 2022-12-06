@@ -110,3 +110,7 @@ func balanceSet(tset []domain.Transaction, initialBalance int64) []balance {
 
 	return bset
 }
+
+func EarliestYear() (int, error) {
+	return db.EarliestYear()
+}

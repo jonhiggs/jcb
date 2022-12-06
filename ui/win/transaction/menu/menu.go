@@ -78,8 +78,16 @@ func scan(y int, x int) error {
 			Year++
 			updateTransactions()
 		case '[':
-			Year--
-			updateTransactions()
+			ey, err := transaction.EarliestYear()
+			if err != nil {
+				return err
+			}
+			if Year > ey {
+				Year--
+				updateTransactions()
+			} else {
+				return errors.New("You have no history before now.")
+			}
 		case 'x':
 			if selectedTransactionCommitted() {
 				return errors.New("Cannot delete committed transactions")
