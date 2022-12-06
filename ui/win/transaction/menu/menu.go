@@ -3,6 +3,7 @@ package menuWin
 import (
 	"errors"
 	"fmt"
+	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
 	stringf "jcb/ui/formatter/string"
@@ -77,11 +78,8 @@ func scan(y int, x int) error {
 		statusWin.Clear()
 		switch ch {
 		case ']':
-			ly, err := transaction.LatestYear()
-			if err != nil {
-				return err
-			}
-			if Year < ly {
+			_, end := dates.Range()
+			if Year <= end.Year() {
 				Year++
 				updateTransactions()
 			} else {
@@ -89,11 +87,8 @@ func scan(y int, x int) error {
 			}
 
 		case '[':
-			ey, err := transaction.EarliestYear()
-			if err != nil {
-				return err
-			}
-			if Year > ey {
+			start, _ := dates.Range()
+			if Year > start.Year() {
 				Year--
 				updateTransactions()
 			} else {
