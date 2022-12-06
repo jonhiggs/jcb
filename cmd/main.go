@@ -55,5 +55,4 @@ func main() {
 	}
 
 	ui.Start(time.Now().Year())
-
 }

@@ -25,9 +25,10 @@ var menuItems []*gc.MenuItem
 var menu *gc.Menu
 var y int
 var x int
-var year int
+var Year int
 
-func Show(y int) error {
+func Show(y int, year int) error {
+	Year = year
 	header()
 	separator(y)
 	balanceWin, _ = gc.NewWindow(1, 22, y-1, 50)
@@ -73,6 +74,12 @@ func scan(y int, x int) error {
 	for {
 		ch := win.GetChar()
 		switch ch {
+		case ']':
+			Year++
+			updateTransactions()
+		case '[':
+			Year--
+			updateTransactions()
 		case 'x':
 			if selectedTransactionCommitted() {
 				return errors.New("Cannot delete committed transactions")
@@ -102,7 +109,7 @@ func scan(y int, x int) error {
 				if err != nil {
 					return err
 				}
-				err = transaction.Commit(id, balance, year)
+				err = transaction.Commit(id, balance, Year)
 				if err != nil {
 					return err
 				}
@@ -236,12 +243,12 @@ func updateTransactions() error {
 	var balance int64
 	balance = 0
 
-	uncommitted, err := transaction.Uncommitted(year)
+	uncommitted, err := transaction.Uncommitted(Year)
 	if err != nil {
 		return err
 	}
 
-	committed, err := transaction.Committed(year)
+	committed, err := transaction.Committed(Year)
 	if err != nil {
 		return err
 	}
@@ -275,6 +282,7 @@ func updateTransactions() error {
 
 	menu.UnPost()
 	if len(menuItems) == 0 {
+		printLowBalance(time.Date(Year, 1, 1, 0, 0, 0, 0, time.UTC), 0)
 		return errors.New("No data to show. Press ? for help.")
 	}
 

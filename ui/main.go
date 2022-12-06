@@ -34,5 +34,5 @@ func Start(year int) {
 	initColorPairs()
 	statusWin.Show(maxY)
 
-	transactionMenuWin.Show(maxY)
+	transactionMenuWin.Show(maxY, year)
 }
