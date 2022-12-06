@@ -321,8 +321,12 @@ func selectedTransaction() int64 {
 func selectTransaction(id int64) {
 	for _, item := range menu.Items() {
 		desc, _ := strconv.ParseInt(item.Description(), 10, 64)
+		// Jumping once is flaky on OpenBSD for some reason when it needs to
+		// jump a long way. This is an inefficient workaround.
+		menu.Current(item)
 		if desc == id {
-			menu.Current(item)
+			statusWin.PrintError(errors.New(fmt.Sprintf("found it at %d", item.Index())))
+			return
 		}
 	}
 }
