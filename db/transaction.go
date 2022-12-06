@@ -168,3 +168,14 @@ func EarliestYear() (int, error) {
 	}
 	return strconv.Atoi(year)
 }
+
+func LatestYear() (int, error) {
+	var year string
+	statement, _ := db.Prepare("SELECT DISTINCT substring(date,1,4) FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
+	err := statement.QueryRow().Scan(&year)
+	if err != nil {
+		return -1, err
+	}
+	y, err := strconv.Atoi(year)
+	return y + 1, err
+}
