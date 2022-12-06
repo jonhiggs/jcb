@@ -206,13 +206,8 @@ func scan(y int, x int) error {
 func printLowBalance(date time.Time, balance int64) {
 	var d string
 	var b string
-	if date.Year() < 2022 {
-		d = "unknown"
-		b = "unknown"
-	} else {
-		d = date.Format("2006-01-02")
-		b, _ = stringf.Cents(balance)
-	}
+	d = date.Format("2006-01-02")
+	b, _ = stringf.Cents(balance)
 
 	str := fmt.Sprintf("%s %s", d, b)
 
@@ -301,7 +296,6 @@ func updateTransactions() error {
 
 	menu.UnPost()
 	if len(menuItems) == 0 {
-		printLowBalance(time.Date(Year, 1, 1, 0, 0, 0, 0, time.UTC), 0)
 		return errors.New("No data to show. Press ? for help.")
 	}
 
@@ -317,7 +311,12 @@ func updateTransactions() error {
 	}
 
 	selectTransaction(id)
-	printLowBalance(findLowestBalance())
+	if len(uncommitted) > 0 {
+		printLowBalance(findLowestBalance())
+	} else {
+		balanceWin.Clear()
+		balanceWin.Refresh()
+	}
 
 	return nil
 }
