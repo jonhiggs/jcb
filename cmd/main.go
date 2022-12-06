@@ -49,10 +49,12 @@ func main() {
 		}
 	}
 
-	err = db.Init(file)
+	year := time.Now().Year()
+
+	err = db.Init(file, year)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ui.Start(time.Now().Year())
+	ui.Start(year)
 }
