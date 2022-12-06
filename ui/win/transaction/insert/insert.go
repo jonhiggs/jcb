@@ -1,6 +1,7 @@
 package transactionInsertWin
 
 import (
+	"errors"
 	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
@@ -158,20 +159,23 @@ func scan() (int64, error) {
 			var id int64
 			var err error
 			transactions, err := readForm()
-			if err == nil {
-				for _, t := range transactions {
-					id, err = transaction.Insert(t)
-					if err != nil {
-						statusWin.PrintError(err)
-						//} else {
-						//	updateTransactions()
-						//	selectTransaction(id)
-					}
-				}
-			} else {
-				return -1, err
+			if err != nil {
+				return -1, nil
 			}
-			return id, err
+
+			if len(transactions) == 0 {
+				return -1, errors.New("Rule won't create any transactions")
+			}
+
+			for _, t := range transactions {
+				id, err = transaction.Insert(t)
+				if err != nil {
+					statusWin.PrintError(err)
+				} else {
+					return -1, err
+				}
+			}
+			return id, nil
 		case 1: // ctrl-a
 			form.Driver(gc.REQ_BEG_FIELD)
 		case 5: // ctrl-e
