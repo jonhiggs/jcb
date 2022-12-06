@@ -113,6 +113,7 @@ func scan(y int, x int) error {
 
 			err := transaction.DeleteId(selection)
 			if err != nil {
+				menu.Driver(gc.DriverActions[gc.KEY_UP])
 				return err
 			}
 
@@ -273,6 +274,7 @@ func updateTransactions() error {
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
+	// uncommitted transactions
 	for i, n := range uncommitted {
 		ft, err := stringf.Transaction(n)
 		if err != nil {
