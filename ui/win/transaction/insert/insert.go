@@ -105,6 +105,13 @@ func readForm() ([]domain.Transaction, error) {
 	if err != nil {
 		return trans, err
 	}
+	committedUntil, err := transaction.CommittedUntil()
+	if err != nil {
+		return []domain.Transaction{}, err
+	}
+	if date.Unix() < committedUntil.Unix() {
+		return []domain.Transaction{}, errors.New(fmt.Sprintf("Date must be greater than %s", committedUntil.Format("2006-01-02")))
+	}
 
 	description, err := dataf.Description(fields[2].Buffer())
 	if err != nil {
@@ -160,7 +167,7 @@ func scan() (int64, error) {
 			var err error
 			transactions, err := readForm()
 			if err != nil {
-				return -1, nil
+				return -1, err
 			}
 
 			if len(transactions) == 0 {
@@ -170,8 +177,6 @@ func scan() (int64, error) {
 			for _, t := range transactions {
 				id, err = transaction.Insert(t)
 				if err != nil {
-					statusWin.PrintError(err)
-				} else {
 					return -1, err
 				}
 			}
