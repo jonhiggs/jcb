@@ -147,16 +147,20 @@ func TransactionBalance(id int64) (int64, error) {
 }
 
 func TransactionCommittedUntil() (time.Time, error) {
-	var date string
-	statement, _ := db.Prepare("SELECT date FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
-	err := statement.QueryRow().Scan(&date)
+	rows, err := db.Query("SELECT date FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
 	if err != nil {
 		return time.Unix(0, 0), err
 	}
 
-	ts, _ := time.Parse(timeLayout, date)
+	defer rows.Close()
+	for rows.Next() {
+		var date string
+		err = rows.Scan(&date)
+		ts, _ := time.Parse(timeLayout, date)
+		return ts, nil
+	}
 
-	return ts, err
+	return time.Unix(0, 0), nil
 }
 
 func EarliestYear() (int, error) {
