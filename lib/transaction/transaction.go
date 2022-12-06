@@ -57,6 +57,31 @@ func Commit(id int64, initialBalance int64, year int) error {
 	return nil
 }
 
+func ClosingBalance(year int) (int64, error) {
+	ey, err := EarliestYear()
+	if err != nil {
+		return -1, err
+	}
+
+	if year < ey {
+		return -1, errors.New(fmt.Sprintf("Cannot determine closing balance of %d", year))
+	}
+
+	committed, err := Committed(year)
+	if err != nil {
+		return -1, err
+	}
+
+	uncommitted, err := Uncommitted(year)
+	if err != nil {
+		return -1, err
+	}
+
+	initialBalance := committed[len(committed)-1].Id
+	bset := balanceSet(uncommitted, initialBalance)
+	return bset[len(bset)-1].Balance, nil
+}
+
 func Uncommit(id int64) error {
 	return db.UncommitTransaction(id)
 }
