@@ -14,6 +14,7 @@ func Show(y int) {
 
 func Clear() {
 	win.Clear()
+	win.Refresh()
 }
 
 func PrintError(e error) {
