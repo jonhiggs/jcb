@@ -40,6 +40,7 @@ func Show(y int, year int) error {
 	}
 
 	win, err = gc.NewWindow(y-3, 72, 1, 0)
+	win.Timeout(5000)
 	menu.SubWindow(win)
 	menu.Mark("")
 	menu.Option(gc.O_SHOWDESC, false)
@@ -73,6 +74,7 @@ func scan(y int, x int) error {
 
 	for {
 		ch := win.GetChar()
+		statusWin.Clear()
 		switch ch {
 		case ']':
 			ly, err := transaction.LatestYear()
