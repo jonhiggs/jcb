@@ -25,6 +25,7 @@ var menuItems []*gc.MenuItem
 var menu *gc.Menu
 var y int
 var x int
+var year int
 
 func Show(y int) error {
 	header()
@@ -101,7 +102,7 @@ func scan(y int, x int) error {
 				if err != nil {
 					return err
 				}
-				err = transaction.Commit(id, balance)
+				err = transaction.Commit(id, balance, year)
 				if err != nil {
 					return err
 				}
@@ -235,12 +236,12 @@ func updateTransactions() error {
 	var balance int64
 	balance = 0
 
-	uncommitted, err := transaction.Uncommitted()
+	uncommitted, err := transaction.Uncommitted(year)
 	if err != nil {
 		return err
 	}
 
-	committed, err := transaction.Committed()
+	committed, err := transaction.Committed(year)
 	if err != nil {
 		return err
 	}
