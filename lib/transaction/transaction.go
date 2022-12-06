@@ -34,16 +34,16 @@ func DeleteId(id int64) error {
 	return db.DeleteTransaction(id)
 }
 
-func Uncommitted() ([]domain.Transaction, error) {
-	return db.UncommittedTransactions()
+func Uncommitted(year int) ([]domain.Transaction, error) {
+	return db.UncommittedTransactions(year)
 }
 
-func Committed() ([]domain.Transaction, error) {
-	return db.CommittedTransactions()
+func Committed(year int) ([]domain.Transaction, error) {
+	return db.CommittedTransactions(year)
 }
 
-func Commit(id int64, initialBalance int64) error {
-	balance, err := commitSet(id, initialBalance)
+func Commit(id int64, initialBalance int64, year int) error {
+	balance, err := commitSet(id, initialBalance, year)
 	if err != nil {
 		return err
 	}
@@ -70,10 +70,10 @@ func Balance(id int64) (int64, error) {
 }
 
 // set of transactions that need to be committed before committing provided id
-func commitSet(id int64, initialBalance int64) ([]balance, error) {
+func commitSet(id int64, initialBalance int64, year int) ([]balance, error) {
 	var found bool
 
-	uncommitted, err := db.UncommittedTransactions()
+	uncommitted, err := db.UncommittedTransactions(year)
 	if err != nil {
 		return []balance{}, err
 	}

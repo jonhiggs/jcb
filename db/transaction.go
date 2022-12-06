@@ -9,8 +9,8 @@ import (
 
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
-func CommittedTransactions() ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC")
+func CommittedTransactions(year int) ([]domain.Transaction, error) {
+	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE '%' AND committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
 	if err != nil {
 		return nil, err
 	}
@@ -37,8 +37,8 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 	return records, nil
 }
 
-func UncommittedTransactions() ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt IS NULL ORDER BY date, id ASC")
+func UncommittedTransactions(year int) ([]domain.Transaction, error) {
+	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE '%' AND committedAt IS NULL ORDER BY date, id ASC", fmt.Sprintf("%d%%", year))
 	if err != nil {
 		return nil, err
 	}
