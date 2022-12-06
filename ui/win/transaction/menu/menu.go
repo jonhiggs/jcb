@@ -75,8 +75,17 @@ func scan(y int, x int) error {
 		ch := win.GetChar()
 		switch ch {
 		case ']':
-			Year++
-			updateTransactions()
+			ly, err := transaction.LatestYear()
+			if err != nil {
+				return err
+			}
+			if Year < ly {
+				Year++
+				updateTransactions()
+			} else {
+				return errors.New(fmt.Sprintf("You must complete %d before moving on.", Year))
+			}
+
 		case '[':
 			ey, err := transaction.EarliestYear()
 			if err != nil {
@@ -86,7 +95,7 @@ func scan(y int, x int) error {
 				Year--
 				updateTransactions()
 			} else {
-				return errors.New("You have no history before now.")
+				return errors.New(fmt.Sprintf("You have no history before %d.", Year))
 			}
 		case 'x':
 			if selectedTransactionCommitted() {
