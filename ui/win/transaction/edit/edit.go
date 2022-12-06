@@ -1,6 +1,7 @@
 package transactionEditWin
 
 import (
+	"errors"
 	"fmt"
 	"jcb/domain"
 	"jcb/lib/transaction"
@@ -85,6 +86,13 @@ func readForm(id int64) (domain.Transaction, error) {
 	date, err := dataf.Date(fmt.Sprintf("2022-%s-%s", dateMonth, dateDay))
 	if err != nil {
 		return domain.Transaction{}, err
+	}
+	committedUntil, err := transaction.CommittedUntil()
+	if err != nil {
+		return domain.Transaction{}, err
+	}
+	if date.Unix() < committedUntil.Unix() {
+		return domain.Transaction{}, errors.New(fmt.Sprintf("Date must be greater than %s", committedUntil.Format("2006-01-02")))
 	}
 
 	description, err := dataf.Description(fields[2].Buffer())
