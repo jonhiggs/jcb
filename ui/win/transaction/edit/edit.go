@@ -70,7 +70,6 @@ func Show(id int64) int64 {
 		err = scan(id)
 	}
 
-	statusWin.Clear()
 	return id
 }
 

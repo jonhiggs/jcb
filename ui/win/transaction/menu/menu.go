@@ -176,9 +176,6 @@ func scan(y int, x int) error {
 			id := transactionInsertWin.Show()
 			updateTransactions()
 			selectTransaction(id)
-			win.Touch()
-			win.Refresh()
-			statusWin.Refresh()
 		case 'e':
 			id, _ := dataf.Id(menu.Current(nil).Description())
 			if selectedTransactionCommitted() {
@@ -186,15 +183,10 @@ func scan(y int, x int) error {
 			}
 			transactionEditWin.Show(id)
 			updateTransactions()
-			selectTransaction(id)
-			win.Touch()
-			win.Refresh()
-			statusWin.Refresh()
 		case '?':
 			helpWin.Show()
 			win.Touch()
 			win.Refresh()
-			statusWin.Refresh()
 		case 3, 'q':
 			return nil
 		default:

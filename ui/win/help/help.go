@@ -10,7 +10,7 @@ import (
 var win *gc.Window
 
 func Show() {
-	win, _ = gc.NewWindow(23, 45, 4, 10)
+	win, _ = gc.NewWindow(20, 45, 1, 10)
 	defer win.Delete()
 	win.Box(0, 0)
 
@@ -53,7 +53,7 @@ func Show() {
 	win.MovePrint(8, 25, "^F   Forward")
 
 	win.AttrOn(gc.ColorPair(2) | gc.A_BOLD)
-	win.MovePrint(21, 38-len(config.VERSION), fmt.Sprintf("jcb v%s", config.VERSION))
+	win.MovePrint(18, 38-len(config.VERSION), fmt.Sprintf("jcb v%s", config.VERSION))
 	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD)
 
 	scan()
