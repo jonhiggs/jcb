@@ -325,7 +325,6 @@ func selectTransaction(id int64) {
 		// jump a long way. This is an inefficient workaround.
 		menu.Current(item)
 		if desc == id {
-			statusWin.PrintError(errors.New(fmt.Sprintf("found it at %d", item.Index())))
 			return
 		}
 	}
