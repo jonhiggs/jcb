@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+const (
+	TYPE_OPENING     = 0
+	TYPE_COMMITTED   = 1
+	TYPE_UNCOMMITTED = 2
+)
+
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 func CommittedTransactions(year int) ([]domain.Transaction, error) {

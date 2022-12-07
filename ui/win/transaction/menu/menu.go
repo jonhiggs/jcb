@@ -263,7 +263,7 @@ func updateTransactions() error {
 		if err != nil {
 			return err
 		}
-		balance, _ = transaction.Balance(n.Id)
+		balance, _ = balance.Id(n.Id)
 		balanceStr, _ := stringf.Cents(balance)
 		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)

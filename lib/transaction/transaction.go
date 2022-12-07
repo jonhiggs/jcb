@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+const (
+	TYPE_NONE        = -1
+	TYPE_OPENING     = 0
+	TYPE_COMMITTED   = 1
+	TYPE_UNCOMMITTED = 2
+)
+
 type balance struct {
 	Id      int64
 	Cents   int64
@@ -81,8 +88,24 @@ func CommittedUntil() (time.Time, error) {
 	return db.TransactionCommittedUntil()
 }
 
-func Balance(id int64) (int64, error) {
-	return db.TransactionBalance(id)
+func Type(id, int64) int {
+	if t.Id == 0 {
+		return TYPE_OPENING
+	}
+
+	for _, t := range Committed {
+		if t.Id == id {
+			return TYPE_COMMITTED
+		}
+	}
+
+	for _, t := range Uncommitted {
+		if t.Id == id {
+			return TYPE_UNCOMMITTED
+		}
+	}
+
+	return TYPE_NONE
 }
 
 // set of transactions that need to be committed before committing provided id
