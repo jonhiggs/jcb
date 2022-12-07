@@ -18,7 +18,7 @@ var win *gc.Window
 var form gc.Form
 var fields []*gc.Field
 
-func Show() int64 {
+func Show(year int) int64 {
 	gc.Cursor(1)
 	defer gc.Cursor(0)
 	win, _ = gc.NewWindow(10, 49, 4, 10)
@@ -71,28 +71,28 @@ func Show() int64 {
 	win.AttrOff(gc.ColorPair(2) | gc.A_BOLD | gc.A_UNDERLINE)
 
 	win.MovePrint(3, 2, "Date:")
-	win.MovePrint(3, 17, "2022-")
+	win.MovePrint(3, 17, fmt.Sprintf("%d-", year))
 	win.MovePrint(3, 24, "-")
 	win.MovePrint(4, 2, "Description:")
 	win.MovePrint(5, 2, "Amount:")
 	win.MovePrint(6, 2, "Repeat every:")
 	win.MovePrint(7, 2, "Repeat until:")
-	win.MovePrint(7, 17, "2022-")
+	win.MovePrint(7, 17, fmt.Sprintf("%d-", year))
 	win.MovePrint(7, 24, "-")
 
 	win.Box(0, 0)
 
-	id, err := scan()
+	id, err := scan(year)
 	for err != nil {
 		statusWin.PrintError(err)
-		id, err = scan()
+		id, err = scan(year)
 	}
 
 	statusWin.Clear()
 	return id
 }
 
-func readForm() ([]domain.Transaction, error) {
+func readForm(year int) ([]domain.Transaction, error) {
 	var trans []domain.Transaction
 	err := form.Driver(gc.REQ_VALIDATION)
 	if err != nil {
@@ -102,7 +102,7 @@ func readForm() ([]domain.Transaction, error) {
 	// date
 	dateMonth := fields[0].Buffer()
 	dateDay := fields[1].Buffer()
-	date, err := dataf.Date(fmt.Sprintf("2022-%s-%s", dateMonth, dateDay))
+	date, err := dataf.Date(fmt.Sprintf("%d-%s-%s", year, dateMonth, dateDay))
 	if err != nil {
 		return trans, err
 	}
@@ -128,7 +128,7 @@ func readForm() ([]domain.Transaction, error) {
 
 	repeatUntilMonth := fields[5].Buffer()
 	repeatUntilDay := fields[6].Buffer()
-	repeatUntil, err := dataf.Date(fmt.Sprintf("2022-%s-%s", repeatUntilMonth, repeatUntilDay))
+	repeatUntil, err := dataf.Date(fmt.Sprintf("%d-%s-%s", year, repeatUntilMonth, repeatUntilDay))
 	repeatUntil = repeatUntil.Add(time.Hour * 23)
 	repeatUntil = repeatUntil.Add(time.Minute * 59)
 	repeatUntil = repeatUntil.Add(time.Second * 59)
@@ -150,7 +150,7 @@ func readForm() ([]domain.Transaction, error) {
 	return trans, err
 }
 
-func scan() (int64, error) {
+func scan(year int) (int64, error) {
 	win.Keypad(true)
 	win.Refresh()
 
@@ -163,7 +163,7 @@ func scan() (int64, error) {
 		case gc.KEY_RETURN:
 			var id int64
 			var err error
-			transactions, err := readForm()
+			transactions, err := readForm(year)
 			if err != nil {
 				return -1, err
 			}
