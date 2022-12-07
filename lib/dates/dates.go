@@ -13,10 +13,6 @@ func Opening() time.Time {
 	return t.Date
 }
 
-//func FirstCommitted(year int) time.Date {
-//	return db.DateFirstCommitted()
-//}
-
 // year of -1 will scan all years
 func FirstUncommitted(year int) time.Time {
 	return db.DateFirstUncommitted(year)
@@ -52,20 +48,3 @@ func Range() (time.Time, time.Time) {
 
 	return start, end
 }
-
-//func FirstUncommitted(year int) time.Date {
-//	return db.DateFirstCommitted()
-//}
-//
-//func LastCommitted(year int) time.Date {
-//	return db.DateLastCommitted()
-//}
-
-//func lastCommittedted(year int) time.Date {
-//}
-//
-//func firstUncommittedted(year int) time.Date {
-//}
-//
-//func lastUncommittedted(year int) time.Date {
-//}
