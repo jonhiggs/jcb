@@ -20,6 +20,9 @@ func Find(id int64) (domain.Transaction, error) {
 }
 
 func Insert(t domain.Transaction) (int64, error) {
+	if t.Date.Unix() < dates.LastCommitted(-1).Unix() {
+		return -1, errors.New("Date is too early")
+	}
 	return db.InsertTransaction(t)
 }
 
