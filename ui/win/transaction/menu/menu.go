@@ -253,7 +253,9 @@ func updateTransactions() error {
 	// committed transactions
 	for i, n := range committed {
 		ft, _ := stringf.Transaction(n)
-		str := fmt.Sprintf("* %s  %-38s  %8s  %8d", ft.Date, ft.Description, ft.Cents, b)
+		b += n.Cents
+		bs, _ := stringf.Cents(b)
+		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, bs)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
@@ -266,7 +268,8 @@ func updateTransactions() error {
 			b -= n.Cents
 		}
 		b += n.Cents
-		str := fmt.Sprintf("  %s  %-38s  %8s  %8d", ft.Date, ft.Description, ft.Cents, b)
+		bs, _ := stringf.Cents(b)
+		str := fmt.Sprintf("  %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, bs)
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
