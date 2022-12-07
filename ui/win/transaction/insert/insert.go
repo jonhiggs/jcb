@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"jcb/domain"
+	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
 	"jcb/ui/repeater"
@@ -105,12 +106,9 @@ func readForm() ([]domain.Transaction, error) {
 	if err != nil {
 		return trans, err
 	}
-	committedUntil, err := transaction.CommittedUntil()
-	if err != nil {
-		return []domain.Transaction{}, err
-	}
-	if date.Unix() < committedUntil.Unix() {
-		return []domain.Transaction{}, errors.New(fmt.Sprintf("Date must be greater than %s", committedUntil.Format("2006-01-02")))
+
+	if date.Unix() < dates.LastCommitted(-1).Unix() {
+		return nil, errors.New("Date is too early")
 	}
 
 	description, err := dataf.Description(fields[2].Buffer())
