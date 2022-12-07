@@ -7,26 +7,28 @@ import (
 )
 
 func Id(id int64) (int64, error) {
-	switch transaction.Type() {
+	switch transaction.Type(id) {
 	case transaction.TYPE_OPENING:
-		return transaction.Find(id).Cents
+		t, err := transaction.Find(id)
+		return t.Cents, err
 
 	case transaction.TYPE_COMMITTED:
 		return db.TransactionBalance(id)
 
 	case transaction.TYPE_UNCOMMITTED:
-		balance, _ := FinalCommitted()
-		uncommitted, _ := transaction.Uncommitted()
-		for _, t := range uncommitted {
-			balance += t.Amount()
+		b, _ := FinalCommitted()
+		uc, _ := transaction.Uncommitted(-1)
+		for _, t := range uc {
+			b += t.Cents
 		}
 
-		return balance, nil
+		return b, nil
 	default:
 		return 0, errors.New("Unknown transaction")
 	}
 }
 
 func FinalCommitted() (int64, error) {
+	committed, _ := transaction.Committed(-1)
 	return db.TransactionBalance(committed[len(committed)-1].Id)
 }

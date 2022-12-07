@@ -1,9 +1,11 @@
 package db
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"jcb/domain"
+	"log"
 	"strconv"
 	"time"
 )
@@ -17,28 +19,35 @@ const (
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 func CommittedTransactions(year int) ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
+	var rows *sql.Rows
+	var err error
+
+	var records []domain.Transaction
+
+	if year == -1 {
+		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
+	} else {
+		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
+	}
+
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	defer rows.Close()
 
-	var records []domain.Transaction
 	for rows.Next() {
-		t := domain.Transaction{}
-		var date string
+		var id int64
+		var dateString string
+		var description string
+		var cents int64
 
-		err = rows.Scan(&t.Id, &date, &t.Description, &t.Cents)
-
-		ts, _ := time.Parse(timeLayout, date)
-		t.Date = ts
-
+		err = rows.Scan(&id, &dateString, &description, &cents)
 		if err != nil {
-			return nil, err
+			log.Fatal(err)
 		}
 
-		records = append(records, t)
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents})
 	}
 
 	return records, nil

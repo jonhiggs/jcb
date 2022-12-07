@@ -3,6 +3,7 @@ package menuWin
 import (
 	"errors"
 	"fmt"
+	bal "jcb/lib/balance"
 	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
@@ -243,7 +244,6 @@ func separator(y int) {
 
 func updateTransactions() error {
 	var balance int64
-	balance = 0
 
 	uncommitted, err := transaction.Uncommitted(Year)
 	if err != nil {
@@ -263,8 +263,8 @@ func updateTransactions() error {
 		if err != nil {
 			return err
 		}
-		balance, _ = balance.Id(n.Id)
-		balanceStr, _ := stringf.Cents(balance)
+		b, _ := bal.Id(n.Id)
+		balanceStr, _ := stringf.Cents(b)
 		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
