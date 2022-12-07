@@ -30,13 +30,16 @@ func Id(id int64) (int64, error) {
 
 func FinalCommitted() (int64, error) {
 	committed, _ := transaction.Committed(-1)
-	return db.TransactionBalance(committed[len(committed)-1].Id)
+	if len(committed) > 0 {
+		return db.TransactionBalance(committed[len(committed)-1].Id)
+	}
+	return -1, errors.New("got to do fix this")
 }
 
 func Opening(year int) int64 {
 	var b int64
 	opening, _ := transaction.Find(0)
-	committed, _ := transaction.Committed(year - 1)
+	committed, _ := transaction.Committed(year)
 	if len(committed) > 0 {
 		b, _ = Id(committed[len(committed)-1].Id)
 	} else if opening.Date.Year() == year {
@@ -48,8 +51,8 @@ func Opening(year int) int64 {
 
 func Closing(year int) int64 {
 	var b int64
-	committed, _ := transaction.Committed(year - 1)
-	uncommitted, _ := transaction.Uncommitted(year - 1)
+	committed, _ := transaction.Committed(year)
+	uncommitted, _ := transaction.Uncommitted(year)
 	if len(uncommitted) != 0 {
 		b, _ = Id(uncommitted[len(uncommitted)-1].Id)
 		return b
