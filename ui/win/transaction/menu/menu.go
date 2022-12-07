@@ -243,29 +243,17 @@ func separator(y int) {
 }
 
 func updateTransactions() error {
-	b := bal.Closing(Year - 1)
+	b := bal.GetClosing(Year - 1)
 
-	uncommitted, err := transaction.Uncommitted(Year)
-	if err != nil {
-		return err
-	}
-
-	committed, err := transaction.Committed(Year)
-	if err != nil {
-		return err
-	}
+	uncommitted, _ := transaction.Uncommitted(Year)
+	committed, _ := transaction.Committed(Year)
 
 	menuItems = make([]*gc.MenuItem, len(committed)+len(uncommitted))
 
 	// committed transactions
 	for i, n := range committed {
-		ft, err := stringf.Transaction(n)
-		if err != nil {
-			return err
-		}
-		b, _ = bal.Id(n.Id)
-		balanceStr, _ := stringf.Cents(b)
-		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		ft, _ := stringf.Transaction(n)
+		str := fmt.Sprintf("* %s  %-38s  %8s  %8d", ft.Date, ft.Description, ft.Cents, b)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
 	}
 
@@ -278,10 +266,11 @@ func updateTransactions() error {
 			b -= n.Cents
 		}
 		b += n.Cents
-		balanceStr, _ := stringf.Cents(b)
-		str := fmt.Sprintf("  %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
+		str := fmt.Sprintf("  %s  %-38s  %8s  %8d", ft.Date, ft.Description, ft.Cents, b)
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
+
+	bal.SetClosing(Year, b)
 
 	id := selectedTransaction()
 
@@ -290,7 +279,7 @@ func updateTransactions() error {
 		return errors.New("No data to show. Press ? for help.")
 	}
 
-	err = menu.SetItems(menuItems)
+	err := menu.SetItems(menuItems)
 	if err != nil {
 		return err
 	}
@@ -303,7 +292,7 @@ func updateTransactions() error {
 
 	selectTransaction(id)
 	if len(uncommitted) > 0 {
-		printLowBalance(findLowestBalance())
+		//printLowBalance(findLowestBalance())
 	} else {
 		balanceWin.Clear()
 		balanceWin.Refresh()
@@ -322,8 +311,8 @@ func selectTransaction(id int64) {
 		desc, _ := strconv.ParseInt(item.Description(), 10, 64)
 		// Jumping once is flaky on OpenBSD for some reason when it needs to
 		// jump a long way. This is an inefficient workaround.
-		menu.Current(item)
 		if desc == id {
+			menu.Current(item)
 			return
 		}
 	}

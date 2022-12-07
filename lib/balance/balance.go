@@ -1,65 +1,14 @@
 package balance
 
 import (
-	"errors"
 	"jcb/db"
-	"jcb/lib/transaction"
 )
 
-func Id(id int64) (int64, error) {
-	switch transaction.Type(id) {
-	case transaction.TYPE_OPENING:
-		t, err := transaction.Find(id)
-		return t.Cents, err
-
-	case transaction.TYPE_COMMITTED:
-		return db.TransactionBalance(id)
-
-	case transaction.TYPE_UNCOMMITTED:
-		b, _ := FinalCommitted()
-		uc, _ := transaction.Uncommitted(-1)
-		for _, t := range uc {
-			b += t.Cents
-		}
-
-		return b, nil
-	default:
-		return 0, errors.New("Unknown transaction")
-	}
+func SetClosing(year int, balance int64) {
+	db.SetClosing(year, balance)
+	return
 }
 
-func FinalCommitted() (int64, error) {
-	committed, _ := transaction.Committed(-1)
-	if len(committed) > 0 {
-		return db.TransactionBalance(committed[len(committed)-1].Id)
-	}
-	return -1, errors.New("got to do fix this")
-}
-
-func Opening(year int) int64 {
-	var b int64
-	opening, _ := transaction.Find(0)
-	committed, _ := transaction.Committed(year)
-	if len(committed) > 0 {
-		b, _ = Id(committed[len(committed)-1].Id)
-	} else if opening.Date.Year() == year {
-		b = opening.Cents
-	}
-
-	return b
-}
-
-func Closing(year int) int64 {
-	var b int64
-	committed, _ := transaction.Committed(year)
-	uncommitted, _ := transaction.Uncommitted(year)
-	if len(uncommitted) != 0 {
-		b, _ = Id(uncommitted[len(uncommitted)-1].Id)
-		return b
-	} else if len(committed) != 0 {
-		b, _ = Id(committed[len(uncommitted)-1].Id)
-		return b
-	} else {
-		return 0
-	}
+func GetClosing(year int) int64 {
+	return db.GetClosing(year)
 }
