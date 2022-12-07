@@ -248,6 +248,10 @@ func updateTransactions() error {
 	uncommitted, _ := transaction.Uncommitted(Year)
 	committed, _ := transaction.Committed(Year)
 
+	for _, i := range menuItems {
+		i.Free()
+	}
+
 	menuItems = make([]*gc.MenuItem, len(committed)+len(uncommitted))
 
 	// committed transactions
