@@ -32,3 +32,9 @@ func FinalCommitted() (int64, error) {
 	committed, _ := transaction.Committed(-1)
 	return db.TransactionBalance(committed[len(committed)-1].Id)
 }
+
+func Opening(year int) int64 {
+	committed, _ := transaction.Committed(year - 1)
+	b, _ := Id(committed[len(committed)-1].Id)
+	return b
+}

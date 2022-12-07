@@ -170,7 +170,7 @@ func scan(y int, x int) error {
 				}
 			}
 		case 'i':
-			id := transactionInsertWin.Show()
+			id := transactionInsertWin.Show(Year)
 			updateTransactions()
 			selectTransaction(id)
 		case 'e':
@@ -270,10 +270,17 @@ func updateTransactions() error {
 	}
 
 	// uncommitted transactions
+	if len(committed) == 0 {
+		balance = bal.Opening(Year)
+	}
+
 	for i, n := range uncommitted {
 		ft, err := stringf.Transaction(n)
 		if err != nil {
 			return err
+		}
+		if n.Id == 0 {
+			balance -= n.Cents
 		}
 		balance += n.Cents
 		balanceStr, _ := stringf.Cents(balance)
