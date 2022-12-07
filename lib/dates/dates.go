@@ -18,6 +18,11 @@ func Opening() time.Time {
 //}
 
 // year of -1 will scan all years
+func FirstUncommitted(year int) time.Time {
+	return db.DateFirstUncommitted(year)
+}
+
+// year of -1 will scan all years
 func LastCommitted(year int) time.Time {
 	return db.DateLastCommitted(year)
 }
