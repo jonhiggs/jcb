@@ -34,7 +34,14 @@ func FinalCommitted() (int64, error) {
 }
 
 func Opening(year int) int64 {
+	var b int64
+	opening, _ := transaction.Find(0)
 	committed, _ := transaction.Committed(year - 1)
-	b, _ := Id(committed[len(committed)-1].Id)
+	if len(committed) > 0 {
+		b, _ = Id(committed[len(committed)-1].Id)
+	} else if opening.Date.Year() == year {
+		b = opening.Cents
+	}
+
 	return b
 }
