@@ -24,6 +24,9 @@ func Insert(t domain.Transaction) (int64, error) {
 }
 
 func Edit(t domain.Transaction) error {
+	if t.Id == 0 && t.Date.Unix() > dates.FirstUncommitted(-1).Unix() {
+		return errors.New("Date must be earlier than the first transaction")
+	}
 	if t.Date.Unix() < dates.LastCommitted(t.Date.Year()).Unix() {
 		return errors.New("Date must be after the latest committed transaction")
 	}
