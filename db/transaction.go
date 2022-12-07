@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"jcb/domain"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -152,18 +151,6 @@ func DeleteTransaction(id int64) error {
 	return err
 }
 
-func TransactionBalance(id int64) (int64, error) {
-	var balance int64
-
-	statement, _ := db.Prepare("SELECT balance FROM transactions WHERE id = ? AND committedAt NOT NULL")
-	err := statement.QueryRow(id).Scan(&balance)
-	if err != nil {
-		return -1, err
-	}
-
-	return balance, err
-}
-
 func TransactionCommittedUntil() (time.Time, error) {
 	rows, err := db.Query("SELECT date FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
 	if err != nil {
@@ -179,50 +166,4 @@ func TransactionCommittedUntil() (time.Time, error) {
 	}
 
 	return time.Unix(0, 0), nil
-}
-
-func LatestYear() (int, error) {
-	var year string
-	statement, _ := db.Prepare("SELECT DISTINCT substring(date,1,4) FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
-	err := statement.QueryRow().Scan(&year)
-	if err != nil {
-		return -1, err
-	}
-	y, err := strconv.Atoi(year)
-	return y + 1, err
-}
-
-func DateSpan() (time.Time, time.Time, time.Time, error) {
-	var oS string
-	var fS string
-	var lS string
-
-	var o time.Time
-	var f time.Time
-	var l time.Time
-
-	statement, _ := db.Prepare("SELECT date FROM transactions WHERE id = 0")
-	err := statement.QueryRow().Scan(&oS)
-	if err != nil {
-		return time.Unix(0, 0), time.Unix(0, 0), time.Unix(0, 0), err
-	}
-	o, _ = time.Parse(timeLayout, oS)
-
-	statement, _ = db.Prepare("SELECT date FROM transactions WHERE id != 0 ORDER BY date ASC LIMIT 1")
-	err = statement.QueryRow().Scan(&lS)
-	if err != nil {
-		l = time.Date(o.Year()+1, 12, 31, 23, 59, 59, 59, time.UTC)
-	} else {
-		l, _ = time.Parse(timeLayout, lS)
-	}
-
-	statement, _ = db.Prepare("SELECT date FROM transactions WHERE id != 0 ORDER BY date DESC LIMIT 1")
-	err = statement.QueryRow().Scan(&fS)
-	if err != nil {
-		f = l
-	} else {
-		f, _ = time.Parse(timeLayout, fS)
-	}
-
-	return o, f, l, nil
 }
