@@ -70,31 +70,6 @@ func Commit(id int64, initialBalance int64, year int) error {
 	return nil
 }
 
-//func ClosingBalance(year int) (int64, error) {
-//	ey, err := EarliestYear()
-//	if err != nil {
-//		return -1, err
-//	}
-//
-//	if year < ey {
-//		return -1, errors.New(fmt.Sprintf("Cannot determine closing balance of %d", year))
-//	}
-//
-//	committed, err := Committed(year)
-//	if err != nil {
-//		return -1, err
-//	}
-//
-//	uncommitted, err := Uncommitted(year)
-//	if err != nil {
-//		return -1, err
-//	}
-//
-//	initialBalance := committed[len(committed)-1].Id
-//	bset := balanceSet(uncommitted, initialBalance)
-//	return bset[len(bset)-1].Balance, nil
-//}
-
 func Uncommit(id int64) error {
 	return db.UncommitTransaction(id)
 }
@@ -148,41 +123,3 @@ func balanceSet(tset []domain.Transaction, initialBalance int64) []balance {
 
 	return bset
 }
-
-//func ValidDateRange() (time.Time, time.Time) {
-//	var a time.Time
-//	var b time.Time
-//
-//	opening, first, last, err := db.DateSpan()
-//
-//	a := OpeningTransaction().Date
-//	b := time.Date(a.Year()+1, 12, 31, 23, 59, 59, time.UTC)
-//
-//	c, err := Committed(a.Year())
-//	if len(c) > 0 {
-//		a = c[len(c)-1].Date
-//	}
-//
-//	y, err = db.LatestYear()
-//	if err == nil {
-//		b = time.Date(y, 12, 31, 23, 59, 59, time.UTC)
-//	}
-//
-//	return a, b
-//}
-//
-//func OpeningTransaction() {
-//	t, _ := Find(0)
-//	return t
-//}
-//
-//func validDate(date) error {
-//	start, end := ValidDateRange()
-//	if date.Unix() < start.Unix() {
-//		return errors.New(fmt.Sprintf("Date cannot be before %s", start.Format("2006-01-02")))
-//	}
-//	if date.Unix() > end.Unix() {
-//		return errors.New(fmt.Sprintf("Date cannot be after %s", end.Format("2006-01-02")))
-//	}
-//	return nil
-//}
