@@ -54,32 +54,35 @@ func CommittedTransactions(year int) ([]domain.Transaction, error) {
 }
 
 func UncommittedTransactions(year int) ([]domain.Transaction, error) {
-	rows, err := db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt IS NULL ORDER BY date, id ASC", fmt.Sprintf("%d%%", year))
+	var rows *sql.Rows
+	var err error
+
+	var records []domain.Transaction
+
+	if year == -1 {
+		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt IS NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
+	} else {
+		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt IS NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
+	}
+
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	defer rows.Close()
 
-	var records []domain.Transaction
 	for rows.Next() {
-		t := domain.Transaction{}
-		var date string
+		var id int64
+		var dateString string
+		var description string
+		var cents int64
 
-		err = rows.Scan(&t.Id, &date, &t.Description, &t.Cents)
-
-		ts, err := time.Parse(timeLayout, date)
+		err = rows.Scan(&id, &dateString, &description, &cents)
 		if err != nil {
-			return nil, err
+			log.Fatal(err)
 		}
 
-		t.Date = ts
-
-		if err != nil {
-			return nil, err
-		}
-
-		records = append(records, t)
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents})
 	}
 
 	return records, nil
