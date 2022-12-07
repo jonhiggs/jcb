@@ -3,7 +3,7 @@ package menuWin
 import (
 	"errors"
 	"fmt"
-	bal "jcb/lib/balance"
+	"jcb/lib/balance"
 	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	dataf "jcb/ui/formatter/data"
@@ -243,7 +243,7 @@ func separator(y int) {
 }
 
 func updateTransactions() error {
-	b := bal.GetClosing(Year - 1)
+	b := balance.GetClosing(Year - 1)
 
 	uncommitted, _ := transaction.Uncommitted(Year)
 	committed, _ := transaction.Committed(Year)
@@ -273,7 +273,7 @@ func updateTransactions() error {
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}
 
-	bal.SetClosing(Year, b)
+	balance.SetClosing(Year, b)
 
 	id := selectedTransaction()
 
@@ -295,7 +295,7 @@ func updateTransactions() error {
 
 	selectTransaction(id)
 	if len(uncommitted) > 0 {
-		//printLowBalance(findLowestBalance())
+		printLowBalance(findLowestBalance())
 	} else {
 		balanceWin.Clear()
 		balanceWin.Refresh()
@@ -347,16 +347,16 @@ func findLowestBalance() (time.Time, int64) {
 		}
 
 		fields := strings.Fields(m.Name())
-		balance, _ := dataf.Cents(fields[len(fields)-1])
+		b, _ := dataf.Cents(fields[len(fields)-1])
 		date, err := dataf.Date(fields[0])
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if !found || balance < lowBalance {
+		if !found || b < lowBalance {
 			found = true
 			lowDate = date
-			lowBalance = balance
+			lowBalance = b
 		}
 	}
 
