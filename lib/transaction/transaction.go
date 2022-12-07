@@ -88,18 +88,20 @@ func CommittedUntil() (time.Time, error) {
 	return db.TransactionCommittedUntil()
 }
 
-func Type(id, int64) int {
-	if t.Id == 0 {
+func Type(id int64) int {
+	if id == 0 {
 		return TYPE_OPENING
 	}
 
-	for _, t := range Committed {
+	committed, _ := Committed(-1)
+	for _, t := range committed {
 		if t.Id == id {
 			return TYPE_COMMITTED
 		}
 	}
 
-	for _, t := range Uncommitted {
+	uncommitted, _ := Uncommitted(-1)
+	for _, t := range uncommitted {
 		if t.Id == id {
 			return TYPE_UNCOMMITTED
 		}
