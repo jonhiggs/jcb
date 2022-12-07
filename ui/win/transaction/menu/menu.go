@@ -243,7 +243,7 @@ func separator(y int) {
 }
 
 func updateTransactions() error {
-	var balance int64
+	b := bal.Closing(Year - 1)
 
 	uncommitted, err := transaction.Uncommitted(Year)
 	if err != nil {
@@ -263,15 +263,10 @@ func updateTransactions() error {
 		if err != nil {
 			return err
 		}
-		b, _ := bal.Id(n.Id)
+		b, _ = bal.Id(n.Id)
 		balanceStr, _ := stringf.Cents(b)
 		str := fmt.Sprintf("* %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i], _ = gc.NewItem(str, ft.Id)
-	}
-
-	// uncommitted transactions
-	if len(committed) == 0 {
-		balance = bal.Opening(Year)
 	}
 
 	for i, n := range uncommitted {
@@ -280,10 +275,10 @@ func updateTransactions() error {
 			return err
 		}
 		if n.Id == 0 {
-			balance -= n.Cents
+			b -= n.Cents
 		}
-		balance += n.Cents
-		balanceStr, _ := stringf.Cents(balance)
+		b += n.Cents
+		balanceStr, _ := stringf.Cents(b)
 		str := fmt.Sprintf("  %s  %-38s  %8s  %8s", ft.Date, ft.Description, ft.Cents, balanceStr)
 		menuItems[i+len(committed)], _ = gc.NewItem(str, ft.Id)
 	}

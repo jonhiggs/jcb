@@ -45,3 +45,18 @@ func Opening(year int) int64 {
 
 	return b
 }
+
+func Closing(year int) int64 {
+	var b int64
+	committed, _ := transaction.Committed(year - 1)
+	uncommitted, _ := transaction.Uncommitted(year - 1)
+	if len(uncommitted) != 0 {
+		b, _ = Id(uncommitted[len(uncommitted)-1].Id)
+		return b
+	} else if len(committed) != 0 {
+		b, _ = Id(committed[len(uncommitted)-1].Id)
+		return b
+	} else {
+		return 0
+	}
+}
