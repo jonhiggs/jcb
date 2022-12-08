@@ -8,8 +8,10 @@ import (
 	"github.com/rivo/tview"
 )
 
+var app *tview.Application
+
 func Start(year int) {
-	app := tview.NewApplication()
+	app = tview.NewApplication()
 
 	table := TransactionMenu(year)
 	box1 := tview.NewBox().
@@ -40,7 +42,12 @@ func Start(year int) {
 		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
 		table.SetSelectable(false, false)
 	})
-	if err := app.SetRoot(grid, true).EnableMouse(true).Run(); err != nil {
+
+	err := app.SetRoot(grid, true).
+		EnableMouse(true).
+		Run()
+
+	if err != nil {
 		panic(err)
 	}
 }
@@ -118,4 +125,15 @@ func TransactionMenu(year int) *tview.Table {
 	}
 
 	return table
+}
+
+func modal() *tview.Modal {
+	return tview.NewModal().
+		SetText("Do you want to quit the application?").
+		AddButtons([]string{"Quit", "Cancel"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			if buttonLabel == "Quit" {
+				app.Stop()
+			}
+		})
 }
