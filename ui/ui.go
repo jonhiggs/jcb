@@ -12,9 +12,22 @@ func Start(year int) {
 	app := tview.NewApplication()
 
 	table := TransactionMenu(year)
+	box1 := tview.NewBox().
+		SetBorder(true).
+		SetBorderAttributes(tcell.AttrBold).
+		SetTitle("A [red]c[yellow]o[green]l[darkcyan]o[blue]r[darkmagenta]f[red]u[yellow]l[white] [black:red]c[:yellow]o[:green]l[:darkcyan]o[:blue]r[:darkmagenta]f[:red]u[:yellow]l[white:] [::bu]title")
+	box0 := tview.NewBox().
+		SetBorder(true).
+		SetBorderAttributes(tcell.AttrBold).
+		SetTitle("A [red]c[yellow]o[green]l[darkcyan]o[blue]r[darkmagenta]f[red]u[yellow]l[white] [black:red]c[:yellow]o[:green]l[:darkcyan]o[:blue]r[:darkmagenta]f[:red]u[:yellow]l[white:] [::bu]title")
 
-	frame := tview.NewFrame(table).
-		SetBorders(0, 0, 0, 0, 0, 0)
+	grid := tview.NewGrid().
+		SetRows(0, 3).
+		SetColumns(0).
+		SetBorders(false).
+		AddItem(table, 0, 0, 1, 3, 0, 0, true).
+		AddItem(box0, 1, 0, 1, 2, 0, 0, false).
+		AddItem(box1, 1, 2, 1, 1, 0, 20, false)
 
 	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEscape {
@@ -27,7 +40,7 @@ func Start(year int) {
 		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
 		table.SetSelectable(false, false)
 	})
-	if err := app.SetRoot(frame, true).EnableMouse(true).Run(); err != nil {
+	if err := app.SetRoot(grid, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }
