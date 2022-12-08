@@ -10,6 +10,29 @@ import (
 
 func Start(year int) {
 	app := tview.NewApplication()
+
+	table := TransactionMenu(year)
+
+	frame := tview.NewFrame(table).
+		SetBorders(0, 0, 0, 0, 0, 0)
+
+	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEscape {
+			app.Stop()
+		}
+		if key == tcell.KeyEnter {
+			table.SetSelectable(true, true)
+		}
+	}).SetSelectedFunc(func(row int, column int) {
+		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
+		table.SetSelectable(false, false)
+	})
+	if err := app.SetRoot(frame, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+}
+
+func TransactionMenu(year int) *tview.Table {
 	table := tview.NewTable().
 		SetBorders(false)
 
@@ -81,18 +104,5 @@ func Start(year int) {
 
 	}
 
-	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEscape {
-			app.Stop()
-		}
-		if key == tcell.KeyEnter {
-			table.SetSelectable(true, true)
-		}
-	}).SetSelectedFunc(func(row int, column int) {
-		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
-		table.SetSelectable(false, false)
-	})
-	if err := app.SetRoot(table, true).EnableMouse(true).Run(); err != nil {
-		panic(err)
-	}
+	return table
 }
