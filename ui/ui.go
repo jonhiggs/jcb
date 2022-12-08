@@ -17,10 +17,7 @@ func Start(year int) {
 	app = tview.NewApplication()
 
 	table := TransactionMenu(year)
-	//box1 := tview.NewBox().
-	//	SetBorder(true).
-	//	SetBorderAttributes(tcell.AttrBold).
-	//	SetTitle("A [red]c[yellow]o[green]l[darkcyan]o[blue]r[darkmagenta]f[red]u[yellow]l[white] [black:red]c[:yellow]o[:green]l[:darkcyan]o[:blue]r[:darkmagenta]f[:red]u[:yellow]l[white:] [::bu]title")
+
 	box0 := tview.NewTextView().
 		SetDynamicColors(true).
 		SetRegions(true).
@@ -47,12 +44,12 @@ func Start(year int) {
 		AddItem(status, 2, 0, 1, 1, 0, 0, false).
 		AddItem(balance, 2, 1, 1, 1, 0, 0, false)
 
-	table.Select(0, 0).SetFixed(1, 1).SetDoneFunc(func(key tcell.Key) {
+	table.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEscape {
 			app.Stop()
 		}
 		if key == tcell.KeyEnter {
-			table.SetSelectable(true, true)
+			Modal().Focus()
 		}
 	}).SetSelectedFunc(func(row int, column int) {
 		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
@@ -70,7 +67,9 @@ func Start(year int) {
 
 func TransactionMenu(year int) *tview.Table {
 	table := tview.NewTable().
+		Select(0, 0).
 		SetBorders(false).
+		SetFixed(1, 1).
 		SetSelectable(true, false).
 		SetSeparator(' ')
 
