@@ -32,7 +32,7 @@ func Cents(i int64) (string, error) {
 		d = s[0 : len(s)-2]
 		c = s[len(s)-2 : len(s)]
 	}
-	s = fmt.Sprintf("%s%s.%s ", negative, d, c)
+	s = fmt.Sprintf("%s%s.%s", negative, d, c)
 	return fmt.Sprintf("%10s", s), nil
 }
 
@@ -40,12 +40,12 @@ func Date(d time.Time) (string, error) {
 	if d.Year() < 2000 {
 		return "", errors.New(fmt.Sprintf("Date is too old [%d]", d.Year()))
 	}
-	return d.Format("2006-01-02 "), nil
+	return d.Format("2006-01-02"), nil
 }
 
 func Description(d string) (string, error) {
 	d = strings.Trim(d, " ")
-	d = fmt.Sprintf("%-20s ", d)
+	d = fmt.Sprintf("%-27s", d)
 	return d, nil
 }
 
