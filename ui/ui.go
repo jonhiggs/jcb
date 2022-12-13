@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"time"
@@ -23,7 +22,7 @@ func Start(year int) {
 	box0.SetDynamicColors(true)
 	box0.SetRegions(true)
 	box0.SetWordWrap(true)
-	box0.SetText("═══════════════════════════════════════════════════════════════")
+	box0.SetText("════════════════════════════════════════════════════════════")
 	box0.SetTextAlign(cview.AlignCenter)
 
 	balance := cview.NewTextView()
@@ -34,7 +33,7 @@ func Start(year int) {
 	balance.SetTextAlign(cview.AlignRight)
 
 	status := cview.NewTextView()
-	fmt.Printf(status, "status")
+	//fmt.Printf(status, "status")
 
 	grid := cview.NewGrid()
 	grid.SetRows(0, 1, 1)
@@ -50,29 +49,26 @@ func Start(year int) {
 			app.Stop()
 		}
 		if key == tcell.KeyEnter {
-			Modal().Focus()
+			table.SetSelectable(true, true)
 		}
-	}).SetSelectedFunc(func(row int, column int) {
-		table.GetCell(row, column).SetTextColor(tcell.ColorRed)
+	})
+	table.SetSelectedFunc(func(row int, column int) {
+		table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		table.SetSelectable(false, false)
 	})
 
-	err := app.SetRoot(grid, true).
-		EnableMouse(true).
-		Run()
-
-	if err != nil {
-		panic(err)
-	}
+	app.SetRoot(grid, true)
+	app.EnableMouse(true)
+	app.Run()
 }
 
 func TransactionMenu(year int) *cview.Table {
-	table := cview.NewTable().
-		Select(0, 0).
-		SetBorders(false).
-		SetFixed(1, 1).
-		SetSelectable(true, false).
-		SetSeparator(' ')
+	table := cview.NewTable()
+	table.Select(0, 0)
+	table.SetBorders(false)
+	table.SetFixed(1, 1)
+	table.SetSelectable(true, false)
+	table.SetSeparator(' ')
 
 	committed, _ := transaction.Committed(year)
 	uncommitted, _ := transaction.Uncommitted(year)
@@ -81,29 +77,33 @@ func TransactionMenu(year int) *cview.Table {
 		all = append(all, t)
 	}
 
-	table.SetCell(0, 0, cview.NewTableCell("DATE").
-		SetTextColor(tcell.ColorYellow).
-		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
-		SetSelectable(false).
-		SetAlign(cview.AlignLeft))
+	cell := cview.NewTableCell("DATE")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignLeft)
+	table.SetCell(0, 0, cell)
 
-	table.SetCell(0, 1, cview.NewTableCell("DESCRIPTION").
-		SetTextColor(tcell.ColorYellow).
-		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
-		SetSelectable(false).
-		SetAlign(cview.AlignLeft))
+	cell = cview.NewTableCell("DESCRIPTION")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignLeft)
+	table.SetCell(0, 1, cell)
 
-	table.SetCell(0, 2, cview.NewTableCell("AMOUNT").
-		SetTextColor(tcell.ColorYellow).
-		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
-		SetSelectable(false).
-		SetAlign(cview.AlignRight))
+	cell = cview.NewTableCell("AMOUNT")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignRight)
+	table.SetCell(0, 2, cell)
 
-	table.SetCell(0, 3, cview.NewTableCell("BALANCE").
-		SetTextColor(tcell.ColorYellow).
-		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
-		SetSelectable(false).
-		SetAlign(cview.AlignRight))
+	cell = cview.NewTableCell("BALANCE")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignRight)
+	table.SetCell(0, 3, cell)
 
 	b := int64(0)
 	for i, t := range all {
@@ -132,38 +132,41 @@ func TransactionMenu(year int) *cview.Table {
 			attributes = tcell.AttrBold
 		}
 
-		table.SetCell(i+1, 0, cview.NewTableCell(date).
-			SetTextColor(color).
-			SetAttributes(attributes).
-			SetAlign(cview.AlignLeft))
+		cell = cview.NewTableCell(date)
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		cell.SetAlign(cview.AlignLeft)
+		table.SetCell(i+1, 0, cell)
 
-		table.SetCell(i+1, 1, cview.NewTableCell(description).
-			SetTextColor(color).
-			SetAttributes(attributes).
-			SetAlign(cview.AlignLeft))
+		cell = cview.NewTableCell(description)
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		cell.SetAlign(cview.AlignLeft)
+		table.SetCell(i+1, 1, cell)
 
-		table.SetCell(i+1, 2, cview.NewTableCell(cents).
-			SetTextColor(color).
-			SetAttributes(attributes).
-			SetAlign(cview.AlignRight))
+		cell = cview.NewTableCell(cents)
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		cell.SetAlign(cview.AlignRight)
+		table.SetCell(i+1, 2, cell)
 
-		table.SetCell(i+1, 3, cview.NewTableCell(balance).
-			SetTextColor(color).
-			SetAttributes(attributes).
-			SetAlign(cview.AlignRight))
-
+		cell = cview.NewTableCell(balance)
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		cell.SetAlign(cview.AlignRight)
+		table.SetCell(i+1, 3, cell)
 	}
 
 	return table
 }
 
-func Modal() *cview.Modal {
-	return cview.NewModal().
-		SetText("Do you want to quit the application?").
-		AddButtons([]string{"Quit", "Cancel"}).
-		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-			if buttonLabel == "Quit" {
-				app.Stop()
-			}
-		})
-}
+//func Modal() *cview.Modal {
+//	return cview.NewModal().
+//		SetText("Do you want to quit the application?").
+//		AddButtons([]string{"Quit", "Cancel"}).
+//		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+//			if buttonLabel == "Quit" {
+//				app.Stop()
+//			}
+//		})
+//}
