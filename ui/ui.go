@@ -1,48 +1,49 @@
 package ui
 
 import (
+	"fmt"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"time"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
-var app *tview.Application
+var app *cview.Application
 var lowestBalance int64
 var lowestBalanceDate time.Time
 
 func Start(year int) {
-	app = tview.NewApplication()
+	app = cview.NewApplication()
 
 	table := TransactionMenu(year)
 
-	box0 := tview.NewTextView().
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWordWrap(true).
-		SetText("═══════════════════════════════════════════════════════════════").
-		SetTextAlign(tview.AlignCenter)
+	box0 := cview.NewTextView()
+	box0.SetDynamicColors(true)
+	box0.SetRegions(true)
+	box0.SetWordWrap(true)
+	box0.SetText("═══════════════════════════════════════════════════════════════")
+	box0.SetTextAlign(cview.AlignCenter)
 
-	balance := tview.NewTextView().
-		SetDynamicColors(true).
-		SetRegions(true).
-		SetWordWrap(true).
-		SetText("balance").
-		SetTextAlign(tview.AlignRight)
+	balance := cview.NewTextView()
+	balance.SetDynamicColors(true)
+	balance.SetRegions(true)
+	balance.SetWordWrap(true)
+	balance.SetText("balance")
+	balance.SetTextAlign(cview.AlignRight)
 
-	status := tview.NewTextArea().
-		SetPlaceholder("status")
+	status := cview.NewTextView()
+	fmt.Printf(status, "status")
 
-	grid := tview.NewGrid().
-		SetRows(0, 1, 1).
-		SetColumns(40, 20, 0).
-		SetBorders(false).
-		AddItem(table, 0, 0, 1, 2, 0, 0, true).
-		AddItem(box0, 1, 0, 1, 2, 0, 0, true).
-		AddItem(status, 2, 0, 1, 1, 0, 0, false).
-		AddItem(balance, 2, 1, 1, 1, 0, 0, false)
+	grid := cview.NewGrid()
+	grid.SetRows(0, 1, 1)
+	grid.SetColumns(40, 20, 0)
+	grid.SetBorders(false)
+	grid.AddItem(table, 0, 0, 1, 2, 0, 0, true)
+	grid.AddItem(box0, 1, 0, 1, 2, 0, 0, true)
+	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
+	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
 
 	table.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEscape {
@@ -65,8 +66,8 @@ func Start(year int) {
 	}
 }
 
-func TransactionMenu(year int) *tview.Table {
-	table := tview.NewTable().
+func TransactionMenu(year int) *cview.Table {
+	table := cview.NewTable().
 		Select(0, 0).
 		SetBorders(false).
 		SetFixed(1, 1).
@@ -80,29 +81,29 @@ func TransactionMenu(year int) *tview.Table {
 		all = append(all, t)
 	}
 
-	table.SetCell(0, 0, tview.NewTableCell("DATE").
+	table.SetCell(0, 0, cview.NewTableCell("DATE").
 		SetTextColor(tcell.ColorYellow).
 		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
 		SetSelectable(false).
-		SetAlign(tview.AlignLeft))
+		SetAlign(cview.AlignLeft))
 
-	table.SetCell(0, 1, tview.NewTableCell("DESCRIPTION").
+	table.SetCell(0, 1, cview.NewTableCell("DESCRIPTION").
 		SetTextColor(tcell.ColorYellow).
 		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
 		SetSelectable(false).
-		SetAlign(tview.AlignLeft))
+		SetAlign(cview.AlignLeft))
 
-	table.SetCell(0, 2, tview.NewTableCell("AMOUNT").
+	table.SetCell(0, 2, cview.NewTableCell("AMOUNT").
 		SetTextColor(tcell.ColorYellow).
 		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
 		SetSelectable(false).
-		SetAlign(tview.AlignRight))
+		SetAlign(cview.AlignRight))
 
-	table.SetCell(0, 3, tview.NewTableCell("BALANCE").
+	table.SetCell(0, 3, cview.NewTableCell("BALANCE").
 		SetTextColor(tcell.ColorYellow).
 		SetAttributes(tcell.AttrUnderline|tcell.AttrBold).
 		SetSelectable(false).
-		SetAlign(tview.AlignRight))
+		SetAlign(cview.AlignRight))
 
 	b := int64(0)
 	for i, t := range all {
@@ -131,33 +132,33 @@ func TransactionMenu(year int) *tview.Table {
 			attributes = tcell.AttrBold
 		}
 
-		table.SetCell(i+1, 0, tview.NewTableCell(date).
+		table.SetCell(i+1, 0, cview.NewTableCell(date).
 			SetTextColor(color).
 			SetAttributes(attributes).
-			SetAlign(tview.AlignLeft))
+			SetAlign(cview.AlignLeft))
 
-		table.SetCell(i+1, 1, tview.NewTableCell(description).
+		table.SetCell(i+1, 1, cview.NewTableCell(description).
 			SetTextColor(color).
 			SetAttributes(attributes).
-			SetAlign(tview.AlignLeft))
+			SetAlign(cview.AlignLeft))
 
-		table.SetCell(i+1, 2, tview.NewTableCell(cents).
+		table.SetCell(i+1, 2, cview.NewTableCell(cents).
 			SetTextColor(color).
 			SetAttributes(attributes).
-			SetAlign(tview.AlignRight))
+			SetAlign(cview.AlignRight))
 
-		table.SetCell(i+1, 3, tview.NewTableCell(balance).
+		table.SetCell(i+1, 3, cview.NewTableCell(balance).
 			SetTextColor(color).
 			SetAttributes(attributes).
-			SetAlign(tview.AlignRight))
+			SetAlign(cview.AlignRight))
 
 	}
 
 	return table
 }
 
-func Modal() *tview.Modal {
-	return tview.NewModal().
+func Modal() *cview.Modal {
+	return cview.NewModal().
 		SetText("Do you want to quit the application?").
 		AddButtons([]string{"Quit", "Cancel"}).
 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
