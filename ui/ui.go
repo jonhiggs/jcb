@@ -82,7 +82,6 @@ func Start(year int) {
 
 	app.SetInputCapture(c.Capture)
 	app.SetRoot(grid, true)
-	app.EnableMouse(true)
 	app.Run()
 }
 
