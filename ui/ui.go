@@ -3,8 +3,10 @@ package ui
 import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	"log"
 	"time"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -17,6 +19,7 @@ func Start(year int) {
 	app = cview.NewApplication()
 
 	table := TransactionMenu(year)
+	table.SetRect(0, 0, 72, 20)
 
 	box0 := cview.NewTextView()
 	box0.SetDynamicColors(true)
@@ -32,6 +35,10 @@ func Start(year int) {
 	balance.SetText("balance")
 	balance.SetTextAlign(cview.AlignRight)
 
+	panels := cview.NewPanels()
+	panels.AddPanel("balance", table, false, true)
+	panels.AddPanel("box", Box(), false, false)
+
 	status := cview.NewTextView()
 	status.SetText("status")
 
@@ -39,7 +46,7 @@ func Start(year int) {
 	grid.SetRows(0, 1, 1)
 	grid.SetColumns(40, 20, 0)
 	grid.SetBorders(false)
-	grid.AddItem(table, 0, 0, 1, 2, 0, 0, true)
+	grid.AddItem(panels, 0, 0, 1, 2, 0, 0, true)
 	grid.AddItem(box0, 1, 0, 1, 2, 0, 0, true)
 	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
 	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
@@ -48,16 +55,32 @@ func Start(year int) {
 		if key == tcell.KeyEscape {
 			app.Stop()
 		}
+
+		if key == tcell.KeyEscape {
+			app.Stop()
+		}
 		if key == tcell.KeyEnter {
 			table.SetSelectable(true, true)
 		}
 	})
 	table.SetSelectedFunc(func(row int, column int) {
-		app.SetRoot(Window(), true)
+		panels.ShowPanel("box")
 		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		//table.SetSelectable(false, false)
 	})
 
+	handleOpen := func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.ShowPanel("box")
+		return nil
+	}
+
+	c := cbind.NewConfiguration()
+
+	if err := c.Set("Alt+o", handleOpen); err != nil {
+		log.Fatalf("failed to set keybind: %s", err)
+	}
+
+	app.SetInputCapture(c.Capture)
 	app.SetRoot(grid, true)
 	app.EnableMouse(true)
 	app.Run()
@@ -185,4 +208,17 @@ func Window() *cview.WindowManager {
 	wm.Add(w1, w2)
 
 	return wm
+}
+
+func Box() *cview.Box {
+	app := cview.NewApplication()
+	defer app.HandlePanic()
+
+	box := cview.NewBox()
+	box.SetBorder(true)
+	box.SetBorderAttributes(tcell.AttrBold)
+	box.SetRect(10, 10, 20, 20)
+	box.SetTitle("New Transaction")
+
+	return box
 }
