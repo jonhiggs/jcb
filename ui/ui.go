@@ -33,7 +33,7 @@ func Start(year int) {
 	balance.SetTextAlign(cview.AlignRight)
 
 	status := cview.NewTextView()
-	//fmt.Printf(status, "status")
+	status.SetText("status")
 
 	grid := cview.NewGrid()
 	grid.SetRows(0, 1, 1)
@@ -53,8 +53,9 @@ func Start(year int) {
 		}
 	})
 	table.SetSelectedFunc(func(row int, column int) {
-		table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
-		table.SetSelectable(false, false)
+		app.SetRoot(Window(), true)
+		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
+		//table.SetSelectable(false, false)
 	})
 
 	app.SetRoot(grid, true)
@@ -79,28 +80,28 @@ func TransactionMenu(year int) *cview.Table {
 
 	cell := cview.NewTableCell("DATE")
 	cell.SetTextColor(tcell.ColorYellow)
-	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
 	table.SetCell(0, 0, cell)
 
 	cell = cview.NewTableCell("DESCRIPTION")
 	cell.SetTextColor(tcell.ColorYellow)
-	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
 	table.SetCell(0, 1, cell)
 
 	cell = cview.NewTableCell("AMOUNT")
 	cell.SetTextColor(tcell.ColorYellow)
-	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 2, cell)
 
 	cell = cview.NewTableCell("BALANCE")
 	cell.SetTextColor(tcell.ColorYellow)
-	cell.SetAttributes(tcell.AttrUnderline|tcell.AttrBold)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 3, cell)
@@ -160,13 +161,28 @@ func TransactionMenu(year int) *cview.Table {
 	return table
 }
 
-//func Modal() *cview.Modal {
-//	return cview.NewModal().
-//		SetText("Do you want to quit the application?").
-//		AddButtons([]string{"Quit", "Cancel"}).
-//		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-//			if buttonLabel == "Quit" {
-//				app.Stop()
-//			}
-//		})
-//}
+func Window() *cview.WindowManager {
+	list := cview.NewList()
+	list.ShowSecondaryText(false)
+	list.AddItem(cview.NewListItem("Item #1"))
+	list.AddItem(cview.NewListItem("Item #2"))
+	list.AddItem(cview.NewListItem("Item #3"))
+	list.AddItem(cview.NewListItem("Item #4"))
+	list.AddItem(cview.NewListItem("Item #5"))
+	list.AddItem(cview.NewListItem("Item #6"))
+	list.AddItem(cview.NewListItem("Item #7"))
+
+	loremIpsum := cview.NewTextView()
+	loremIpsum.SetText("balh blah blha")
+
+	wm := cview.NewWindowManager()
+	w1 := cview.NewWindow(list)
+	w1.SetRect(2, 2, 10, 7)
+	w2 := cview.NewWindow(loremIpsum)
+	w2.SetRect(7, 4, 12, 12)
+	w1.SetTitle("List")
+	w2.SetTitle("Lorem Ipsum")
+	wm.Add(w1, w2)
+
+	return wm
+}
