@@ -12,6 +12,7 @@ import (
 )
 
 var app *cview.Application
+var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
 
@@ -35,9 +36,9 @@ func Start(year int) {
 	balance.SetText("balance")
 	balance.SetTextAlign(cview.AlignRight)
 
-	panels := cview.NewPanels()
+	panels = cview.NewPanels()
 	panels.AddPanel("balance", table, false, true)
-	panels.AddPanel("box", Box(), false, false)
+	panels.AddPanel("insert", Form(), false, false)
 
 	status := cview.NewTextView()
 	status.SetText("status")
@@ -64,13 +65,13 @@ func Start(year int) {
 		}
 	})
 	table.SetSelectedFunc(func(row int, column int) {
-		panels.ShowPanel("box")
+		panels.ShowPanel("insert")
 		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		//table.SetSelectable(false, false)
 	})
 
 	handleOpen := func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.ShowPanel("box")
+		panels.ShowPanel("insert")
 		return nil
 	}
 
@@ -210,9 +211,6 @@ func Window() *cview.WindowManager {
 }
 
 func Box() *cview.Box {
-	app := cview.NewApplication()
-	defer app.HandlePanic()
-
 	box := cview.NewBox()
 	box.SetBorder(true)
 	box.SetBorderAttributes(tcell.AttrBold)
@@ -220,4 +218,34 @@ func Box() *cview.Box {
 	box.SetTitle("New Transaction")
 
 	return box
+}
+
+func Form() *cview.Form {
+	form := cview.NewForm()
+
+	date := cview.NewInputField()
+	date.SetLabel("Date")
+	date.SetFieldWidth(11)
+	date.SetFieldNote("Your complete address")
+
+	form.AddFormItem(date)
+	form.AddInputField("Description:", "", 0, nil, nil)
+	form.AddInputField("Amount:", "", 6, nil, nil)
+	form.AddInputField("Repeat Every:", "", 4, nil, nil)
+	form.AddInputField("Repeat Until", "2022-12-31", 11, func(t string, c rune) bool { return true }, nil)
+	form.AddButton("Save", func() {
+	})
+	form.AddButton("Quit", func() {
+		panels.HidePanel("insert")
+		date.SetText("")
+		form.SetFocus(0)
+	})
+	form.SetBorder(true)
+	form.SetBorderAttributes(tcell.AttrBold)
+	form.SetRect(4, 4, 50, 20)
+	form.SetTitleAlign(cview.AlignCenter)
+	form.SetTitle(" New Transaction ")
+	form.SetWrapAround(true)
+
+	return form
 }
