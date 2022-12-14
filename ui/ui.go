@@ -70,14 +70,14 @@ func Start(year int) {
 		//table.SetSelectable(false, false)
 	})
 
-	handleOpen := func(ev *tcell.EventKey) *tcell.EventKey {
+	handleOpenInsert := func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.ShowPanel("insert")
 		return nil
 	}
 
 	c := cbind.NewConfiguration()
 
-	if err := c.Set("Alt+o", handleOpen); err != nil {
+	if err := c.Set("i", handleOpenInsert); err != nil {
 		log.Fatalf("failed to set keybind: %s", err)
 	}
 
