@@ -38,7 +38,7 @@ func Start(year int) {
 
 	panels = cview.NewPanels()
 	panels.AddPanel("balance", table, false, true)
-	panels.AddPanel("insert", Form(), false, false)
+	panels.AddPanel("insert", createInsertForm(), false, false)
 
 	status := cview.NewTextView()
 	status.SetText("status")
@@ -69,11 +69,6 @@ func Start(year int) {
 		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		//table.SetSelectable(false, false)
 	})
-
-	handleOpenInsert := func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.ShowPanel("insert")
-		return nil
-	}
 
 	c := cbind.NewConfiguration()
 
@@ -218,34 +213,4 @@ func Box() *cview.Box {
 	box.SetTitle("New Transaction")
 
 	return box
-}
-
-func Form() *cview.Form {
-	form := cview.NewForm()
-
-	date := cview.NewInputField()
-	date.SetLabel("Date")
-	date.SetFieldWidth(11)
-	date.SetFieldNote("Your complete address")
-
-	form.AddFormItem(date)
-	form.AddInputField("Description:", "", 0, nil, nil)
-	form.AddInputField("Amount:", "", 6, nil, nil)
-	form.AddInputField("Repeat Every:", "", 4, nil, nil)
-	form.AddInputField("Repeat Until", "2022-12-31", 11, func(t string, c rune) bool { return true }, nil)
-	form.AddButton("Save", func() {
-	})
-	form.AddButton("Quit", func() {
-		panels.HidePanel("insert")
-		date.SetText("")
-		form.SetFocus(0)
-	})
-	form.SetBorder(true)
-	form.SetBorderAttributes(tcell.AttrBold)
-	form.SetRect(4, 4, 50, 20)
-	form.SetTitleAlign(cview.AlignCenter)
-	form.SetTitle(" New Transaction ")
-	form.SetWrapAround(true)
-
-	return form
 }
