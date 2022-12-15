@@ -1,6 +1,10 @@
 package ui
 
 import (
+	"jcb/domain"
+
+	dataf "jcb/lib/formatter/data"
+
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -8,7 +12,7 @@ import (
 var insertForm *cview.Form
 var insertInputFieldDate *cview.InputField
 var insertInputFieldDescription *cview.InputField
-var insertInputFieldAmount *cview.InputField
+var insertInputFieldCents *cview.InputField
 var insertInputFieldRepeatRule *cview.InputField
 var insertInputFieldRepeatUntil *cview.InputField
 
@@ -21,11 +25,20 @@ func handleCloseInsert() {
 	panels.HidePanel("insert")
 	insertInputFieldDate.SetText("")
 	insertInputFieldDescription.SetText("")
-	insertInputFieldAmount.SetText("")
+	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
 	insertInputFieldRepeatUntil.SetText("2022-12-31")
 	insertForm.SetFocus(0)
 	return
+}
+
+func readInsertForm() domain.Transaction {
+	return domain.Transaction{
+		0,
+		dataf.Date(insertInputFieldDate.GetText()),
+		dataf.Description(insertInputFieldDescription.GetText()),
+		dataf.Cents(insertInputFieldCents.GetText()),
+	}
 }
 
 func createInsertForm() *cview.Form {
@@ -39,9 +52,9 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
 
-	insertInputFieldAmount = cview.NewInputField()
-	insertInputFieldAmount.SetLabel("Amount:")
-	insertInputFieldAmount.SetFieldWidth(6)
+	insertInputFieldCents = cview.NewInputField()
+	insertInputFieldCents.SetLabel("Amount:")
+	insertInputFieldCents.SetFieldWidth(6)
 
 	insertInputFieldRepeatRule = cview.NewInputField()
 	insertInputFieldRepeatRule.SetLabel("Repeat Every:")
@@ -56,7 +69,7 @@ func createInsertForm() *cview.Form {
 
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldDescription)
-	insertForm.AddFormItem(insertInputFieldAmount)
+	insertForm.AddFormItem(insertInputFieldCents)
 	insertForm.AddFormItem(insertInputFieldRepeatRule)
 	insertForm.AddFormItem(insertInputFieldRepeatUntil)
 
