@@ -34,11 +34,10 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
 	insertInputFieldDate.SetFieldWidth(11)
-	insertInputFieldDate.SetFieldNote("Your complete address")
 
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
-	insertInputFieldDescription.SetFieldWidth(6)
+	insertInputFieldDescription.SetFieldWidth(0)
 
 	insertInputFieldAmount = cview.NewInputField()
 	insertInputFieldAmount.SetLabel("Amount:")
@@ -46,8 +45,9 @@ func createInsertForm() *cview.Form {
 
 	insertInputFieldRepeatRule = cview.NewInputField()
 	insertInputFieldRepeatRule.SetLabel("Repeat Every:")
-	insertInputFieldRepeatRule.SetFieldWidth(4)
+	insertInputFieldRepeatRule.SetFieldWidth(14)
 	insertInputFieldRepeatRule.SetText("0d")
+	insertInputFieldRepeatRule.SetFieldNote(`<number>(dwm)`)
 
 	insertInputFieldRepeatUntil = cview.NewInputField()
 	insertInputFieldRepeatUntil.SetLabel("Repeat Until:")
@@ -64,7 +64,7 @@ func createInsertForm() *cview.Form {
 	insertForm.AddButton("Quit", handleCloseInsert)
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(4, 4, 50, 20)
+	insertForm.SetRect(4, 4, 45, 18)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" New Transaction ")
 	insertForm.SetWrapAround(true)
