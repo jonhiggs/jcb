@@ -3,7 +3,9 @@ package ui
 import (
 	"time"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
+	"github.com/gdamore/tcell/v2"
 )
 
 var app *cview.Application
@@ -44,6 +46,31 @@ func Start(year int) {
 	grid.AddItem(box0, 1, 0, 1, 2, 0, 0, true)
 	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
 	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
+
+	c := cbind.NewConfiguration()
+	handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
+		pn, _ := panels.GetFrontPanel()
+		if pn == "transactions" {
+			app.Stop()
+		} else {
+			handleCloseInsert()
+		}
+		return nil
+	}
+
+	c.SetRune(tcell.ModCtrl, 'c', handleExit)
+
+	app.SetInputCapture(c.Capture)
+
+	//app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	//	switch event.Key() {
+	//	case tcell.KeyCtrlD:
+	//		status.SetText("hi")
+	//	case tcell.KeyCtrlC:
+	//		status.SetText("worked")
+	//	}
+	//	return event
+	//})
 
 	app.SetRoot(grid, true)
 	app.Run()
