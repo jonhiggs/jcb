@@ -3,7 +3,9 @@ package ui
 import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	"log"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -17,6 +19,13 @@ func createTransactionsTable() *cview.Table {
 	table.SetSelectable(true, false)
 	table.SetSeparator(' ')
 	table.SetRect(0, 0, 72, 20)
+
+	c := cbind.NewConfiguration()
+	if err := c.Set("i", handleOpenInsert); err != nil {
+		log.Fatalf("failed to set keybind: %s", err)
+	}
+
+	table.SetInputCapture(c.Capture)
 
 	committed, _ := transaction.Committed(year)
 	uncommitted, _ := transaction.Uncommitted(year)
