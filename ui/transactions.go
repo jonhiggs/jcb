@@ -3,7 +3,6 @@ package ui
 import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
-	"log"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -21,10 +20,7 @@ func createTransactionsTable() *cview.Table {
 	table.SetRect(0, 0, 72, 20)
 
 	c := cbind.NewConfiguration()
-	if err := c.Set("i", handleOpenInsert); err != nil {
-		log.Fatalf("failed to set keybind: %s", err)
-	}
-
+	c.Set("i", handleOpenInsert)
 	table.SetInputCapture(c.Capture)
 
 	committed, _ := transaction.Committed(year)
