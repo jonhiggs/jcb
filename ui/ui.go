@@ -45,13 +45,6 @@ func Start(year int) {
 	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
 	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
 
-	//c := cbind.NewConfiguration()
-
-	//if err := c.Set("i", handleOpenInsert); err != nil {
-	//	log.Fatalf("failed to set keybind: %s", err)
-	//}
-
-	//app.SetInputCapture(c.Capture)
 	app.SetRoot(grid, true)
 	app.Run()
 }
