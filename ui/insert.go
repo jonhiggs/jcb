@@ -71,6 +71,7 @@ func readInsertForm() domain.Transaction {
 
 func createInsertForm() *cview.Form {
 	insertForm = cview.NewForm()
+	insertForm.SetCancelFunc(handleCloseInsert)
 
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
