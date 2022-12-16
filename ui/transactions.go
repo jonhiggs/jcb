@@ -111,13 +111,6 @@ func createTransactionsTable() *cview.Table {
 	}
 
 	table.SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEscape {
-			app.Stop()
-		}
-
-		if key == tcell.KeyEscape {
-			app.Stop()
-		}
 		if key == tcell.KeyEnter {
 			table.SetSelectable(true, true)
 		}
