@@ -1,10 +1,8 @@
 package ui
 
 import (
-	"log"
 	"time"
 
-	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 )
 
@@ -12,6 +10,7 @@ var app *cview.Application
 var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
+var status *cview.TextView
 
 func Start(year int) {
 	app = cview.NewApplication()
@@ -34,7 +33,7 @@ func Start(year int) {
 	panels.AddPanel("transactions", createTransactionsTable(), false, true)
 	panels.AddPanel("insert", createInsertForm(), false, false)
 
-	status := cview.NewTextView()
+	status = cview.NewTextView()
 	status.SetText("status")
 
 	grid := cview.NewGrid()
@@ -46,13 +45,13 @@ func Start(year int) {
 	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
 	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
 
-	c := cbind.NewConfiguration()
+	//c := cbind.NewConfiguration()
 
-	if err := c.Set("i", handleOpenInsert); err != nil {
-		log.Fatalf("failed to set keybind: %s", err)
-	}
+	//if err := c.Set("i", handleOpenInsert); err != nil {
+	//	log.Fatalf("failed to set keybind: %s", err)
+	//}
 
-	app.SetInputCapture(c.Capture)
+	//app.SetInputCapture(c.Capture)
 	app.SetRoot(grid, true)
 	app.Run()
 }

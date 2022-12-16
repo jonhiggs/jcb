@@ -1,10 +1,14 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/domain"
+	"log"
 
 	dataf "jcb/lib/formatter/data"
+	"jcb/lib/validator"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -18,6 +22,19 @@ var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("insert")
+
+	c := cbind.NewConfiguration()
+
+	if err := c.Set("x", handleOpenInsert); err != nil {
+		log.Fatalf("failed to set keybind: %s", err)
+	}
+
+	insertForm.SetInputCapture(c.Capture)
+
+	if err := c.Set("x", handleOpenInsert); err != nil {
+		log.Fatalf("failed to set keybind: %s", err)
+	}
+
 	return nil
 }
 
@@ -30,6 +47,17 @@ func handleCloseInsert() {
 	insertInputFieldRepeatUntil.SetText("2022-12-31")
 	insertForm.SetFocus(0)
 	return
+}
+
+func validateInsertForm(s string) {
+	err := validator.Date(s)
+	if err != nil {
+		status.SetText(fmt.Sprint(err))
+		insertInputFieldDate.SetLabelColor(tcell.ColorRed)
+	} else {
+		insertInputFieldDate.SetLabelColor(tcell.ColorGreen)
+		status.SetText("")
+	}
 }
 
 func readInsertForm() domain.Transaction {
@@ -47,6 +75,11 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
 	insertInputFieldDate.SetFieldWidth(11)
+	insertInputFieldDate.SetChangedFunc(validateInsertForm)
+	insertInputFieldDate.SetFieldBackgroundColor(tcell.ColorRed)
+	insertInputFieldDate.SetFieldBackgroundColorFocused(tcell.ColorRed)
+	insertInputFieldDate.SetFieldTextColor(tcell.ColorBlue)
+	insertInputFieldDate.SetFieldTextColorFocused(tcell.ColorBlue)
 
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
