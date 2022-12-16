@@ -3,12 +3,10 @@ package ui
 import (
 	"fmt"
 	"jcb/domain"
-	"log"
 
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/validator"
 
-	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -22,19 +20,6 @@ var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("insert")
-
-	c := cbind.NewConfiguration()
-
-	if err := c.Set("x", handleOpenInsert); err != nil {
-		log.Fatalf("failed to set keybind: %s", err)
-	}
-
-	insertForm.SetInputCapture(c.Capture)
-
-	if err := c.Set("x", handleOpenInsert); err != nil {
-		log.Fatalf("failed to set keybind: %s", err)
-	}
-
 	return nil
 }
 
