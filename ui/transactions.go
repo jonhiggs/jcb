@@ -29,6 +29,32 @@ func handleSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleHalfPageDown(ev *tcell.EventKey) *tcell.EventKey {
+	_, h := app.GetScreenSize()
+	r, _ := table.GetSelection()
+
+	if r+(h/2) < table.GetRowCount() {
+		table.Select(r+(h/2), 0)
+	} else {
+		table.Select(table.GetRowCount()-1, 0)
+	}
+
+	return nil
+}
+
+func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
+	_, h := app.GetScreenSize()
+	r, _ := table.GetSelection()
+
+	if r-(h/2) > 0 {
+		table.Select(r-(h/2), 0)
+	} else {
+		table.Select(0, 0)
+	}
+
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
 	year := 2022
 	table = cview.NewTable()
@@ -44,6 +70,8 @@ func createTransactionsTable() *cview.Table {
 	c.Set("i", handleOpenInsert)
 	c.Set("j", handleSelectNext)
 	c.Set("k", handleSelectPrev)
+	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
+	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
 	table.SetInputCapture(c.Capture)
 
 	committed, _ := transaction.Committed(year)
