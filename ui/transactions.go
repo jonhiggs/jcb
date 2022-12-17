@@ -9,9 +9,25 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+var table *cview.Table
+
+func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := table.GetSelection()
+	if table.GetRowCount() > r+1 {
+		table.Select(r+1, 0)
+	}
+	return nil
+}
+
+func handleSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := table.GetSelection()
+	table.Select(r-1, 0)
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
 	year := 2022
-	table := cview.NewTable()
+	table = cview.NewTable()
 	table.Select(0, 0)
 	table.SetBorders(false)
 	table.SetFixed(1, 1)
@@ -21,6 +37,8 @@ func createTransactionsTable() *cview.Table {
 
 	c := cbind.NewConfiguration()
 	c.Set("i", handleOpenInsert)
+	c.Set("j", handleSelectNext)
+	c.Set("k", handleSelectPrev)
 	table.SetInputCapture(c.Capture)
 
 	committed, _ := transaction.Committed(year)
