@@ -39,10 +39,6 @@ func handleCloseInsert() {
 	return
 }
 
-func handleSaveInsert() {
-	return
-}
-
 func validateInsertForm(s string) {
 	err := validator.Date(s)
 	if err != nil {
@@ -134,6 +130,9 @@ func handleSaveTransaction() {
 			status.SetText(fmt.Sprint(err))
 		}
 	}
+
+	handleCloseInsert()
+	// select the inserted transaction
 }
 
 func createInsertForm() *cview.Form {
