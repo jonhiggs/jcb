@@ -3,6 +3,8 @@ package ui
 import (
 	"fmt"
 	"jcb/domain"
+	"jcb/ui-goncurses/repeater"
+	"log"
 	"regexp"
 	"strings"
 
@@ -73,7 +75,8 @@ func dateInputFieldAcceptance(s string, c rune) bool {
 		return c == '0' || c == '1'
 	case 7:
 		var v bool
-		if strings.HasPrefix(s, "0") {
+		status.SetText(s[len(s)-2:])
+		if strings.HasPrefix(s[len(s)-2:], "0") {
 			v, _ = regexp.MatchString(`[1-9]`, string(c))
 		} else {
 			v, _ = regexp.MatchString(`[0-2]`, string(c))
@@ -94,22 +97,42 @@ func dateInputFieldChanged(s string) {
 	return
 }
 
-func readInsertForm() domain.Transaction {
-	return domain.Transaction{
-		-1,
-		dataf.Date(insertInputFieldDate.GetText()),
-		dataf.Description(insertInputFieldDescription.GetText()),
-		dataf.Cents(insertInputFieldCents.GetText()),
+func readInsertForm() []domain.Transaction {
+	var transactions []domain.Transaction
+	repeatFrom, err := transaction.CommittedUntil()
+
+	date := dataf.Date(insertInputFieldDate.GetText())
+	description := dataf.Description(insertInputFieldDescription.GetText())
+	cents := dataf.Cents(insertInputFieldCents.GetText())
+	repeatRule := dataf.RepeatRule(insertInputFieldRepeatRule.GetText())
+	repeatUntil := dataf.Date(insertInputFieldRepeatUntil.GetText())
+	repeatFrom, err = transaction.CommittedUntil()
+
+	timestamps, err := repeater.Expand(date, repeatFrom, repeatUntil, repeatRule)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	for _, ts := range timestamps {
+		transactions = append(transactions, domain.Transaction{
+			-1,
+			ts,
+			description,
+			cents,
+		})
+	}
+
+	return transactions
 }
 
 func handleSaveTransaction() {
-	t := readInsertForm()
-	id, err := transaction.Insert(t)
-	if err == nil {
-		status.SetText(fmt.Sprintf("saving transaction %d", id))
-	} else {
-		status.SetText(fmt.Sprint(err))
+	for _, t := range readInsertForm() {
+		id, err := transaction.Insert(t)
+		if err == nil {
+			status.SetText(fmt.Sprintf("saving transaction %d", id))
+		} else {
+			status.SetText(fmt.Sprint(err))
+		}
 	}
 }
 
