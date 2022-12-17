@@ -3,8 +3,11 @@ package ui
 import (
 	"fmt"
 	"jcb/domain"
+	"regexp"
+	"strings"
 
 	dataf "jcb/lib/formatter/data"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -34,6 +37,10 @@ func handleCloseInsert() {
 	return
 }
 
+func handleSaveInsert() {
+	return
+}
+
 func validateInsertForm(s string) {
 	err := validator.Date(s)
 	if err != nil {
@@ -45,12 +52,64 @@ func validateInsertForm(s string) {
 	}
 }
 
+func dateInputFieldAcceptance(s string, c rune) bool {
+	valid_char, _ := regexp.MatchString(`[\d\-]*`, string(c))
+	if !valid_char {
+		return false
+	}
+
+	switch len(s) {
+	case 1:
+		return c == '2'
+	case 2:
+		return c == '0'
+	case 3:
+		return c == '2'
+	case 4:
+		return c == '2'
+	case 5, 8:
+		return c == '-'
+	case 6:
+		return c == '0' || c == '1'
+	case 7:
+		var v bool
+		if strings.HasPrefix(s, "0") {
+			v, _ = regexp.MatchString(`[1-9]`, string(c))
+		} else {
+			v, _ = regexp.MatchString(`[0-2]`, string(c))
+		}
+		return v
+	case 9:
+		v, _ := regexp.MatchString(`[0123]`, string(c))
+		return v
+	case 10:
+		v, _ := regexp.MatchString(`[0-9]`, string(c))
+		return v
+	}
+
+	return false
+}
+
+func dateInputFieldChanged(s string) {
+	return
+}
+
 func readInsertForm() domain.Transaction {
 	return domain.Transaction{
-		0,
+		-1,
 		dataf.Date(insertInputFieldDate.GetText()),
 		dataf.Description(insertInputFieldDescription.GetText()),
 		dataf.Cents(insertInputFieldCents.GetText()),
+	}
+}
+
+func handleSaveTransaction() {
+	t := readInsertForm()
+	id, err := transaction.Insert(t)
+	if err == nil {
+		status.SetText(fmt.Sprintf("saving transaction %d", id))
+	} else {
+		status.SetText(fmt.Sprint(err))
 	}
 }
 
@@ -59,13 +118,11 @@ func createInsertForm() *cview.Form {
 	insertForm.SetCancelFunc(handleCloseInsert)
 
 	insertInputFieldDate = cview.NewInputField()
-	insertInputFieldDate.SetLabel("Date:")
+	insertInputFieldDate.SetLabel("Date")
+	insertInputFieldDate.SetText("2022-")
 	insertInputFieldDate.SetFieldWidth(11)
-	insertInputFieldDate.SetChangedFunc(validateInsertForm)
-	insertInputFieldDate.SetFieldBackgroundColor(tcell.ColorRed)
-	insertInputFieldDate.SetFieldBackgroundColorFocused(tcell.ColorRed)
-	insertInputFieldDate.SetFieldTextColor(tcell.ColorBlue)
-	insertInputFieldDate.SetFieldTextColorFocused(tcell.ColorBlue)
+	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
+	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
@@ -92,7 +149,7 @@ func createInsertForm() *cview.Form {
 	insertForm.AddFormItem(insertInputFieldRepeatRule)
 	insertForm.AddFormItem(insertInputFieldRepeatUntil)
 
-	insertForm.AddButton("Save", func() {})
+	insertForm.AddButton("Save", handleSaveTransaction)
 	insertForm.AddButton("Quit", handleCloseInsert)
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
@@ -100,6 +157,8 @@ func createInsertForm() *cview.Form {
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" New Transaction ")
 	insertForm.SetWrapAround(true)
+	insertForm.SetFieldBackgroundColor(tcell.Color242)
+	insertForm.SetFieldBackgroundColorFocused(tcell.ColorRed)
 
 	return insertForm
 }
