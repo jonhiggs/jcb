@@ -136,7 +136,7 @@ func createTransactionsTable() *cview.Table {
 			attributes = tcell.AttrBold
 		}
 
-		cell = cview.NewTableCell(" " + date)
+		cell = cview.NewTableCell(date)
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
