@@ -34,6 +34,7 @@ func createTransactionsTable() *cview.Table {
 	table.SetSelectable(true, false)
 	table.SetSeparator(' ')
 	table.SetRect(0, 0, 72, 20)
+	table.SetScrollBarVisibility(cview.ScrollBarNever)
 
 	c := cbind.NewConfiguration()
 	c.Set("i", handleOpenInsert)
@@ -103,7 +104,7 @@ func createTransactionsTable() *cview.Table {
 			attributes = tcell.AttrBold
 		}
 
-		cell = cview.NewTableCell(date)
+		cell = cview.NewTableCell(" " + date)
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)

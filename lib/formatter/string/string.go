@@ -45,7 +45,7 @@ func Date(d time.Time) (string, error) {
 
 func Description(d string) (string, error) {
 	d = strings.Trim(d, " ")
-	d = fmt.Sprintf("%-27s", d)
+	d = fmt.Sprintf("%-25s", d)
 	return d, nil
 }
 
