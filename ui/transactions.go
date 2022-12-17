@@ -16,6 +16,10 @@ func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 	if table.GetRowCount() > r+1 {
 		table.Select(r+1, 0)
 	}
+
+	_, h := app.GetScreenSize()
+	table.SetRect(0, 0, 72, h-2)
+
 	return nil
 }
 

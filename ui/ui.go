@@ -74,4 +74,7 @@ func Start(year int) {
 
 	app.SetRoot(grid, true)
 	app.Run()
+
+	_, h := app.GetScreenSize()
+	table.SetRect(0, 0, 72, h-2)
 }
