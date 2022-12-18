@@ -2,7 +2,7 @@ package ui
 
 import (
 	"jcb/domain"
-	"jcb/ui-goncurses/repeater"
+	"jcb/lib/repeater"
 	"log"
 	"regexp"
 	"strings"

@@ -14,7 +14,7 @@ import (
 
 func Cents(s string) int64 {
 	if validator.Cents(s) != nil {
-		log.Fatal("cannot convert invalid cents to data")
+		log.Fatal(fmt.Sprintf("cannot convert invalid cents '%s' to data", s))
 	}
 
 	s = strings.Trim(s, " ")
@@ -46,7 +46,7 @@ func Description(s string) string {
 
 func Id(d string) int64 {
 	if validator.Id(d) != nil {
-		log.Fatal("cannot convert invalid id to data")
+		log.Fatal(fmt.Sprintf("cannot convert invalid id '%s' to data", d))
 	}
 
 	id, _ := strconv.ParseInt(d, 10, 64)
@@ -55,7 +55,7 @@ func Id(d string) int64 {
 
 func RepeatRule(rule string) string {
 	if validator.RepeatRule(rule) != nil {
-		log.Fatal("cannot convert invalid repeat rule to data")
+		log.Fatal(fmt.Sprintf("cannot convert invalid repeat rule '%s' to data", rule))
 	}
 
 	return strings.Trim(rule, " ")

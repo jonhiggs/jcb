@@ -26,7 +26,7 @@ func handleOpenEdit() {
 	panels.ShowPanel("edit")
 
 	t, _ := transaction.Find(selectionId())
-	ts, _ := stringf.Transaction(t)
+	ts := stringf.Transaction(t)
 
 	editInputFieldDate.SetText(ts.Date)
 	editInputFieldDescription.SetText(ts.Description)

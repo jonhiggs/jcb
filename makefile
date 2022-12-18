@@ -3,9 +3,9 @@ run: test build
 
 test:
 	go test ./lib/transaction
-	#go test ./ui/formatter/data
-	#go test ./ui/formatter/string
-	#go test ./ui/repeater
+	go test ./lib/formatter/data
+	go test ./lib/formatter/string
+	go test ./lib/repeater
 
 build:
 	go build  -o jcb ./cmd/main.go
