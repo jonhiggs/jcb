@@ -54,6 +54,21 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleJumpToFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
+	uncommitted, _ := transaction.Uncommitted(2022)
+	firstUncommitted := uncommitted[0]
+
+	for i, v := range transactionIds {
+		if firstUncommitted.Id == v {
+			table.Select(i, 0)
+			return nil
+		}
+	}
+
+	table.Select(len(transactionIds)-1, 0)
+	return nil
+}
+
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
 	transaction.Delete(transactionIds[r])
@@ -92,6 +107,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("k", handleSelectPrev)
 	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
+	c.Set("0", handleJumpToFirstUncommitted)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("C", handleCommitTransaction)
 	table.SetInputCapture(c.Capture)
