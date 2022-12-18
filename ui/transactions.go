@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 
@@ -74,8 +75,6 @@ func handleJumpSimilar(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 	curDescription := table.GetCell(curRow, 1).GetText()
 
-	status.SetText(curDescription)
-
 	for i := curRow + 1; i != curRow; i++ {
 		if table.GetCell(i, 1).GetText() == curDescription {
 			table.Select(i, 0)
@@ -86,6 +85,44 @@ func handleJumpSimilar(ev *tcell.EventKey) *tcell.EventKey {
 			i = 0
 		}
 	}
+
+	return nil
+}
+
+func handleJumpMonthNext(ev *tcell.EventKey) *tcell.EventKey {
+	curRow, _ := table.GetSelection()
+	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
+
+	status.SetText(fmt.Sprintf("%d", int(curMonth)))
+
+	for i := curRow + 1; i < len(transactionIds); i++ {
+		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
+		if int(month) > int(curMonth) {
+			table.Select(i, 0)
+			return nil
+		}
+	}
+
+	table.Select(len(transactionIds)-1, 0)
+
+	return nil
+}
+
+func handleJumpMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
+	curRow, _ := table.GetSelection()
+	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
+
+	status.SetText(fmt.Sprintf("%d", int(curMonth)))
+
+	for i := curRow + 1; i > 0; i-- {
+		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
+		if int(month) < int(curMonth) {
+			table.Select(i, 0)
+			return nil
+		}
+	}
+
+	table.Select(1, 0)
 
 	return nil
 }
@@ -129,6 +166,8 @@ func createTransactionsTable() *cview.Table {
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
 	c.Set("0", handleJumpToFirstUncommitted)
 	c.Set("*", handleJumpSimilar)
+	c.Set("}", handleJumpMonthNext)
+	c.Set("{", handleJumpMonthPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("C", handleCommitTransaction)
 	table.SetInputCapture(c.Capture)
