@@ -88,7 +88,7 @@ func createEditForm() *cview.Form {
 	editForm.AddButton("Close", handleCloseEdit)
 	editForm.SetBorder(true)
 	editForm.SetBorderAttributes(tcell.AttrBold)
-	editForm.SetRect(6, 4, 45, 16)
+	editForm.SetRect(6, 4, 45, 11)
 	editForm.SetTitleAlign(cview.AlignCenter)
 	editForm.SetTitle(" Edit Transaction ")
 	editForm.SetWrapAround(true)
