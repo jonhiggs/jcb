@@ -70,6 +70,26 @@ func handleJumpToFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleJumpSimilar(ev *tcell.EventKey) *tcell.EventKey {
+	curRow, _ := table.GetSelection()
+	curDescription := table.GetCell(curRow, 1).GetText()
+
+	status.SetText(curDescription)
+
+	for i := curRow + 1; i != curRow; i++ {
+		if table.GetCell(i, 1).GetText() == curDescription {
+			table.Select(i, 0)
+			break
+		}
+
+		if i == len(transactionIds) {
+			i = 0
+		}
+	}
+
+	return nil
+}
+
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
 	transaction.Delete(transactionIds[r])
@@ -108,6 +128,7 @@ func createTransactionsTable() *cview.Table {
 	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
 	c.Set("0", handleJumpToFirstUncommitted)
+	c.Set("*", handleJumpSimilar)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("C", handleCommitTransaction)
 	table.SetInputCapture(c.Capture)
