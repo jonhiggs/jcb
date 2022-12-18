@@ -24,16 +24,18 @@ var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("insert")
-	return nil
-}
 
-func handleCloseInsert() {
-	panels.HidePanel("insert")
 	insertInputFieldDate.SetText("2022-")
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
 	insertInputFieldRepeatUntil.SetText("2022-12-31")
+
+	return nil
+}
+
+func handleCloseInsert() {
+	panels.HidePanel("insert")
 	insertForm.SetFocus(0)
 	return
 }
