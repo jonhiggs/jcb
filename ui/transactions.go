@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 
@@ -200,7 +201,7 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 0, cell)
 
-		cell = cview.NewTableCell(description)
+		cell = cview.NewTableCell(fmt.Sprintf("%-26s", description))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
