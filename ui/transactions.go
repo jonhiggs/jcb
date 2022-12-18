@@ -53,6 +53,14 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := table.GetSelection()
+	transaction.Delete(transactionIds[r])
+	updateTransactionsTable()
+	table.Select(r, 0)
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
 	table = cview.NewTable()
 	table.Select(0, 0)
@@ -69,6 +77,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("k", handleSelectPrev)
 	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
+	c.Set("x", handleDeleteTransaction)
 	table.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
