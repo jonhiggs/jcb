@@ -10,6 +10,7 @@ import (
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -160,16 +161,22 @@ func createInsertForm() *cview.Form {
 	insertForm.AddFormItem(insertInputFieldRepeatRule)
 	insertForm.AddFormItem(insertInputFieldRepeatUntil)
 
-	insertForm.AddButton("Save", handleSaveTransaction)
-	insertForm.AddButton("Close", handleCloseInsert)
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(6, 4, 45, 16)
+	insertForm.SetRect(6, 4, 45, 14)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" Insert Transaction ")
 	insertForm.SetWrapAround(true)
 	insertForm.SetFieldBackgroundColor(tcell.Color242)
 	insertForm.SetFieldBackgroundColorFocused(tcell.ColorRed)
+
+	c := cbind.NewConfiguration()
+	c.SetKey(0, tcell.KeyEnter, handleEditTransaction)
+	insertInputFieldDate.SetInputCapture(c.Capture)
+	insertInputFieldDescription.SetInputCapture(c.Capture)
+	insertInputFieldCents.SetInputCapture(c.Capture)
+	insertInputFieldRepeatRule.SetInputCapture(c.Capture)
+	insertInputFieldRepeatUntil.SetInputCapture(c.Capture)
 
 	return insertForm
 }

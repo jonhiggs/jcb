@@ -8,6 +8,7 @@ import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -51,7 +52,7 @@ func readEditForm() domain.Transaction {
 	}
 }
 
-func handleEditTransaction() {
+func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	t := readEditForm()
 	err := transaction.Edit(t)
 	if err == nil {
@@ -60,6 +61,7 @@ func handleEditTransaction() {
 	} else {
 		log.Fatal(err)
 	}
+	return nil
 }
 
 func createEditForm() *cview.Form {
@@ -84,16 +86,20 @@ func createEditForm() *cview.Form {
 	editForm.AddFormItem(editInputFieldDescription)
 	editForm.AddFormItem(editInputFieldCents)
 
-	editForm.AddButton("Save", handleEditTransaction)
-	editForm.AddButton("Close", handleCloseEdit)
 	editForm.SetBorder(true)
 	editForm.SetBorderAttributes(tcell.AttrBold)
-	editForm.SetRect(6, 4, 45, 11)
+	editForm.SetRect(6, 4, 45, 9)
 	editForm.SetTitleAlign(cview.AlignCenter)
 	editForm.SetTitle(" Edit Transaction ")
 	editForm.SetWrapAround(true)
 	editForm.SetFieldBackgroundColor(tcell.Color242)
 	editForm.SetFieldBackgroundColorFocused(tcell.ColorRed)
+
+	c := cbind.NewConfiguration()
+	c.SetKey(0, tcell.KeyEnter, handleEditTransaction)
+	editInputFieldDate.SetInputCapture(c.Capture)
+	editInputFieldDescription.SetInputCapture(c.Capture)
+	editInputFieldCents.SetInputCapture(c.Capture)
 
 	return editForm
 }
