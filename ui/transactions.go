@@ -11,6 +11,7 @@ import (
 
 var table *cview.Table
 var transactionIds []int64
+var initialBalance int64
 
 func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
@@ -61,7 +62,15 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := table.GetSelection()
+	transaction.Commit(transactionIds[r], initialBalance, 2022)
+	updateTransactionsTable()
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
+	initialBalance = 0
 	table = cview.NewTable()
 	table.Select(0, 0)
 	table.SetBorders(false)
@@ -78,6 +87,7 @@ func createTransactionsTable() *cview.Table {
 	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
 	c.Set("x", handleDeleteTransaction)
+	c.Set("C", handleCommitTransaction)
 	table.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
@@ -134,7 +144,7 @@ func updateTransactionsTable() {
 	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 3, cell)
 
-	b := int64(0)
+	b := initialBalance
 	transactionIds = make([]int64, len(all)+1)
 	for i, t := range all {
 		b += t.Cents
