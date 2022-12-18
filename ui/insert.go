@@ -163,7 +163,7 @@ func createInsertForm() *cview.Form {
 	insertForm.AddFormItem(insertInputFieldRepeatUntil)
 
 	insertForm.AddButton("Save", handleSaveTransaction)
-	insertForm.AddButton("Quit", handleCloseInsert)
+	insertForm.AddButton("Close", handleCloseInsert)
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
 	insertForm.SetRect(6, 4, 45, 16)
