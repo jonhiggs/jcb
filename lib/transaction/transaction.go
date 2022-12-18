@@ -36,11 +36,11 @@ func Edit(t domain.Transaction) error {
 	return db.EditTransaction(t)
 }
 
-func Delete(t domain.Transaction) error {
-	if t.Id == 0 {
+func Delete(id int64) error {
+	if id == 0 {
 		return errors.New("You cannot delete the opening balance")
 	}
-	return db.DeleteTransaction(t.Id)
+	return db.DeleteTransaction(id)
 }
 
 func DeleteId(id int64) error {
