@@ -53,7 +53,6 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func createTransactionsTable() *cview.Table {
-	year := 2022
 	table = cview.NewTable()
 	table.Select(0, 0)
 	table.SetBorders(false)
@@ -71,6 +70,25 @@ func createTransactionsTable() *cview.Table {
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
 	table.SetInputCapture(c.Capture)
 
+	updateTransactionsTable()
+
+	table.SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			table.SetSelectable(true, true)
+		}
+	})
+
+	table.SetSelectedFunc(func(row int, column int) {
+		panels.ShowPanel("insert")
+		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
+		//table.SetSelectable(false, false)
+	})
+
+	return table
+}
+
+func updateTransactionsTable() {
+	year := 2022
 	committed, _ := transaction.Committed(year)
 	uncommitted, _ := transaction.Uncommitted(year)
 	all := committed
@@ -157,18 +175,4 @@ func createTransactionsTable() *cview.Table {
 		cell.SetAlign(cview.AlignRight)
 		table.SetCell(i+1, 3, cell)
 	}
-
-	table.SetDoneFunc(func(key tcell.Key) {
-		if key == tcell.KeyEnter {
-			table.SetSelectable(true, true)
-		}
-	})
-
-	table.SetSelectedFunc(func(row int, column int) {
-		panels.ShowPanel("insert")
-		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
-		//table.SetSelectable(false, false)
-	})
-
-	return table
 }

@@ -132,6 +132,8 @@ func handleSaveTransaction() {
 	}
 
 	handleCloseInsert()
+	updateTransactionsTable()
+
 	// select the inserted transaction
 }
 
