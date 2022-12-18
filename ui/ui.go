@@ -34,6 +34,7 @@ func Start(year int) {
 	panels = cview.NewPanels()
 	panels.AddPanel("transactions", createTransactionsTable(), false, true)
 	panels.AddPanel("insert", createInsertForm(), false, false)
+	panels.AddPanel("edit", createEditForm(), false, false)
 
 	status = cview.NewTextView()
 	status.SetText("status")
