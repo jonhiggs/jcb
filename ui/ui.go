@@ -62,6 +62,10 @@ func Start(year int) {
 
 	app.SetInputCapture(c.Capture)
 
+	app.SetAfterResizeFunc(func(w int, h int) {
+		table.SetRect(0, 0, 72, h-2)
+	})
+
 	//app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 	//	switch event.Key() {
 	//	case tcell.KeyCtrlD:

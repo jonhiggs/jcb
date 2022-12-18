@@ -17,9 +17,6 @@ func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 		table.Select(r+1, 0)
 	}
 
-	_, h := app.GetScreenSize()
-	table.SetRect(0, 0, 72, h-2)
-
 	return nil
 }
 
