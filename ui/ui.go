@@ -66,16 +66,6 @@ func Start(year int) {
 		table.SetRect(0, 0, 72, h-2)
 	})
 
-	//app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-	//	switch event.Key() {
-	//	case tcell.KeyCtrlD:
-	//		status.SetText("hi")
-	//	case tcell.KeyCtrlC:
-	//		status.SetText("worked")
-	//	}
-	//	return event
-	//})
-
 	app.SetRoot(grid, true)
 	app.Run()
 }
