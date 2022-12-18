@@ -56,7 +56,7 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleJumpToFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
+func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	uncommitted, _ := transaction.Uncommitted(2022)
 	firstUncommitted := uncommitted[0]
 
@@ -71,7 +71,7 @@ func handleJumpToFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleJumpSimilar(ev *tcell.EventKey) *tcell.EventKey {
+func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 	curDescription := table.GetCell(curRow, 1).GetText()
 
@@ -89,11 +89,9 @@ func handleJumpSimilar(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleJumpMonthNext(ev *tcell.EventKey) *tcell.EventKey {
+func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
-
-	status.SetText(fmt.Sprintf("%d", int(curMonth)))
 
 	for i := curRow + 1; i < len(transactionIds); i++ {
 		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
@@ -108,11 +106,9 @@ func handleJumpMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleJumpMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
+func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
-
-	status.SetText(fmt.Sprintf("%d", int(curMonth)))
 
 	for i := curRow + 1; i > 0; i-- {
 		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
@@ -164,10 +160,10 @@ func createTransactionsTable() *cview.Table {
 	c.Set("k", handleSelectPrev)
 	c.SetRune(tcell.ModCtrl, 'd', handleHalfPageDown)
 	c.SetRune(tcell.ModCtrl, 'u', handleHalfPageUp)
-	c.Set("0", handleJumpToFirstUncommitted)
-	c.Set("*", handleJumpSimilar)
-	c.Set("}", handleJumpMonthNext)
-	c.Set("{", handleJumpMonthPrev)
+	c.Set("0", handleSelectFirstUncommitted)
+	c.Set("*", handleSelectSimilar)
+	c.Set("}", handleSelectMonthNext)
+	c.Set("{", handleSelectMonthPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("C", handleCommitTransaction)
 	table.SetInputCapture(c.Capture)
