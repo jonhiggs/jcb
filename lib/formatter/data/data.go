@@ -14,7 +14,7 @@ import (
 
 func Cents(s string) int64 {
 	if validator.Cents(s) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid cents to data")
 	}
 
 	s = strings.Trim(s, " ")
@@ -29,7 +29,7 @@ func Cents(s string) int64 {
 
 func Date(s string) time.Time {
 	if validator.Date(s) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal(fmt.Sprintf("cannot convert invalid date '%s' to data", s))
 	}
 
 	r, _ := time.Parse("2006-01-02", strings.Trim(s, " "))
@@ -38,7 +38,7 @@ func Date(s string) time.Time {
 
 func Description(s string) string {
 	if validator.Description(s) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid description to data")
 	}
 
 	return strings.Trim(s, " ")
@@ -46,7 +46,7 @@ func Description(s string) string {
 
 func Id(d string) int64 {
 	if validator.Id(d) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid id to data")
 	}
 
 	id, _ := strconv.ParseInt(d, 10, 64)
@@ -55,7 +55,7 @@ func Id(d string) int64 {
 
 func RepeatRule(rule string) string {
 	if validator.RepeatRule(rule) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid repeat rule to data")
 	}
 
 	return strings.Trim(rule, " ")
@@ -63,7 +63,7 @@ func RepeatRule(rule string) string {
 
 func RepeatRuleUnit(rule string) string {
 	if validator.RepeatRule(rule) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid repeat rule unit to data")
 	}
 
 	return rule[len(rule)-1:]
@@ -71,7 +71,7 @@ func RepeatRuleUnit(rule string) string {
 
 func RepeatRuleFrequency(rule string) int {
 	if validator.RepeatRule(rule) != nil {
-		log.Fatal("cannot convert invalid input to data")
+		log.Fatal("cannot convert invalid frequency to data")
 	}
 
 	i, _ := strconv.Atoi(rule[0 : len(rule)-1])
