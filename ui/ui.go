@@ -55,6 +55,7 @@ func Start(year int) {
 			app.Stop()
 		} else {
 			handleCloseInsert()
+			handleCloseEdit()
 		}
 		return nil
 	}
