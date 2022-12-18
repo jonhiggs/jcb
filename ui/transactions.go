@@ -10,6 +10,7 @@ import (
 )
 
 var table *cview.Table
+var transactionIds []int64
 
 func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
@@ -125,6 +126,7 @@ func updateTransactionsTable() {
 	table.SetCell(0, 3, cell)
 
 	b := int64(0)
+	transactionIds = make([]int64, len(all)+1)
 	for i, t := range all {
 		b += t.Cents
 		date, _ := stringf.Date(t.Date)
@@ -174,5 +176,16 @@ func updateTransactionsTable() {
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
 		table.SetCell(i+1, 3, cell)
+
+		transactionIds[i+1] = t.Id
 	}
+}
+
+func selectTransaction(id int64) {
+	for i, v := range transactionIds {
+		if v == id {
+			table.Select(i, 0)
+		}
+	}
+
 }

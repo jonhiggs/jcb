@@ -125,16 +125,14 @@ func handleSaveTransaction() {
 	for _, t := range readInsertForm() {
 		id, err := transaction.Insert(t)
 		if err == nil {
-			status.SetText(fmt.Sprintf("saving transaction %d", id))
+			updateTransactionsTable()
+			selectTransaction(id)
 		} else {
 			status.SetText(fmt.Sprint(err))
 		}
 	}
 
 	handleCloseInsert()
-	updateTransactionsTable()
-
-	// select the inserted transaction
 }
 
 func createInsertForm() *cview.Form {
