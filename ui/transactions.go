@@ -121,7 +121,7 @@ func createTransactionsTable() *cview.Table {
 	})
 
 	table.SetSelectedFunc(func(row int, column int) {
-		panels.ShowPanel("edit")
+		handleOpenEdit()
 		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
 		//table.SetSelectable(false, false)
 	})
