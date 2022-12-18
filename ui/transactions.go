@@ -82,7 +82,7 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	year := 2022
 	r, _ := table.GetSelection()
 	id := transactionIds[r]
-	if transaction.IsCommitted(id, year) {
+	if transaction.IsCommitted(id) {
 		transaction.Uncommit(id)
 	} else {
 		transaction.Commit(id, initialBalance, year)
