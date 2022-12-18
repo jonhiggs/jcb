@@ -2,8 +2,11 @@ package ui
 
 import (
 	"jcb/domain"
+	"log"
 
 	dataf "jcb/lib/formatter/data"
+	stringf "jcb/lib/formatter/string"
+	"jcb/lib/transaction"
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -14,15 +17,20 @@ var editInputFieldDate *cview.InputField
 var editInputFieldDescription *cview.InputField
 var editInputFieldCents *cview.InputField
 
-func handleOpenEdit(ev *tcell.EventKey) *tcell.EventKey {
+func handleOpenEdit() {
 	panels.ShowPanel("edit")
-	return nil
+
+	t, _ := transaction.Find(selectionId())
+	ts, _ := stringf.Transaction(t)
+
+	editInputFieldDate.SetText(ts.Date)
+	editInputFieldDescription.SetText(ts.Description)
+	editInputFieldCents.SetText(ts.Cents)
 }
 
 func handleCloseEdit() {
 	panels.HidePanel("edit")
 	editForm.SetFocus(0)
-	return
 }
 
 func readEditForm() domain.Transaction {
@@ -31,26 +39,23 @@ func readEditForm() domain.Transaction {
 	cents := dataf.Cents(editInputFieldCents.GetText())
 
 	return domain.Transaction{
-		-1,
+		selectionId(),
 		date,
 		description,
 		cents,
 	}
 }
 
-//func handleSaveTransaction() {
-//	for _, t := range readInsertForm() {
-//		id, err := transaction.Insert(t)
-//		if err == nil {
-//			updateTransactionsTable()
-//			selectTransaction(id)
-//		} else {
-//			status.SetText(fmt.Sprint(err))
-//		}
-//	}
-//
-//	handleCloseInsert()
-//}
+func handleEditTransaction() {
+	t := readEditForm()
+	err := transaction.Edit(t)
+	if err == nil {
+		updateTransactionsTable()
+		handleCloseEdit()
+	} else {
+		log.Fatal(err)
+	}
+}
 
 func createEditForm() *cview.Form {
 	editForm = cview.NewForm()
@@ -58,10 +63,9 @@ func createEditForm() *cview.Form {
 
 	editInputFieldDate = cview.NewInputField()
 	editInputFieldDate.SetLabel("Date:")
-	editInputFieldDate.SetText("2022-")
 	editInputFieldDate.SetFieldWidth(11)
-	editInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
-	editInputFieldDate.SetChangedFunc(dateInputFieldChanged)
+	//editInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
+	//editInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
@@ -71,11 +75,11 @@ func createEditForm() *cview.Form {
 	editInputFieldCents.SetLabel("Amount:")
 	editInputFieldCents.SetFieldWidth(6)
 
-	editForm.AddFormItem(insertInputFieldDate)
-	editForm.AddFormItem(insertInputFieldDescription)
-	editForm.AddFormItem(insertInputFieldCents)
+	editForm.AddFormItem(editInputFieldDate)
+	editForm.AddFormItem(editInputFieldDescription)
+	editForm.AddFormItem(editInputFieldCents)
 
-	editForm.AddButton("Save", handleSaveTransaction)
+	editForm.AddButton("Save", handleEditTransaction)
 	editForm.AddButton("Close", handleCloseEdit)
 	editForm.SetBorder(true)
 	editForm.SetBorderAttributes(tcell.AttrBold)
