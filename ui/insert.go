@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"jcb/domain"
 	"jcb/ui-goncurses/repeater"
 	"log"
@@ -37,7 +36,6 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 func handleCloseInsert() {
 	panels.HidePanel("insert")
 	insertForm.SetFocus(0)
-	return
 }
 
 func dateInputFieldAcceptance(s string, c rune) bool {
@@ -118,7 +116,7 @@ func handleSaveTransaction() {
 			updateTransactionsTable()
 			selectTransaction(id)
 		} else {
-			status.SetText(fmt.Sprint(err))
+			log.Fatal(err)
 		}
 	}
 
@@ -168,7 +166,7 @@ func createInsertForm() *cview.Form {
 	insertForm.SetBorderAttributes(tcell.AttrBold)
 	insertForm.SetRect(6, 4, 45, 16)
 	insertForm.SetTitleAlign(cview.AlignCenter)
-	insertForm.SetTitle(" New Transaction ")
+	insertForm.SetTitle(" Insert Transaction ")
 	insertForm.SetWrapAround(true)
 	insertForm.SetFieldBackgroundColor(tcell.Color242)
 	insertForm.SetFieldBackgroundColorFocused(tcell.ColorRed)
