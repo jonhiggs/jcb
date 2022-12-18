@@ -63,9 +63,15 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	year := 2022
 	r, _ := table.GetSelection()
-	transaction.Commit(transactionIds[r], initialBalance, 2022)
-	updateTransactionsTable()
+	id := transactionIds[r]
+	if transaction.IsCommitted(id, year) {
+		transaction.Uncommit(id)
+	} else {
+		transaction.Commit(id, initialBalance, year)
+		updateTransactionsTable()
+	}
 	return nil
 }
 
