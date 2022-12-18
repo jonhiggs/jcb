@@ -10,7 +10,6 @@ import (
 
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
-	"jcb/lib/validator"
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -30,24 +29,13 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleCloseInsert() {
 	panels.HidePanel("insert")
-	insertInputFieldDate.SetText("")
+	insertInputFieldDate.SetText("2022-")
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
 	insertInputFieldRepeatUntil.SetText("2022-12-31")
 	insertForm.SetFocus(0)
 	return
-}
-
-func validateInsertForm(s string) {
-	err := validator.Date(s)
-	if err != nil {
-		status.SetText(fmt.Sprint(err))
-		insertInputFieldDate.SetLabelColor(tcell.ColorRed)
-	} else {
-		insertInputFieldDate.SetLabelColor(tcell.ColorGreen)
-		status.SetText("")
-	}
 }
 
 func dateInputFieldAcceptance(s string, c rune) bool {
@@ -140,7 +128,7 @@ func createInsertForm() *cview.Form {
 	insertForm.SetCancelFunc(handleCloseInsert)
 
 	insertInputFieldDate = cview.NewInputField()
-	insertInputFieldDate.SetLabel("Date")
+	insertInputFieldDate.SetLabel("Date:")
 	insertInputFieldDate.SetText("2022-")
 	insertInputFieldDate.SetFieldWidth(11)
 	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
@@ -164,6 +152,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldRepeatUntil.SetLabel("Repeat Until:")
 	insertInputFieldRepeatUntil.SetFieldWidth(11)
 	insertInputFieldRepeatUntil.SetText("2022-12-31")
+	insertInputFieldRepeatUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
 
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldDescription)
@@ -175,7 +164,7 @@ func createInsertForm() *cview.Form {
 	insertForm.AddButton("Quit", handleCloseInsert)
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(4, 4, 45, 18)
+	insertForm.SetRect(6, 4, 45, 16)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" New Transaction ")
 	insertForm.SetWrapAround(true)
