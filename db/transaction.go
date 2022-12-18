@@ -167,3 +167,19 @@ func TransactionCommittedUntil() (time.Time, error) {
 
 	return time.Unix(0, 0), nil
 }
+
+func TransactionIsCommitted(id int64) bool {
+	var count int
+	statement, _ := db.Prepare("SELECT COUNT(*) FROM transactions WHERE id == ? AND committedAt NOT NULL")
+	statement.QueryRow(id).Scan(&count)
+
+	switch count {
+	case 0:
+		return false
+	case 1:
+		return true
+	}
+
+	log.Fatal("There should never be more than two items sharing an id")
+	return false
+}
