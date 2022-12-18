@@ -230,3 +230,8 @@ func selectTransaction(id int64) {
 	}
 
 }
+
+func selectionId() int64 {
+	r, _ := table.GetSelection()
+	return transactionIds[r]
+}
