@@ -58,7 +58,8 @@ func Committed(year int) ([]domain.Transaction, error) {
 	return db.CommittedTransactions(year)
 }
 
-func Commit(id int64, initialBalance int64, year int) error {
+func Commit(id int64, initialBalance int64) error {
+	year := db.TransactionYear(id)
 	balance, err := commitSet(id, initialBalance, year)
 	if err != nil {
 		return err

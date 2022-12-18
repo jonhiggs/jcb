@@ -183,3 +183,11 @@ func TransactionIsCommitted(id int64) bool {
 	log.Fatal("There should never be more than two items sharing an id")
 	return false
 }
+
+func TransactionYear(id int64) int {
+	var dateString string
+	statement, _ := db.Prepare("SELECT date FROM transactions WHERE id == ?")
+	statement.QueryRow(id).Scan(&dateString)
+
+	return parseDate(dateString).Year()
+}
