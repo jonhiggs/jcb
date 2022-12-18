@@ -76,7 +76,7 @@ func createEditForm() *cview.Form {
 	editForm.AddFormItem(insertInputFieldCents)
 
 	editForm.AddButton("Save", handleSaveTransaction)
-	editForm.AddButton("Quit", handleCloseInsert)
+	editForm.AddButton("Close", handleCloseEdit)
 	editForm.SetBorder(true)
 	editForm.SetBorderAttributes(tcell.AttrBold)
 	editForm.SetRect(6, 4, 45, 16)
