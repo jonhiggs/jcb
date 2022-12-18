@@ -3,14 +3,14 @@
 package stringFormatter
 
 import (
-	"errors"
 	"fmt"
 	"jcb/domain"
+	"log"
 	"strings"
 	"time"
 )
 
-func Cents(i int64) (string, error) {
+func Cents(i int64) string {
 	var d string
 	var c string
 
@@ -33,55 +33,32 @@ func Cents(i int64) (string, error) {
 		c = s[len(s)-2 : len(s)]
 	}
 	s = fmt.Sprintf("%s%s.%s", negative, d, c)
-	return fmt.Sprintf("%10s", s), nil
+	return s
 }
 
-func Date(d time.Time) (string, error) {
-	if d.Year() < 2000 {
-		return "", errors.New(fmt.Sprintf("Date is too old [%d]", d.Year()))
-	}
-	return d.Format("2006-01-02"), nil
+func Date(d time.Time) string {
+	return d.Format("2006-01-02")
 }
 
-func Description(d string) (string, error) {
-	d = strings.Trim(d, " ")
-	return d, nil
+func Description(d string) string {
+	return strings.Trim(d, " ")
 }
 
-func Id(d int64) (string, error) {
-	var err error
-	err = nil
-
+func Id(d int64) string {
 	s := fmt.Sprintf("%d", d)
 
 	if d < 0 {
 		s = "0"
-		err = errors.New("Id cannot be less than 0")
+		log.Fatal("Id cannot be less than 0")
 	}
-	return s, err
+	return s
 }
 
-func Transaction(d domain.Transaction) (domain.StringTransaction, error) {
-	r := domain.StringTransaction{}
-	id, err := Id(d.Id)
-	if err != nil {
-		return r, err
-	}
+func Transaction(d domain.Transaction) domain.StringTransaction {
+	id := Id(d.Id)
+	date := Date(d.Date)
+	description := Description(d.Description)
+	cents := Cents(d.Cents)
 
-	date, err := Date(d.Date)
-	if err != nil {
-		return r, err
-	}
-
-	description, err := Description(d.Description)
-	if err != nil {
-		return r, err
-	}
-
-	cents, err := Cents(d.Cents)
-	if err != nil {
-		return r, err
-	}
-
-	return domain.StringTransaction{id, date, description, cents}, nil
+	return domain.StringTransaction{id, date, description, cents}
 }

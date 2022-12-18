@@ -226,10 +226,10 @@ func updateTransactionsTable() {
 	transactionIds = make([]int64, len(all)+1)
 	for i, t := range all {
 		b += t.Cents
-		date, _ := stringf.Date(t.Date)
-		description, _ := stringf.Description(t.Description)
-		cents, _ := stringf.Cents(t.Cents)
-		balance, _ := stringf.Cents(b)
+		date := stringf.Date(t.Date)
+		description := stringf.Description(t.Description)
+		cents := stringf.Cents(t.Cents)
+		balance := stringf.Cents(b)
 		isCommitted := false
 
 		for _, ct := range committed {
@@ -262,7 +262,7 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 1, cell)
 
-		cell = cview.NewTableCell(cents)
+		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
