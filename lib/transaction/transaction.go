@@ -81,6 +81,17 @@ func CommittedUntil() (time.Time, error) {
 	return db.TransactionCommittedUntil()
 }
 
+func IsCommitted(id int64, year int) bool {
+	transactions, _ := Committed(year)
+	for _, t := range transactions {
+		if t.Id == id {
+			return true
+		}
+	}
+
+	return false
+}
+
 // set of transactions that need to be committed before committing provided id
 func commitSet(id int64, initialBalance int64, year int) ([]balance, error) {
 	var found bool
