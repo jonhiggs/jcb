@@ -20,12 +20,11 @@ var editInputFieldCents *cview.InputField
 
 func handleOpenEdit() {
 	if transaction.IsCommitted(selectionId()) {
-		status.SetText("Cannot edit a committed transaction")
+		printStatus("Cannot edit a committed transaction")
 		return
 	}
 
 	panels.ShowPanel("edit")
-	panels.SendToFront("edit")
 
 	t, _ := transaction.Find(selectionId())
 	ts := stringf.Transaction(t)
