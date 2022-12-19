@@ -111,7 +111,7 @@ func readInsertForm() []domain.Transaction {
 	return transactions
 }
 
-func handleSaveTransaction() {
+func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	for _, t := range readInsertForm() {
 		id, err := transaction.Insert(t)
 		if err == nil {
@@ -123,6 +123,7 @@ func handleSaveTransaction() {
 	}
 
 	handleCloseInsert()
+	return nil
 }
 
 func createInsertForm() *cview.Form {
@@ -172,7 +173,7 @@ func createInsertForm() *cview.Form {
 	insertForm.SetFieldBackgroundColorFocused(tcell.ColorRed)
 
 	c := cbind.NewConfiguration()
-	c.SetKey(0, tcell.KeyEnter, handleEditTransaction)
+	c.SetKey(0, tcell.KeyEnter, handleInsertTransaction)
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)
