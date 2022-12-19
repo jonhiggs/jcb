@@ -7,7 +7,6 @@ import (
 	"jcb/ui"
 	"log"
 	"os"
-	"time"
 
 	"nullprogram.com/x/optparse"
 )
@@ -49,12 +48,10 @@ func main() {
 		}
 	}
 
-	year := time.Now().Year()
-
-	err = db.Init(file, year)
+	err = db.Init(file)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ui.Start(year)
+	ui.Start()
 }

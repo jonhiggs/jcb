@@ -13,7 +13,7 @@ import (
 
 var db *sql.DB
 
-func Init(file string, year int) error {
+func Init(file string) error {
 	var err error
 	makeConfigDir(file)
 	db, err = sql.Open("sqlite3", file)
@@ -44,6 +44,8 @@ func Init(file string, year int) error {
 	if err != nil {
 		return err
 	}
+
+	year := time.Now().Year()
 
 	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0}
 	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents)
