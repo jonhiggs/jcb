@@ -132,10 +132,17 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	curRow, _ := table.GetSelection()
+	var r int
+	if curRow == len(transactionIds)-1 {
+		r = curRow - 1
+	} else {
+		r = curRow
+	}
+
 	transaction.Delete(id)
 	table.RemoveRow(curRow)
 	updateTransactionsTable()
-	table.Select(curRow-1, 0)
+	table.Select(r, 0)
 
 	return nil
 }
