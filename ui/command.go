@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -27,7 +28,7 @@ func handleOpenCommand(ev *tcell.EventKey) *tcell.EventKey {
 func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 	switch commandInputField.GetText() {
 	case "version":
-		status.SetText("v0.0.0")
+		status.SetText(config.VERSION)
 	default:
 		status.SetText(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
 	}
