@@ -15,6 +15,17 @@ var findQuery string
 func handleOpenFind(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("find")
 	panels.SendToFront("find")
+
+	findInputField.SetLabel(string(ev.Rune()))
+	c := cbind.NewConfiguration()
+	switch ev.Rune() {
+	case '/':
+		c.SetKey(0, tcell.KeyEnter, handleFindForwards)
+	case '?':
+		c.SetKey(0, tcell.KeyEnter, handleFindBackwards)
+	}
+	findInputField.SetInputCapture(c.Capture)
+
 	findInputField.SetText("")
 	findForm.SetFocus(0)
 	return nil
@@ -24,10 +35,18 @@ func handleCloseFind() {
 	panels.HidePanel("find")
 }
 
-func handleFind(ev *tcell.EventKey) *tcell.EventKey {
+func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 	findQuery = findInputField.GetText()
 	handleCloseFind()
 	handleSelectNextMatch(ev)
+
+	return nil
+}
+
+func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
+	findQuery = findInputField.GetText()
+	handleCloseFind()
+	handleSelectPrevMatch(ev)
 
 	return nil
 }
@@ -70,7 +89,7 @@ func handleSelectPrevMatch(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func createFindForm(direction string) *cview.Form {
+func createFindForm() *cview.Form {
 	findForm = cview.NewForm()
 	findForm.SetBorder(false)
 	findForm.SetCancelFunc(handleCloseFind)
@@ -81,14 +100,9 @@ func createFindForm(direction string) *cview.Form {
 	findForm.SetFieldBackgroundColorFocused(tcell.ColorBlack)
 
 	findInputField = cview.NewInputField()
-	findInputField.SetLabel("/")
 	findInputField.SetFieldWidth(24)
 
 	findForm.AddFormItem(findInputField)
-
-	c := cbind.NewConfiguration()
-	c.SetKey(0, tcell.KeyEnter, handleFind)
-	findInputField.SetInputCapture(c.Capture)
 
 	return findForm
 }
