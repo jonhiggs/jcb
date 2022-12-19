@@ -124,10 +124,19 @@ func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := table.GetSelection()
-	transaction.Delete(transactionIds[r])
+	id := selectionId()
+
+	if transaction.IsCommitted(id) {
+		status.SetText("Cannot delete committed transactions")
+		return nil
+	}
+
+	curRow, _ := table.GetSelection()
+	transaction.Delete(id)
+	table.RemoveRow(curRow)
 	updateTransactionsTable()
-	table.Select(r, 0)
+	table.Select(curRow-1, 0)
+
 	return nil
 }
 
