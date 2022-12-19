@@ -13,8 +13,10 @@ var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
 var status *cview.TextView
+var year int
 
-func Start(year int) {
+func Start() {
+	year = time.Now().Year()
 	app = cview.NewApplication()
 
 	box0 := cview.NewTextView()

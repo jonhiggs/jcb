@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/domain"
 	"jcb/lib/repeater"
 	"log"
@@ -25,11 +26,11 @@ var insertInputFieldRepeatUntil *cview.InputField
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("insert")
 
-	insertInputFieldDate.SetText("2022-")
+	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
-	insertInputFieldRepeatUntil.SetText("2022-12-31")
+	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31", year))
 
 	return nil
 }
@@ -130,7 +131,7 @@ func createInsertForm() *cview.Form {
 
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
-	insertInputFieldDate.SetText("2022-")
+	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
 	insertInputFieldDate.SetFieldWidth(11)
 	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
 	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
@@ -152,7 +153,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldRepeatUntil = cview.NewInputField()
 	insertInputFieldRepeatUntil.SetLabel("Repeat Until:")
 	insertInputFieldRepeatUntil.SetFieldWidth(11)
-	insertInputFieldRepeatUntil.SetText("2022-12-31")
+	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31"))
 	insertInputFieldRepeatUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
 
 	insertForm.AddFormItem(insertInputFieldDate)
