@@ -38,6 +38,7 @@ func Start() {
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
 	panels.AddPanel("find", createFindForm(), false, false)
+	panels.AddPanel("command", createCommandForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
 
 	grid := cview.NewGrid()
@@ -55,6 +56,7 @@ func Start() {
 			handleCloseInsert()
 			handleCloseEdit()
 			handleCloseFind()
+			handleCloseCommand()
 		}
 		return nil
 	}
@@ -65,8 +67,9 @@ func Start() {
 
 	app.SetAfterResizeFunc(func(w int, h int) {
 		table.SetRect(0, 0, 72, h-1)
-		findForm.SetRect(0, h-1, 72, h)
 		status.SetRect(0, h-1, 72, h)
+		findForm.SetRect(0, h-1, 72, h)
+		commandForm.SetRect(0, h-1, 72, h)
 	})
 
 	app.SetRoot(grid, true)
