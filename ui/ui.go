@@ -12,7 +12,7 @@ var app *cview.Application
 var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
-var status *cview.TextView
+var find *cview.TextView
 var year int
 
 func Start() {
@@ -37,18 +37,14 @@ func Start() {
 	panels.AddPanel("transactions", createTransactionsTable(), false, true)
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
-
-	status = cview.NewTextView()
-	status.SetText("status")
+	panels.AddPanel("find", createFindForm(), false, false)
+	panels.AddPanel("status", createStatusTextView(), false, false)
 
 	grid := cview.NewGrid()
-	grid.SetRows(0, 1, 1)
-	grid.SetColumns(40, 20, 0)
+	grid.SetRows(0)
+	grid.SetColumns(72, 0)
 	grid.SetBorders(false)
-	grid.AddItem(panels, 0, 0, 1, 2, 0, 0, true)
-	grid.AddItem(box0, 1, 0, 1, 2, 0, 0, true)
-	grid.AddItem(status, 2, 0, 1, 1, 0, 0, false)
-	grid.AddItem(balance, 2, 1, 1, 1, 0, 0, false)
+	grid.AddItem(panels, 0, 0, 1, 1, 0, 0, true)
 
 	c := cbind.NewConfiguration()
 	handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
@@ -58,6 +54,7 @@ func Start() {
 		} else {
 			handleCloseInsert()
 			handleCloseEdit()
+			handleCloseFind()
 		}
 		return nil
 	}
@@ -67,7 +64,9 @@ func Start() {
 	app.SetInputCapture(c.Capture)
 
 	app.SetAfterResizeFunc(func(w int, h int) {
-		table.SetRect(0, 0, 72, h-2)
+		table.SetRect(0, 0, 72, h-1)
+		findForm.SetRect(0, h-1, 72, h)
+		status.SetRect(0, h-1, 72, h)
 	})
 
 	app.SetRoot(grid, true)

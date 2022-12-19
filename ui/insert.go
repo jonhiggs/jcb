@@ -25,6 +25,7 @@ var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("insert")
+	panels.SendToFront("insert")
 
 	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
 	insertInputFieldDescription.SetText("")
