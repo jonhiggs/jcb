@@ -25,6 +25,7 @@ func handleOpenEdit() {
 	}
 
 	panels.ShowPanel("edit")
+	panels.SendToFront("edit")
 
 	t, _ := transaction.Find(selectionId())
 	ts := stringf.Transaction(t)

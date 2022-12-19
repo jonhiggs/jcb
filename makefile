@@ -1,4 +1,4 @@
-run: test build
+run: build
 	./jcb
 
 test:

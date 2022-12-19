@@ -182,6 +182,10 @@ func createTransactionsTable() *cview.Table {
 	c.Set("{", handleSelectMonthPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("C", handleCommitTransaction)
+	c.Set("/", handleOpenFindForward)
+	c.Set("?", handleOpenFindBackwards)
+	c.Set("n", handleSelectNextMatch)
+	c.Set("N", handleSelectPrevMatch)
 	table.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
