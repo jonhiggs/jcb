@@ -127,7 +127,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	id := selectionId()
 
 	if transaction.IsCommitted(id) {
-		status.SetText("Cannot delete committed transactions")
+		printStatus("Cannot delete committed transactions")
 		return nil
 	}
 

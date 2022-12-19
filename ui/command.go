@@ -26,19 +26,21 @@ func handleOpenCommand(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
-	switch commandInputField.GetText() {
-	case "version":
-		status.SetText(config.VERSION)
-	default:
-		status.SetText(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
-	}
+	runCommand(commandInputField.GetText())
 
 	commandInputField.SetText("")
 	panels.HidePanel("command")
-	panels.ShowPanel("status")
-	panels.SendToFront("transactions")
 
 	return nil
+}
+
+func runCommand(cmd string) {
+	switch cmd {
+	case "version":
+		printStatus(config.VERSION)
+	default:
+		printStatus(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
+	}
 }
 
 func createCommandForm() *cview.Form {

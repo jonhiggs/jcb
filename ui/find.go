@@ -65,9 +65,7 @@ func handleSelectNextMatch(ev *tcell.EventKey) *tcell.EventKey {
 		}
 	}
 
-	status.SetText("No matches found")
-	panels.ShowPanel("status")
-	panels.SendToFront("transactions")
+	printStatus("No matches found")
 
 	return nil
 }

@@ -24,16 +24,18 @@ var insertInputFieldRepeatRule *cview.InputField
 var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
+	openInsert()
+	return nil
+}
+
+func openInsert() {
 	panels.ShowPanel("insert")
-	panels.SendToFront("insert")
 
 	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
 	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31", year))
-
-	return nil
 }
 
 func handleCloseInsert() {
@@ -62,7 +64,6 @@ func dateInputFieldAcceptance(s string, c rune) bool {
 		return c == '0' || c == '1'
 	case 7:
 		var v bool
-		status.SetText(s[len(s)-2:])
 		if strings.HasPrefix(s[len(s)-2:], "0") {
 			v, _ = regexp.MatchString(`[1-9]`, string(c))
 		} else {
