@@ -3,6 +3,8 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
+	"jcb/db"
+	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -34,10 +36,13 @@ func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func runCommand(cmd string) {
-	switch cmd {
+func runCommand(command string) {
+	cmd := strings.Fields(command)
+	switch cmd[0] {
 	case "version":
 		printStatus(config.VERSION)
+	case "save":
+		db.Save()
 	default:
 		printStatus(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
 	}
