@@ -40,6 +40,7 @@ func Start() {
 	panels.AddPanel("find", createFindForm(), false, false)
 	panels.AddPanel("command", createCommandForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
+	panels.AddPanel("help", createHelp(), false, false)
 
 	grid := cview.NewGrid()
 	grid.SetRows(0)
@@ -51,12 +52,13 @@ func Start() {
 	handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
 		pn, _ := panels.GetFrontPanel()
 		if pn == "transactions" {
-			app.Stop()
+			printStatus("To quit, use the command ':q'.")
 		} else {
 			handleCloseInsert()
 			handleCloseEdit()
 			handleCloseFind()
 			handleCloseCommand()
+			handleCloseHelp()
 		}
 		return nil
 	}
@@ -68,6 +70,7 @@ func Start() {
 	app.SetAfterResizeFunc(func(w int, h int) {
 		table.SetRect(0, 0, 72, h-1)
 		status.SetRect(0, h-1, 72, h)
+		helpTextView.SetRect(0, 0, 72, h-1)
 		findForm.SetRect(0, h-1, 72, h)
 		commandForm.SetRect(0, h-1, 72, h)
 	})
