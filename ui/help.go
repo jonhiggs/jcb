@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -10,6 +11,21 @@ var helpTextView *cview.TextView
 func handleCloseHelp() {
 	panels.HidePanel("help")
 	handleCloseStatus()
+}
+
+func handleHelpScroll(ev *tcell.EventKey) *tcell.EventKey {
+	_, _, _, h := helpTextView.GetInnerRect()
+	offset, _ := helpTextView.GetScrollOffset()
+	switch ev.Rune() {
+	case ' ', 'd':
+		pos := offset + (h / 2)
+		helpTextView.ScrollTo(pos, 0)
+	case 'u':
+		pos := offset - (h / 2)
+		helpTextView.ScrollTo(pos, 0)
+	}
+
+	return nil
 }
 
 func openHelp() {
@@ -64,6 +80,12 @@ func createHelp() *cview.TextView {
 	M-b     Backwards word
 `)
 	helpTextView.SetDoneFunc(func(key tcell.Key) { handleCloseHelp() })
+
+	c := cbind.NewConfiguration()
+	c.Set(" ", handleHelpScroll)
+	c.Set("u", handleHelpScroll)
+	c.Set("d", handleHelpScroll)
+	helpTextView.SetInputCapture(c.Capture)
 
 	return helpTextView
 }
