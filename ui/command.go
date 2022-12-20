@@ -41,8 +41,14 @@ func runCommand(command string) {
 	switch cmd[0] {
 	case "version":
 		printStatus(config.VERSION)
-	case "save":
+	case "w":
 		db.Save()
+		printStatus("File saved")
+	case "quit", "q":
+		app.Stop()
+	case "wq":
+		db.Save()
+		app.Stop()
 	default:
 		printStatus(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
 	}
