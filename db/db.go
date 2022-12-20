@@ -16,9 +16,11 @@ import (
 var db *sql.DB
 var workingFile string
 var saveFile string
+var Dirty bool
 
 func Init(file string) error {
 	var err error
+	Dirty = false
 	makeConfigDir(file)
 	saveFile = file
 	workingFile = makeWorkingFile()
@@ -99,4 +101,5 @@ func Save() {
 	err = os.Rename(workingFile, saveFile)
 	check(err)
 	makeWorkingFile()
+	Dirty = false
 }
