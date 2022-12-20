@@ -50,6 +50,8 @@ func runCommand(command string) {
 		} else {
 			app.Stop()
 		}
+	case "help":
+		openHelp()
 	case "wq":
 		db.Save()
 		app.Stop()
