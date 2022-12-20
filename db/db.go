@@ -76,6 +76,23 @@ func makeWorkingFile() string {
 	defer src.Close()
 
 	dstFile := fmt.Sprintf("%s/.%s.tmp", filepath.Dir(saveFile), filepath.Base(saveFile))
+	_, err = os.Stat(dstFile)
+	if err == nil {
+		fmt.Println("An unsaved file has been found. Would you like to restore it? [y|n]")
+		var choice rune
+		fmt.Scanf("%c", &choice)
+
+		switch choice {
+		case 'y':
+			return dstFile
+		case 'n':
+			os.Remove(dstFile)
+		default:
+			fmt.Println("Invalid choice")
+			os.Exit(1)
+		}
+	}
+
 	dest, err := os.Create(dstFile)
 	check(err)
 	defer dest.Close()
@@ -102,4 +119,8 @@ func Save() {
 	check(err)
 	makeWorkingFile()
 	Dirty = false
+}
+
+func RemoveWorkingFile() {
+	os.Remove(workingFile)
 }
