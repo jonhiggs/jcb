@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+	"io"
 	"jcb/domain"
 	"log"
 	"os"
@@ -12,11 +14,16 @@ import (
 )
 
 var db *sql.DB
+var workingFile string
+var saveFile string
 
 func Init(file string) error {
 	var err error
 	makeConfigDir(file)
-	db, err = sql.Open("sqlite3", file)
+	saveFile = file
+	workingFile = makeWorkingFile()
+
+	db, err = sql.Open("sqlite3", workingFile)
 
 	if err != nil {
 		log.Fatal(err)
@@ -59,4 +66,37 @@ func Init(file string) error {
 func makeConfigDir(file string) {
 	dir := filepath.Dir(file)
 	os.MkdirAll(dir, 0700)
+}
+
+func makeWorkingFile() string {
+	src, err := os.Open(saveFile)
+	check(err)
+	defer src.Close()
+
+	dstFile := fmt.Sprintf("%s/.%s.tmp", filepath.Dir(saveFile), filepath.Base(saveFile))
+	dest, err := os.Create(dstFile)
+	check(err)
+	defer dest.Close()
+
+	_, err = io.Copy(dest, src) // check first var for number of bytes copied
+	check(err)
+
+	err = dest.Sync()
+	check(err)
+
+	return dstFile
+}
+
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Save() {
+	err := os.Remove(saveFile)
+	check(err)
+	err = os.Rename(workingFile, saveFile)
+	check(err)
+	makeWorkingFile()
 }
