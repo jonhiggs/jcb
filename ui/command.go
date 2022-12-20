@@ -45,9 +45,15 @@ func runCommand(command string) {
 		db.Save()
 		printStatus("File saved")
 	case "quit", "q":
-		app.Stop()
+		if db.Dirty {
+			printStatus("You have unsaved changes. Use ':q!' to quit without saving.")
+		} else {
+			app.Stop()
+		}
 	case "wq":
 		db.Save()
+		app.Stop()
+	case "q!":
 		app.Stop()
 	default:
 		printStatus(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))

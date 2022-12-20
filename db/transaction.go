@@ -98,6 +98,7 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 		if err != nil {
 			return -1, err
 		}
+		Dirty = true
 		return res.LastInsertId()
 	}
 	return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
@@ -110,12 +111,14 @@ func EditTransaction(t domain.Transaction) error {
 	}
 
 	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Id)
+	Dirty = true
 	return err
 }
 
 func CommitTransaction(id int64, balance int64) error {
 	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ? WHERE id = ? AND committedAt IS NULL")
 	_, err := statement.Exec(balance, time.Now().Format(timeLayout), id)
+	Dirty = true
 	return err
 }
 
@@ -127,6 +130,7 @@ func UncommitTransaction(id int64) error {
 
 	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, balance = NULL WHERE committedAt >= ?")
 	_, err = statement.Exec(ts)
+	Dirty = true
 	return err
 }
 
@@ -148,6 +152,7 @@ func DeleteTransaction(id int64) error {
 		return err
 	}
 	_, err = statement.Exec(id)
+	Dirty = true
 	return err
 }
 
