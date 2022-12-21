@@ -123,6 +123,35 @@ func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
+	curRow, _ := table.GetSelection()
+	curYear := dataf.Date(table.GetCell(curRow, 0).GetText()).Year()
+
+	if ev.Rune() == '<' {
+		for i := curRow; i > 0; i-- {
+			year := dataf.Date(table.GetCell(i, 0).GetText()).Year()
+			if int(year) != int(curYear) {
+				table.Select(i, 0)
+				return nil
+			}
+		}
+
+		table.Select(1, 0)
+	} else {
+		for i := curRow; i < len(transactionIds)-1; i++ {
+			year := dataf.Date(table.GetCell(i, 0).GetText()).Year()
+			if int(year) != int(curYear) {
+				table.Select(i, 0)
+				return nil
+			}
+		}
+
+		table.Select(len(transactionIds)-1, 0)
+	}
+
+	return nil
+}
+
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	id := selectionId()
 
@@ -188,6 +217,8 @@ func createTransactionsTable() *cview.Table {
 	c.Set("?", handleOpenFind)
 	c.Set("n", handleSelectNextMatch)
 	c.Set("N", handleSelectPrevMatch)
+	c.Set(">", handleSelectYear)
+	c.Set("<", handleSelectYear)
 	table.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
