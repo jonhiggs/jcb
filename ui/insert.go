@@ -33,7 +33,7 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 func openInsert() {
 	panels.ShowPanel("insert")
 
-	insertInputFieldDate.SetText(dates.LastCommitted(year).Format("2006-01-02"))
+	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
@@ -52,14 +52,9 @@ func dateInputFieldAcceptance(s string, c rune) bool {
 	}
 
 	switch len(s) {
-	case 1:
-		return c == '2'
-	case 2:
-		return c == '0'
-	case 3:
-		return c == '2'
-	case 4:
-		return c == '2'
+	case 1, 2, 3, 4:
+		v, _ := regexp.MatchString(`[0-9]`, string(c))
+		return v
 	case 5, 8:
 		return c == '-'
 	case 6:
@@ -179,7 +174,7 @@ func createInsertForm() *cview.Form {
 
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
-	insertInputFieldDate.SetText(dates.LastCommitted(year).Format("2006-01-02"))
+	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
 	insertInputFieldDate.SetFieldWidth(11)
 	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
 	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)

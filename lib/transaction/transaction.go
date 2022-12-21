@@ -20,17 +20,17 @@ func Find(id int64) (domain.Transaction, error) {
 }
 
 func Insert(t domain.Transaction) (int64, error) {
-	if t.Date.Unix() < dates.LastCommitted(-1).Unix() {
+	if t.Date.Unix() < dates.LastCommitted().Unix() {
 		return -1, errors.New("Date is too early")
 	}
 	return db.InsertTransaction(t)
 }
 
 func Edit(t domain.Transaction) error {
-	if t.Id == 0 && t.Date.Unix() > dates.FirstUncommitted(-1).Unix() {
-		return errors.New("Date must be earlier than the first transaction")
+	if t.Id == 0 && t.Date.Unix() > dates.FirstUncommitted().Unix() {
+		return errors.New("Date of opening balance must be before the first transaction")
 	}
-	if t.Date.Unix() < dates.LastCommitted(t.Date.Year()).Unix() {
+	if t.Date.Unix() < dates.LastCommitted().Unix() {
 		return errors.New("Date must be after the latest committed transaction")
 	}
 	return db.EditTransaction(t)
