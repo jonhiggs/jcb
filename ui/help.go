@@ -60,6 +60,8 @@ func createHelp() *cview.TextView {
 	*          Select similar transaction
 	}          Scroll to next month
 	{          Scroll to previous month
+	>          Scroll to next year
+	<          Scroll to previous year
 	C          Commit all transactions to selection
 	:          Enter command mode
 	/          Enter find next query
