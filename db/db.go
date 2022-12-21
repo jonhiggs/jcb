@@ -66,6 +66,11 @@ func makeConfigDir(file string) {
 }
 
 func makeWorkingFile() string {
+	_, err := os.Stat(saveFile)
+	if err != nil {
+		os.Create(saveFile)
+	}
+
 	src, err := os.Open(saveFile)
 	check(err)
 	defer src.Close()
