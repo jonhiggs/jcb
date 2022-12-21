@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/db"
 	"jcb/domain"
 	"jcb/lib/dates"
 	"jcb/lib/repeater"
@@ -37,7 +38,7 @@ func openInsert() {
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
-	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31", year))
+	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year()))
 }
 
 func handleCloseInsert() {
