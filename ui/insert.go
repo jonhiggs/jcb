@@ -3,7 +3,9 @@ package ui
 import (
 	"fmt"
 	"jcb/domain"
+	"jcb/lib/dates"
 	"jcb/lib/repeater"
+	"jcb/lib/validator"
 	"log"
 	"regexp"
 	"strings"
@@ -31,7 +33,7 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 func openInsert() {
 	panels.ShowPanel("insert")
 
-	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
+	insertInputFieldDate.SetText(dates.LastCommitted(year).Format("2006-01-02"))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldRepeatRule.SetText("0d")
@@ -81,6 +83,42 @@ func dateInputFieldAcceptance(s string, c rune) bool {
 	return false
 }
 
+func checkInsertForm() bool {
+	var err error
+
+	err = validator.Date(insertInputFieldDate.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.Description(insertInputFieldDescription.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.Cents(insertInputFieldCents.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.RepeatRule(insertInputFieldRepeatRule.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.Date(insertInputFieldRepeatUntil.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	return true
+}
+
 func dateInputFieldChanged(s string) {
 	return
 }
@@ -114,15 +152,22 @@ func readInsertForm() []domain.Transaction {
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	if !checkInsertForm() {
+		return nil
+	}
+
+	var id int64
+	var err error
 	for _, t := range readInsertForm() {
-		id, err := transaction.Insert(t)
-		if err == nil {
-			updateTransactionsTable()
-			selectTransaction(id)
-		} else {
-			log.Fatal(err)
+		id, err = transaction.Insert(t)
+		if err != nil {
+			printStatus(fmt.Sprint(err))
+			return nil
 		}
 	}
+
+	updateTransactionsTable()
+	selectTransaction(id)
 
 	handleCloseInsert()
 	return nil
@@ -134,7 +179,7 @@ func createInsertForm() *cview.Form {
 
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
-	insertInputFieldDate.SetText(fmt.Sprintf("%d-", year))
+	insertInputFieldDate.SetText(dates.LastCommitted(year).Format("2006-01-02"))
 	insertInputFieldDate.SetFieldWidth(11)
 	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
 	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
