@@ -57,7 +57,7 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	uncommitted, _ := transaction.Uncommitted(year)
+	uncommitted, _ := transaction.Uncommitted()
 	firstUncommitted := uncommitted[0]
 
 	for i, v := range transactionIds {
@@ -208,8 +208,8 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	committed, _ := transaction.Committed(year)
-	uncommitted, _ := transaction.Uncommitted(year)
+	committed, _ := transaction.Committed()
+	uncommitted, _ := transaction.Uncommitted()
 	all := committed
 	for _, t := range uncommitted {
 		all = append(all, t)
