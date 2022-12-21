@@ -1,12 +1,14 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/domain"
 	"log"
 
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	"jcb/lib/validator"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -53,6 +55,10 @@ func readEditForm() domain.Transaction {
 }
 
 func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	if !checkEditForm() {
+		return nil
+	}
+
 	t := readEditForm()
 	err := transaction.Edit(t)
 	if err == nil {
@@ -62,6 +68,29 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		log.Fatal(err)
 	}
 	return nil
+}
+
+func checkEditForm() bool {
+	var err error
+	err = validator.Date(editInputFieldDate.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.Description(editInputFieldDescription.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	err = validator.Cents(editInputFieldCents.GetText())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return false
+	}
+
+	return true
 }
 
 func createEditForm() *cview.Form {
