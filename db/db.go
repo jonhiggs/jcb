@@ -41,11 +41,6 @@ func Init(file string) error {
 			committedAt TEXT,
 			UNIQUE(id)
 	    );
-		CREATE TABLE IF NOT EXISTS balances(
-			year INTEGER,
-			closing INTEGER,
-			UNIQUE(year)
-		);
 	`
 	_, err = db.Exec(sts)
 
