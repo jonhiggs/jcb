@@ -58,12 +58,14 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	uncommitted, _ := transaction.Uncommitted()
-	firstUncommitted := uncommitted[0]
+	if len(uncommitted) > 0 {
+		firstUncommitted := uncommitted[0]
 
-	for i, v := range transactionIds {
-		if firstUncommitted.Id == v {
-			table.Select(i, 0)
-			return nil
+		for i, v := range transactionIds {
+			if firstUncommitted.Id == v {
+				table.Select(i, 0)
+				return nil
+			}
 		}
 	}
 
