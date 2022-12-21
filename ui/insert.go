@@ -9,7 +9,6 @@ import (
 	"jcb/lib/validator"
 	"log"
 	"regexp"
-	"strings"
 
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
@@ -48,35 +47,7 @@ func handleCloseInsert() {
 
 func dateInputFieldAcceptance(s string, c rune) bool {
 	valid_char, _ := regexp.MatchString(`[\d\-]*`, string(c))
-	if !valid_char {
-		return false
-	}
-
-	switch len(s) {
-	case 1, 2, 3, 4:
-		v, _ := regexp.MatchString(`[0-9]`, string(c))
-		return v
-	case 5, 8:
-		return c == '-'
-	case 6:
-		return c == '0' || c == '1'
-	case 7:
-		var v bool
-		if strings.HasPrefix(s[len(s)-2:], "0") {
-			v, _ = regexp.MatchString(`[1-9]`, string(c))
-		} else {
-			v, _ = regexp.MatchString(`[0-2]`, string(c))
-		}
-		return v
-	case 9:
-		v, _ := regexp.MatchString(`[0123]`, string(c))
-		return v
-	case 10:
-		v, _ := regexp.MatchString(`[0-9]`, string(c))
-		return v
-	}
-
-	return false
+	return valid_char
 }
 
 func checkInsertForm() bool {
