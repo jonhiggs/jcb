@@ -6,7 +6,6 @@ import (
 	"jcb/db"
 	"jcb/domain"
 	"jcb/lib/dates"
-	"time"
 )
 
 type balance struct {
@@ -43,13 +42,6 @@ func Delete(id int64) error {
 	return db.DeleteTransaction(id)
 }
 
-func DeleteId(id int64) error {
-	if id == 0 {
-		return errors.New("You cannot delete the opening balance")
-	}
-	return db.DeleteTransaction(id)
-}
-
 func Uncommitted() ([]domain.Transaction, error) {
 	return db.UncommittedTransactions()
 }
@@ -75,10 +67,6 @@ func Commit(id int64, initialBalance int64) error {
 
 func Uncommit(id int64) error {
 	return db.UncommitTransaction(id)
-}
-
-func CommittedUntil() (time.Time, error) {
-	return db.TransactionCommittedUntil()
 }
 
 func IsCommitted(id int64) bool {
