@@ -149,23 +149,6 @@ func DeleteTransaction(id int64) error {
 	return err
 }
 
-func TransactionCommittedUntil() (time.Time, error) {
-	rows, err := db.Query("SELECT date FROM transactions WHERE committedAt NOT NULL ORDER BY date DESC LIMIT 1")
-	if err != nil {
-		return time.Unix(0, 0), err
-	}
-
-	defer rows.Close()
-	for rows.Next() {
-		var date string
-		err = rows.Scan(&date)
-		ts, _ := time.Parse(timeLayout, date)
-		return ts, nil
-	}
-
-	return time.Unix(0, 0), nil
-}
-
 func TransactionIsCommitted(id int64) bool {
 	var count int
 	statement, _ := db.Prepare("SELECT COUNT(*) FROM transactions WHERE id == ? AND committedAt NOT NULL")
@@ -180,12 +163,4 @@ func TransactionIsCommitted(id int64) bool {
 
 	log.Fatal("There should never be more than two items sharing an id")
 	return false
-}
-
-func TransactionYear(id int64) int {
-	var dateString string
-	statement, _ := db.Prepare("SELECT date FROM transactions WHERE id == ?")
-	statement.QueryRow(id).Scan(&dateString)
-
-	return parseDate(dateString).Year()
 }

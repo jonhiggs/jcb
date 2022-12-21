@@ -92,14 +92,13 @@ func dateInputFieldChanged(s string) {
 
 func readInsertForm() []domain.Transaction {
 	var transactions []domain.Transaction
-	repeatFrom, err := transaction.CommittedUntil()
 
 	date := dataf.Date(insertInputFieldDate.GetText())
 	description := dataf.Description(insertInputFieldDescription.GetText())
 	cents := dataf.Cents(insertInputFieldCents.GetText())
 	repeatRule := dataf.RepeatRule(insertInputFieldRepeatRule.GetText())
 	repeatUntil := dataf.Date(insertInputFieldRepeatUntil.GetText())
-	repeatFrom, err = transaction.CommittedUntil()
+	repeatFrom := dates.LastCommitted()
 
 	timestamps, err := repeater.Expand(date, repeatFrom, repeatUntil, repeatRule)
 	if err != nil {
