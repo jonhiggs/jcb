@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"jcb/domain"
-	"log"
 
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
@@ -65,7 +64,7 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		updateTransactionsTable()
 		handleCloseEdit()
 	} else {
-		log.Fatal(err)
+		printStatus(fmt.Sprint(err))
 	}
 	return nil
 }
