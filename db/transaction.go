@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"jcb/domain"
+	stringf "jcb/lib/formatter/string"
 	"log"
 	"time"
 )
@@ -163,4 +164,22 @@ func TransactionIsCommitted(id int64) bool {
 
 	log.Fatal("There should never be more than two items sharing an id")
 	return false
+}
+
+func TransactionUniq(t domain.Transaction) bool {
+	var count int
+	statement, err := db.Prepare("SELECT COUNT(*) FROM transactions WHERE substr(date, 0,11) == ? AND description == ? AND cents == ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = statement.QueryRow(stringf.Date(t.Date), t.Description, t.Cents).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if count == 0 {
+		return true
+	} else {
+		return false
+	}
 }
