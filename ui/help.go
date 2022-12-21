@@ -85,6 +85,7 @@ func createHelp() *cview.TextView {
 	c.Set(" ", handleHelpScroll)
 	c.Set("u", handleHelpScroll)
 	c.Set("d", handleHelpScroll)
+	c.Set("q", func(ev *tcell.EventKey) *tcell.EventKey { handleCloseHelp(); return nil })
 	helpTextView.SetInputCapture(c.Capture)
 
 	return helpTextView
