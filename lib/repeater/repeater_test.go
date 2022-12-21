@@ -262,6 +262,35 @@ func TestExpandShortEnd(t *testing.T) {
 	}
 }
 
+func TestExpandLongEnd(t *testing.T) {
+	var res []time.Time
+	var err error
+	var got string
+
+	date := time.Date(2022, 10, 1, 0, 0, 0, 0, time.UTC)
+	startDate := date
+	endDate := time.Date(2023, 4, 10, 23, 59, 59, 59, time.UTC)
+
+	res, err = Expand(date, startDate, endDate, "1m")
+	got = res[0].Format("2006-01-02")
+	if got != "2022-10-01" {
+		t.Error(fmt.Sprintf("first element expected 2022-01-01 but was %s", got))
+	}
+
+	got = res[6].Format("2006-01-02")
+	if got != "2023-04-01" {
+		t.Error(fmt.Sprintf("second element expected 2023-04-01 but was %s", got))
+	}
+
+	if len(res) != 7 {
+		t.Error(fmt.Sprintf("expected 7 elements, got %d.", len(res)))
+	}
+
+	if err != nil {
+		t.Error("error was not expected")
+	}
+}
+
 func TestExpandNarrowDay(t *testing.T) {
 	var res []time.Time
 	var err error

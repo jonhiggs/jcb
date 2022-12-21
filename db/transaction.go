@@ -17,17 +17,13 @@ const (
 
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
-func CommittedTransactions(year int) ([]domain.Transaction, error) {
+func CommittedTransactions() ([]domain.Transaction, error) {
 	var rows *sql.Rows
 	var err error
 
 	var records []domain.Transaction
 
-	if year == -1 {
-		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
-	} else {
-		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt NOT NULL ORDER BY committedAt ASC", fmt.Sprintf("%d%%", year))
-	}
+	rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -52,17 +48,13 @@ func CommittedTransactions(year int) ([]domain.Transaction, error) {
 	return records, nil
 }
 
-func UncommittedTransactions(year int) ([]domain.Transaction, error) {
+func UncommittedTransactions() ([]domain.Transaction, error) {
 	var rows *sql.Rows
 	var err error
 
 	var records []domain.Transaction
 
-	if year == -1 {
-		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt IS NULL ORDER BY date, description ASC", fmt.Sprintf("%d%%", year))
-	} else {
-		rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE date LIKE ? AND committedAt IS NULL ORDER BY date, description ASC", fmt.Sprintf("%d%%", year))
-	}
+	rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt IS NULL ORDER BY date, description ASC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -88,20 +80,21 @@ func UncommittedTransactions(year int) ([]domain.Transaction, error) {
 }
 
 func InsertTransaction(t domain.Transaction) (int64, error) {
-	if t.Id == -1 {
-		statement, err := db.Prepare("INSERT INTO transactions (date, description, cents) VALUES (?, ?, ?)")
-		if err != nil {
-			return -1, err
-		}
-
-		res, err := statement.Exec(t.Date, t.Description, t.Cents)
-		if err != nil {
-			return -1, err
-		}
-		Dirty = true
-		return res.LastInsertId()
+	if t.Id != -1 {
+		return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
 	}
-	return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
+
+	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents) VALUES (?, ?, ?)")
+	if err != nil {
+		return -1, err
+	}
+
+	res, err := statement.Exec(t.Date, t.Description, t.Cents)
+	if err != nil {
+		return -1, err
+	}
+	Dirty = true
+	return res.LastInsertId()
 }
 
 func EditTransaction(t domain.Transaction) error {
