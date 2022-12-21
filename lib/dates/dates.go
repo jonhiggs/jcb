@@ -14,18 +14,16 @@ func Opening() time.Time {
 }
 
 // year of -1 will scan all years
-func FirstUncommitted(year int) time.Time {
-	return db.DateFirstUncommitted(year)
+func FirstUncommitted() time.Time {
+	return db.DateFirstUncommitted()
 }
 
-// year of -1 will scan all years
-func LastCommitted(year int) time.Time {
-	return db.DateLastCommitted(year)
+func LastCommitted() time.Time {
+	return db.DateLastCommitted()
 }
 
-// year of -1 will scan all years
-func LastUncommitted(year int) time.Time {
-	return db.DateLastUncommitted(year)
+func LastUncommitted() time.Time {
+	return db.DateLastUncommitted()
 }
 
 // returns date of opening balance final day of the year after the final transaction
@@ -36,12 +34,12 @@ func Range() (time.Time, time.Time) {
 	start = Opening()
 	end = time.Date(start.Year()+1, 12, 31, 23, 59, 59, 59, time.UTC)
 
-	lc := LastCommitted(-1)
+	lc := LastCommitted()
 	if lc.Unix() > end.Unix() {
 		end = time.Date(lc.Year()+1, 12, 31, 23, 59, 59, 59, time.UTC)
 	}
 
-	lu := LastUncommitted(-1)
+	lu := LastUncommitted()
 	if lu.Unix() > end.Unix() {
 		end = time.Date(lu.Year()+1, 12, 31, 23, 59, 59, 59, time.UTC)
 	}
