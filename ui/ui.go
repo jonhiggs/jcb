@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"jcb/db"
 	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -76,6 +75,4 @@ func Start() {
 
 	app.SetRoot(grid, true)
 	app.Run()
-
-	db.RemoveWorkingFile()
 }

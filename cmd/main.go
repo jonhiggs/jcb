@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/db"
+	"jcb/lib/importer"
 	"jcb/ui"
 	"log"
 	"os"
@@ -16,14 +17,16 @@ func usage() {
 	fmt.Println("  jcb [OPTIONS]")
 	fmt.Println("")
 	fmt.Println("Options:")
-	fmt.Println("  -h, --help       This help.")
-	fmt.Println("  -f, --file       Set the savefile.")
-	fmt.Println("  -v, --version    Show the version.")
+	fmt.Println("  -h, --help                This help.")
+	fmt.Println("  -f, --file <file>         Set the savefile.")
+	fmt.Println("  -v, --version             Show the version.")
+	fmt.Println("  -i, --import-tsv <file>   Import transactions from TSV.")
 }
 
 func main() {
 	options := []optparse.Option{
 		{"file", 'f', optparse.KindRequired},
+		{"import-tsv", 'i', optparse.KindRequired},
 		{"help", 'h', optparse.KindNone},
 		{"version", 'v', optparse.KindNone},
 	}
@@ -31,6 +34,11 @@ func main() {
 	file := config.DefaultFile()
 
 	results, _, err := optparse.Parse(options, os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = db.Init(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,13 +53,15 @@ func main() {
 		case "version":
 			println(config.VERSION)
 			return
+		case "import-tsv":
+			importer.Tsv(result.Optarg)
+			db.Save()
+			db.RemoveWorkingFile()
+			return
 		}
 	}
 
-	err = db.Init(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	ui.Start()
+
+	db.RemoveWorkingFile()
 }

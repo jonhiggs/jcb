@@ -20,7 +20,7 @@ func Find(id int64) (domain.Transaction, error) {
 
 func Insert(t domain.Transaction) (int64, error) {
 	if t.Date.Unix() < dates.LastCommitted().Unix() {
-		return -1, errors.New("Date is too early")
+		return -1, errors.New("Cannot insert before a committed transation")
 	}
 	return db.InsertTransaction(t)
 }
@@ -71,6 +71,10 @@ func Uncommit(id int64) error {
 
 func IsCommitted(id int64) bool {
 	return db.TransactionIsCommitted(id)
+}
+
+func Uniq(t domain.Transaction) bool {
+	return db.TransactionUniq(t)
 }
 
 // set of transactions that need to be committed before committing provided id
