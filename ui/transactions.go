@@ -95,10 +95,10 @@ func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
-	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
+	curMonth := dataf.Date(table.GetCell(curRow, 1).GetText()).Month()
 
 	for i := curRow + 1; i < len(transactionIds); i++ {
-		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
+		month := dataf.Date(table.GetCell(i, 1).GetText()).Month()
 		if int(month) > int(curMonth) {
 			table.Select(i, 0)
 			return nil
@@ -112,10 +112,10 @@ func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
-	curMonth := dataf.Date(table.GetCell(curRow, 0).GetText()).Month()
+	curMonth := dataf.Date(table.GetCell(curRow, 1).GetText()).Month()
 
 	for i := curRow + 1; i > 0; i-- {
-		month := dataf.Date(table.GetCell(i, 0).GetText()).Month()
+		month := dataf.Date(table.GetCell(i, 1).GetText()).Month()
 		if int(month) < int(curMonth) {
 			table.Select(i, 0)
 			return nil
@@ -129,11 +129,11 @@ func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
-	curYear := dataf.Date(table.GetCell(curRow, 0).GetText()).Year()
+	curYear := dataf.Date(table.GetCell(curRow, 1).GetText()).Year()
 
 	if ev.Rune() == '<' {
 		for i := curRow; i > 0; i-- {
-			year := dataf.Date(table.GetCell(i, 0).GetText()).Year()
+			year := dataf.Date(table.GetCell(i, 1).GetText()).Year()
 			if int(year) != int(curYear) {
 				table.Select(i, 0)
 				return nil
@@ -143,7 +143,7 @@ func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
 		table.Select(1, 0)
 	} else {
 		for i := curRow; i < len(transactionIds)-1; i++ {
-			year := dataf.Date(table.GetCell(i, 0).GetText()).Year()
+			year := dataf.Date(table.GetCell(i, 1).GetText()).Year()
 			if int(year) != int(curYear) {
 				table.Select(i, 0)
 				return nil
