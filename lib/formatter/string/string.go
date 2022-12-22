@@ -67,3 +67,32 @@ func Transaction(d domain.Transaction) domain.StringTransaction {
 
 	return domain.StringTransaction{id, date, description, cents, notes}
 }
+
+func Attributes(a domain.Attributes) string {
+	s := ""
+	if a.Committed {
+		s += "-"
+	} else {
+		s += "C"
+	}
+
+	if a.Repeated {
+		s += "r"
+	} else {
+		s += "-"
+	}
+
+	if a.Notes {
+		s += "n"
+	} else {
+		s += "-"
+	}
+
+	if a.Saved {
+		s += "-"
+	} else {
+		s += "+"
+	}
+
+	return s
+}
