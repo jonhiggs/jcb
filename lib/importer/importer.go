@@ -56,6 +56,7 @@ func Tsv(f string) bool {
 			dataf.Date(d[0]),
 			dataf.Description(d[1]),
 			dataf.Cents(d[2]),
+			dataf.Notes(d[3]),
 		}
 
 		if !transaction.Uniq(t) {

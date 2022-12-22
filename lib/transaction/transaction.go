@@ -73,6 +73,10 @@ func IsCommitted(id int64) bool {
 	return db.TransactionIsCommitted(id)
 }
 
+func Notes(id int64) string {
+	return db.TransactionNotes(id)
+}
+
 func Uniq(t domain.Transaction) bool {
 	return db.TransactionUniq(t)
 }

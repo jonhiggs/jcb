@@ -7,6 +7,7 @@ type Transaction struct {
 	Date        time.Time
 	Description string
 	Cents       int64
+	Notes       string
 }
 
 type StringTransaction struct {
@@ -14,4 +15,5 @@ type StringTransaction struct {
 	Date        string
 	Description string
 	Cents       string
+	Notes       string
 }

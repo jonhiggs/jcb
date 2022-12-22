@@ -44,6 +44,14 @@ func Description(s string) string {
 	return strings.Trim(s, " ")
 }
 
+func Notes(s string) string {
+	if validator.Notes(s) != nil {
+		log.Fatal("cannot convert invalid notes to data")
+	}
+
+	return strings.Trim(s, " ")
+}
+
 func Id(d string) int64 {
 	if validator.Id(d) != nil {
 		log.Fatal(fmt.Sprintf("cannot convert invalid id '%s' to data", d))
@@ -84,5 +92,6 @@ func Transaction(d domain.StringTransaction) domain.Transaction {
 		Date(d.Date),
 		Description(d.Description),
 		Cents(d.Cents),
+		Notes(d.Notes),
 	}
 }
