@@ -251,35 +251,35 @@ func updateTransactionsTable() {
 		all = append(all, t)
 	}
 
-	cell := cview.NewTableCell("DATE")
+	cell := cview.NewTableCell("")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
-	cell.SetAlign(cview.AlignLeft)
+	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 0, cell)
 
-	cell = cview.NewTableCell("DESCRIPTION")
+	cell = cview.NewTableCell("DATE")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
 	table.SetCell(0, 1, cell)
 
-	cell = cview.NewTableCell("AMOUNT")
+	cell = cview.NewTableCell("DESCRIPTION")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
-	cell.SetAlign(cview.AlignRight)
+	cell.SetAlign(cview.AlignLeft)
 	table.SetCell(0, 2, cell)
 
-	cell = cview.NewTableCell("BALANCE")
+	cell = cview.NewTableCell("AMOUNT")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 3, cell)
 
-	cell = cview.NewTableCell("")
+	cell = cview.NewTableCell("BALANCE")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
@@ -315,34 +315,34 @@ func updateTransactionsTable() {
 			attributes = tcell.AttrBold
 		}
 
-		cell = cview.NewTableCell(date)
+		transactionIds[i+1] = t.Id
+		transactionAttributes[i+1] = transaction.Attributes(t.Id)
+
+		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
-		cell.SetAlign(cview.AlignLeft)
+		cell.SetAlign(cview.AlignRight)
 		table.SetCell(i+1, 0, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%-26s", description))
+		cell = cview.NewTableCell(date)
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 1, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
+		cell = cview.NewTableCell(fmt.Sprintf("%-26s", description))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
-		cell.SetAlign(cview.AlignRight)
+		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 2, cell)
 
-		cell = cview.NewTableCell(balance)
+		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
 		table.SetCell(i+1, 3, cell)
 
-		transactionIds[i+1] = t.Id
-		transactionAttributes[i+1] = transaction.Attributes(t.Id)
-
-		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
+		cell = cview.NewTableCell(balance)
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
