@@ -76,12 +76,6 @@ func Attributes(a domain.Attributes) string {
 		s += "C"
 	}
 
-	if a.Repeated {
-		s += "r"
-	} else {
-		s += "-"
-	}
-
 	if a.Notes {
 		s += "n"
 	} else {
