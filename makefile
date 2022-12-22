@@ -1,5 +1,5 @@
 run: build
-	./jcb
+	./jcb -f ./test.db
 
 test:
 	go test ./lib/transaction
