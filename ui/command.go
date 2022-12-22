@@ -41,8 +41,6 @@ func runCommand(command string) {
 	switch cmd[0] {
 	case "version":
 		printStatus(config.VERSION)
-	case "savetime":
-		printStatus(fmt.Sprintf("%s", db.SaveTime))
 	case "w":
 		db.Save()
 		updateTransactionsTable()

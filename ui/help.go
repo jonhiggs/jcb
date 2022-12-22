@@ -40,11 +40,12 @@ func createHelp() *cview.TextView {
  Commands:
 
 	h, help    Print this help
+	q!         Quit without writing
 	q, quit    Quit
+	refresh    Refresh transactions
+	version    Show version
 	w          Write changes to disk
 	wq         Write changes and quit
-	q!         Quit without writing
-	version    Show version
 
 
  Key Bindings:
