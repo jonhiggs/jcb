@@ -59,9 +59,9 @@ func readRepeatForm() []domain.Transaction {
 	var transactions []domain.Transaction
 
 	curRow, _ := table.GetSelection()
-	date := dataf.Date(table.GetCell(curRow, 0).GetText())
-	description := dataf.Description(table.GetCell(curRow, 1).GetText())
-	cents := dataf.Cents(table.GetCell(curRow, 2).GetText())
+	date := dataf.Date(table.GetCell(curRow, 1).GetText())
+	description := dataf.Description(table.GetCell(curRow, 2).GetText())
+	cents := dataf.Cents(table.GetCell(curRow, 3).GetText())
 	repeatRule := dataf.RepeatRule(repeatInputFieldRule.GetText())
 	repeatUntil := dataf.Date(repeatInputFieldUntil.GetText())
 	notes := transaction.Notes(transactionIds[curRow])
