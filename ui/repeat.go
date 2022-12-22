@@ -28,7 +28,7 @@ func handleOpenRepeat(ev *tcell.EventKey) *tcell.EventKey {
 func openRepeat() {
 	panels.ShowPanel("repeat")
 
-	repeatInputFieldRule.SetText("0d")
+	repeatInputFieldRule.SetText("1m")
 	repeatInputFieldUntil.SetText(fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year()))
 }
 
@@ -109,13 +109,13 @@ func createRepeatForm() *cview.Form {
 	repeatForm.SetCancelFunc(handleCloseRepeat)
 
 	repeatInputFieldRule = cview.NewInputField()
-	repeatInputFieldRule.SetLabel("Repeat Every:")
+	repeatInputFieldRule.SetLabel("Frequency:")
 	repeatInputFieldRule.SetFieldWidth(14)
-	repeatInputFieldRule.SetText("0d")
+	repeatInputFieldRule.SetText("1m")
 	repeatInputFieldRule.SetFieldNote(`<number>(dwm)`)
 
 	repeatInputFieldUntil = cview.NewInputField()
-	repeatInputFieldUntil.SetLabel("Repeat Until:")
+	repeatInputFieldUntil.SetLabel("End:")
 	repeatInputFieldUntil.SetFieldWidth(11)
 	repeatInputFieldUntil.SetText(fmt.Sprintf("%d-12-31"))
 	repeatInputFieldUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
@@ -125,7 +125,7 @@ func createRepeatForm() *cview.Form {
 
 	repeatForm.SetBorder(true)
 	repeatForm.SetBorderAttributes(tcell.AttrBold)
-	repeatForm.SetRect(6, 4, 45, 14)
+	repeatForm.SetRect(6, 4, 45, 8)
 	repeatForm.SetTitleAlign(cview.AlignCenter)
 	repeatForm.SetTitle(" Repeat Transaction ")
 	repeatForm.SetWrapAround(true)
