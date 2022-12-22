@@ -77,10 +77,10 @@ func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
-	curDescription := table.GetCell(curRow, 1).GetText()
+	curDescription := table.GetCell(curRow, 2).GetText()
 
 	for i := curRow + 1; i != curRow; i++ {
-		if table.GetCell(i, 1).GetText() == curDescription {
+		if table.GetCell(i, 2).GetText() == curDescription {
 			table.Select(i, 0)
 			break
 		}

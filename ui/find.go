@@ -55,7 +55,7 @@ func handleSelectNextMatch(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 
 	for i := curRow + 1; i != curRow; i++ {
-		if strings.Contains(table.GetCell(i, 1).GetText(), findQuery) {
+		if strings.Contains(table.GetCell(i, 2).GetText(), findQuery) {
 			table.Select(i, 0)
 			return nil
 		}
@@ -74,7 +74,7 @@ func handleSelectPrevMatch(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := table.GetSelection()
 
 	for i := curRow - 1; i != curRow; i-- {
-		if strings.Contains(table.GetCell(i, 1).GetText(), findQuery) {
+		if strings.Contains(table.GetCell(i, 2).GetText(), findQuery) {
 			table.Select(i, 0)
 			break
 		}
