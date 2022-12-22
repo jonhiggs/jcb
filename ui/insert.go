@@ -137,7 +137,7 @@ func createInsertForm() *cview.Form {
 
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(6, 4, 45, 9)
+	insertForm.SetRect(6, 4, 45, 11)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" Insert Transaction ")
 	insertForm.SetWrapAround(true)
