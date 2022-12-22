@@ -197,3 +197,21 @@ func TransactionUniq(t domain.Transaction) bool {
 		return false
 	}
 }
+
+func TransactionAttributes(id int64) domain.Attributes {
+	var committedAt string
+	var notes string
+
+	statement, _ := db.Prepare("SELECT IFNULL(committedAt,''), notes FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&committedAt, &notes)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return domain.Attributes{
+		committedAt == "",
+		false,
+		notes == "",
+		true,
+	}
+}

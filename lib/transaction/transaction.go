@@ -81,6 +81,10 @@ func Uniq(t domain.Transaction) bool {
 	return db.TransactionUniq(t)
 }
 
+func Attributes(id int64) domain.Attributes {
+	return db.TransactionAttributes(id)
+}
+
 // set of transactions that need to be committed before committing provided id
 func commitSet(id int64, initialBalance int64) ([]balance, error) {
 	var found bool

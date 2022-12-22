@@ -17,3 +17,10 @@ type StringTransaction struct {
 	Cents       string
 	Notes       string
 }
+
+type Attributes struct {
+	Committed bool
+	Repeated  bool
+	Notes     bool
+	Saved     bool
+}
