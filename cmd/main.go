@@ -32,13 +32,10 @@ func main() {
 	}
 
 	file := config.DefaultFile()
+	tsvFile := ""
+	fmt.Printf("Loading file %s\n", file)
 
 	results, _, err := optparse.Parse(options, os.Args)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = db.Init(file)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,11 +51,20 @@ func main() {
 			println(config.VERSION)
 			return
 		case "import-tsv":
-			importer.Tsv(result.Optarg)
-			db.Save()
-			db.RemoveWorkingFile()
-			return
+			tsvFile = result.Optarg
 		}
+	}
+
+	err = db.Init(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if tsvFile != "" {
+		importer.Tsv(tsvFile)
+		db.Save()
+		db.RemoveWorkingFile()
+		return
 	}
 
 	ui.Start()
