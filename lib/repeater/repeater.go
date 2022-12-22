@@ -1,15 +1,15 @@
 package repeater
 
 import (
+	"jcb/lib/dates"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func Expand(date time.Time, startDate time.Time, endDate time.Time, rule string) ([]time.Time, error) {
+func Expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error) {
 	if strings.HasPrefix(rule, "0") {
-
-		if date.Unix() < startDate.Unix() {
+		if date.Unix() < dates.LastCommitted().Unix() {
 			return []time.Time{}, nil
 		}
 
@@ -17,36 +17,19 @@ func Expand(date time.Time, startDate time.Time, endDate time.Time, rule string)
 		return []time.Time{t}, err
 	}
 
-	if startDate.Unix() < date.Unix() {
-		startDate = date
-	}
-
 	var timestamps []time.Time
 	for i := 0; i < 380; i++ {
 		nextDate, _ := relativeDate(date, rule, i)
 
-		//var curDate time.Time
-		//if len(timestamps) == 0 {
-		//	curDate = date
-		//} else {
-		//	curDate = timestamps[len(timestamps)-1]
-		//}
-
-		//if curDate.Unix() >= endDate.Unix() {
-		//	break
-		//}
-
-		//if curDate.Unix() == nextDate.Unix() {
-		//	break
-		//}
+		if nextDate.Unix() < dates.LastCommitted().Unix() {
+			continue
+		}
 
 		if nextDate.Unix() >= endDate.Unix() {
 			break
 		}
 
-		if nextDate.Unix() >= startDate.Unix() {
-			timestamps = append(timestamps, nextDate)
-		}
+		timestamps = append(timestamps, nextDate)
 	}
 
 	return timestamps, nil
