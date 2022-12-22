@@ -39,6 +39,11 @@ func Delete(id int64) error {
 	if id == 0 {
 		return errors.New("You cannot delete the opening balance")
 	}
+
+	if Attributes(id).Committed {
+		return errors.New("Cannot delete committed transactions")
+	}
+
 	return db.DeleteTransaction(id)
 }
 
