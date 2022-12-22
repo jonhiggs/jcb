@@ -56,6 +56,7 @@ func Start() {
 			handleCloseInsert()
 			handleCloseEdit()
 			handleCloseFind()
+			handleCloseRepeat()
 			handleCloseCommand()
 			handleCloseHelp()
 		}

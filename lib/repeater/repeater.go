@@ -21,6 +21,10 @@ func Expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error)
 	for i := 0; i < 380; i++ {
 		nextDate, _ := relativeDate(date, rule, i)
 
+		if nextDate.Unix() == date.Unix() {
+			continue
+		}
+
 		if nextDate.Unix() < dates.LastCommitted().Unix() {
 			continue
 		}

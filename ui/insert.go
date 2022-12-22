@@ -2,15 +2,13 @@ package ui
 
 import (
 	"fmt"
-	"jcb/db"
 	"jcb/domain"
 	"jcb/lib/dates"
-	"jcb/lib/repeater"
 	"jcb/lib/validator"
-	"log"
 	"regexp"
 
 	dataf "jcb/lib/formatter/data"
+	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -22,8 +20,6 @@ var insertForm *cview.Form
 var insertInputFieldDate *cview.InputField
 var insertInputFieldDescription *cview.InputField
 var insertInputFieldCents *cview.InputField
-var insertInputFieldRepeatRule *cview.InputField
-var insertInputFieldRepeatUntil *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	openInsert()
@@ -33,11 +29,12 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 func openInsert() {
 	panels.ShowPanel("insert")
 
-	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
+	curRow, _ := table.GetSelection()
+	curDate := dataf.Date(table.GetCell(curRow, 0).GetText())
+
+	insertInputFieldDate.SetText(stringf.Date(curDate))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
-	insertInputFieldRepeatRule.SetText("0d")
-	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year()))
 }
 
 func handleCloseInsert() {
@@ -71,18 +68,6 @@ func checkInsertForm() bool {
 		return false
 	}
 
-	err = validator.RepeatRule(insertInputFieldRepeatRule.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validator.Date(insertInputFieldRepeatUntil.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
 	return true
 }
 
@@ -90,30 +75,12 @@ func dateInputFieldChanged(s string) {
 	return
 }
 
-func readInsertForm() []domain.Transaction {
-	var transactions []domain.Transaction
-
+func readInsertForm() domain.Transaction {
 	date := dataf.Date(insertInputFieldDate.GetText())
 	description := dataf.Description(insertInputFieldDescription.GetText())
 	cents := dataf.Cents(insertInputFieldCents.GetText())
-	repeatRule := dataf.RepeatRule(insertInputFieldRepeatRule.GetText())
-	repeatUntil := dataf.Date(insertInputFieldRepeatUntil.GetText())
 
-	timestamps, err := repeater.Expand(date, repeatUntil, repeatRule)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, ts := range timestamps {
-		transactions = append(transactions, domain.Transaction{
-			-1,
-			ts,
-			description,
-			cents,
-		})
-	}
-
-	return transactions
+	return domain.Transaction{-1, date, description, cents}
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
@@ -123,12 +90,11 @@ func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 	var id int64
 	var err error
-	for _, t := range readInsertForm() {
-		id, err = transaction.Insert(t)
-		if err != nil {
-			printStatus(fmt.Sprint(err))
-			return nil
-		}
+
+	id, err = transaction.Insert(readInsertForm())
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return nil
 	}
 
 	updateTransactionsTable()
@@ -157,27 +123,13 @@ func createInsertForm() *cview.Form {
 	insertInputFieldCents.SetLabel("Amount:")
 	insertInputFieldCents.SetFieldWidth(6)
 
-	insertInputFieldRepeatRule = cview.NewInputField()
-	insertInputFieldRepeatRule.SetLabel("Repeat Every:")
-	insertInputFieldRepeatRule.SetFieldWidth(14)
-	insertInputFieldRepeatRule.SetText("0d")
-	insertInputFieldRepeatRule.SetFieldNote(`<number>(dwm)`)
-
-	insertInputFieldRepeatUntil = cview.NewInputField()
-	insertInputFieldRepeatUntil.SetLabel("Repeat Until:")
-	insertInputFieldRepeatUntil.SetFieldWidth(11)
-	insertInputFieldRepeatUntil.SetText(fmt.Sprintf("%d-12-31"))
-	insertInputFieldRepeatUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
-
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldDescription)
 	insertForm.AddFormItem(insertInputFieldCents)
-	insertForm.AddFormItem(insertInputFieldRepeatRule)
-	insertForm.AddFormItem(insertInputFieldRepeatUntil)
 
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(6, 4, 45, 14)
+	insertForm.SetRect(6, 4, 45, 9)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" Insert Transaction ")
 	insertForm.SetWrapAround(true)
@@ -189,8 +141,6 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)
-	insertInputFieldRepeatRule.SetInputCapture(c.Capture)
-	insertInputFieldRepeatUntil.SetInputCapture(c.Capture)
 
 	return insertForm
 }
