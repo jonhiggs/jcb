@@ -342,7 +342,7 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		table.SetCell(i+1, 3, cell)
 
-		cell = cview.NewTableCell(balance)
+		cell = cview.NewTableCell(fmt.Sprintf("%10s", balance))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
