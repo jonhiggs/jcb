@@ -16,13 +16,14 @@ import (
 var db *sql.DB
 var workingFile string
 var saveFile string
-var Dirty bool
+var SaveTime time.Time
+var dirty bool
 
 func Init(file string) error {
 	var err error
-	Dirty = false
 	makeConfigDir(file)
 	saveFile = file
+	SaveTime = time.Now()
 	workingFile = makeWorkingFile()
 
 	db, err = sql.Open("sqlite3", workingFile)
@@ -40,12 +41,13 @@ func Init(file string) error {
 			cents INTEGER,
 			balance INTEGER,
 			committedAt TEXT,
+			updatedAt TEXT,
 			UNIQUE(id)
 	    );
 	`
 	_, err = db.Exec(sts)
 
-	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt) VALUES (?, ?, ?, ?, ?)")
+	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -53,7 +55,7 @@ func Init(file string) error {
 	year := time.Now().Year()
 
 	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, ""}
-	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now())
+	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now(), time.Now())
 	if err != nil {
 		return err
 	}
@@ -114,14 +116,38 @@ func check(err error) {
 }
 
 func Save() {
-	err := os.Remove(saveFile)
-	check(err)
-	err = os.Rename(workingFile, saveFile)
+	db.Close()
+
+	err := os.Rename(workingFile, saveFile)
 	check(err)
 	makeWorkingFile()
-	Dirty = false
+	dirty = false
+	SaveTime = time.Now()
+
+	db, err = sql.Open("sqlite3", workingFile)
 }
 
 func RemoveWorkingFile() {
 	os.Remove(workingFile)
+}
+
+func Dirty() bool {
+	var count int
+
+	// this is to handle deletes
+	if dirty {
+		return true
+	}
+
+	statement, err := db.Prepare("SELECT COUNT(*) FROM transactions WHERE updatedAt > ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = statement.QueryRow(SaveTime).Scan(&count)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return count > 0
 }

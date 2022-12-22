@@ -41,11 +41,17 @@ func runCommand(command string) {
 	switch cmd[0] {
 	case "version":
 		printStatus(config.VERSION)
+	case "savetime":
+		printStatus(fmt.Sprintf("%s", db.SaveTime))
 	case "w":
 		db.Save()
+		updateTransactionsTable()
 		printStatus("File saved")
+	case "refresh":
+		updateTransactionsTable()
+		printStatus("Refreshed the transactions")
 	case "quit", "q":
-		if db.Dirty {
+		if db.Dirty() {
 			printStatus("You have unsaved changes. Use ':q!' to quit without saving.")
 		} else {
 			app.Stop()

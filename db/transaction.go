@@ -87,34 +87,31 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 		return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
 	}
 
-	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents, notes) VALUES (?, ?, ?, ?)")
+	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents, notes, updatedAt) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return -1, err
 	}
 
-	res, err := statement.Exec(t.Date, t.Description, t.Cents, t.Notes)
+	res, err := statement.Exec(t.Date, t.Description, t.Cents, t.Notes, timeNow())
 	if err != nil {
 		return -1, err
 	}
-	Dirty = true
 	return res.LastInsertId()
 }
 
 func EditTransaction(t domain.Transaction) error {
-	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ?, notes = ? WHERE id = ? AND committedAt IS NULL")
+	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ?, notes = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
 	if err != nil {
 		return err
 	}
 
-	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Notes, t.Id)
-	Dirty = true
+	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Notes, timeNow(), t.Id)
 	return err
 }
 
 func CommitTransaction(id int64, balance int64) error {
-	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ? WHERE id = ? AND committedAt IS NULL")
-	_, err := statement.Exec(balance, time.Now().Format(timeLayout), id)
-	Dirty = true
+	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
+	_, err := statement.Exec(balance, timeNow(), timeNow(), id)
 	return err
 }
 
@@ -124,9 +121,8 @@ func UncommitTransaction(id int64) error {
 	err := statement.QueryRow(id).Scan(&committedAt)
 	ts, _ := time.Parse(timeLayout, committedAt)
 
-	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, balance = NULL WHERE committedAt >= ?")
-	_, err = statement.Exec(ts)
-	Dirty = true
+	statement, _ = db.Prepare("UPDATE transactions SET committedAt = NULL, updatedAt = ?, balance = NULL WHERE committedAt >= ?")
+	_, err = statement.Exec(timeNow(), ts)
 	return err
 }
 
@@ -149,7 +145,9 @@ func DeleteTransaction(id int64) error {
 		return err
 	}
 	_, err = statement.Exec(id)
-	Dirty = true
+
+	dirty = true
+
 	return err
 }
 
@@ -200,10 +198,11 @@ func TransactionUniq(t domain.Transaction) bool {
 
 func TransactionAttributes(id int64) domain.Attributes {
 	var committedAt string
+	var updatedAt string
 	var notes string
 
-	statement, _ := db.Prepare("SELECT IFNULL(committedAt,''), notes FROM transactions WHERE id = ?")
-	err := statement.QueryRow(id).Scan(&committedAt, &notes)
+	statement, _ := db.Prepare("SELECT IFNULL(committedAt,''), updatedAt, notes FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&committedAt, &updatedAt, &notes)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -211,7 +210,11 @@ func TransactionAttributes(id int64) domain.Attributes {
 	return domain.Attributes{
 		committedAt == "",
 		false,
-		notes == "",
-		true,
+		notes != "",
+		parseDate(updatedAt).UnixMicro() < SaveTime.UnixMicro(),
 	}
+}
+
+func timeNow() string {
+	return time.Now().Format(timeLayout)
 }
