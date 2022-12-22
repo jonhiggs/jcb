@@ -45,7 +45,7 @@ func Init(file string) error {
 	`
 	_, err = db.Exec(sts)
 
-	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents) VALUES (?, ?, ?, ?)")
+	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func Init(file string) error {
 	year := time.Now().Year()
 
 	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, ""}
-	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents)
+	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now())
 	if err != nil {
 		return err
 	}
