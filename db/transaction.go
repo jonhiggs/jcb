@@ -208,7 +208,7 @@ func TransactionAttributes(id int64) domain.Attributes {
 	}
 
 	return domain.Attributes{
-		committedAt == "",
+		committedAt != "",
 		notes != "",
 		parseDate(updatedAt).UnixMicro() < SaveTime.UnixMicro(),
 	}

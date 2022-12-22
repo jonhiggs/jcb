@@ -159,11 +159,6 @@ func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	id := selectionId()
 
-	if transaction.IsCommitted(id) {
-		printStatus("Cannot delete committed transactions")
-		return nil
-	}
-
 	curRow, _ := table.GetSelection()
 	var r int
 	if curRow == len(transactionIds)-1 {
@@ -172,7 +167,12 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		r = curRow
 	}
 
-	transaction.Delete(id)
+	err := transaction.Delete(id)
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return nil
+	}
+
 	table.RemoveRow(curRow)
 	updateTransactionsTable()
 	table.Select(r, 0)

@@ -71,9 +71,9 @@ func Transaction(d domain.Transaction) domain.StringTransaction {
 func Attributes(a domain.Attributes) string {
 	s := ""
 	if a.Committed {
-		s += "-"
-	} else {
 		s += "C"
+	} else {
+		s += "-"
 	}
 
 	if a.Notes {
