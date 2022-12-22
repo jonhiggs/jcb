@@ -187,8 +187,8 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		transaction.Uncommit(id)
 	} else {
 		transaction.Commit(id, initialBalance)
-		updateTransactionsTable()
 	}
+	updateTransactionsTable()
 	return nil
 }
 
