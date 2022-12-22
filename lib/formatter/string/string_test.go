@@ -85,7 +85,7 @@ func TestTransaction(t *testing.T) {
 	var got domain.StringTransaction
 	var expect string
 
-	got = Transaction(domain.Transaction{1, time.Now(), "testing", 1200})
+	got = Transaction(domain.Transaction{1, time.Now(), "testing", 1200, ""})
 	expect = "testing"
 	if got.Description != expect {
 		t.Error(fmt.Sprintf("got %s, expected %s", got.Description, expect))

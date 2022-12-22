@@ -9,7 +9,7 @@ import (
 
 func TestBalanceSetA(t *testing.T) {
 	set := make([]domain.Transaction, 1)
-	set[0] = domain.Transaction{1, time.Now(), "one", 123}
+	set[0] = domain.Transaction{1, time.Now(), "one", 123, ""}
 
 	got := balanceSet(set, 100)
 
@@ -32,8 +32,8 @@ func TestBalanceSetA(t *testing.T) {
 
 func TestBalanceSetB(t *testing.T) {
 	set := make([]domain.Transaction, 2)
-	set[0] = domain.Transaction{0, time.Now(), "one", -100}
-	set[1] = domain.Transaction{1, time.Now(), "two", -100}
+	set[0] = domain.Transaction{0, time.Now(), "one", -100, ""}
+	set[1] = domain.Transaction{1, time.Now(), "two", -100, ""}
 
 	got := balanceSet(set, 100)
 
@@ -68,12 +68,12 @@ func TestBalanceSetB(t *testing.T) {
 
 func TestBalanceSetC(t *testing.T) {
 	set := make([]domain.Transaction, 6)
-	set[0] = domain.Transaction{1, time.Now(), "one", -10}
-	set[1] = domain.Transaction{1, time.Now(), "two", -20}
-	set[2] = domain.Transaction{1, time.Now(), "three", -30}
-	set[3] = domain.Transaction{1, time.Now(), "four", 40}
-	set[4] = domain.Transaction{1, time.Now(), "five", -50}
-	set[5] = domain.Transaction{1, time.Now(), "six", -60}
+	set[0] = domain.Transaction{1, time.Now(), "one", -10, ""}
+	set[1] = domain.Transaction{1, time.Now(), "two", -20, ""}
+	set[2] = domain.Transaction{1, time.Now(), "three", -30, ""}
+	set[3] = domain.Transaction{1, time.Now(), "four", 40, ""}
+	set[4] = domain.Transaction{1, time.Now(), "five", -50, ""}
+	set[5] = domain.Transaction{1, time.Now(), "six", -60, ""}
 
 	got := balanceSet(set, 300)
 
