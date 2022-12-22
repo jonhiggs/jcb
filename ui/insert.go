@@ -31,7 +31,7 @@ func openInsert() {
 	panels.ShowPanel("insert")
 
 	curRow, _ := table.GetSelection()
-	curDate := dataf.Date(table.GetCell(curRow, 0).GetText())
+	curDate := dataf.Date(table.GetCell(curRow, 1).GetText())
 
 	insertInputFieldDate.SetText(stringf.Date(curDate))
 	insertInputFieldDescription.SetText("")
