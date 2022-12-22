@@ -20,7 +20,6 @@ type StringTransaction struct {
 
 type Attributes struct {
 	Committed bool
-	Repeated  bool
 	Notes     bool
 	Saved     bool
 }
