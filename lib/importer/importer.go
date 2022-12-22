@@ -27,8 +27,8 @@ func Tsv(f string) bool {
 		i += 1
 		d := strings.Split(scanner.Text(), "\t")
 
-		if len(d) != 4 {
-			fmt.Printf("Skipping line %d: Expected 4 columns but got %d\n", i, len(d))
+		if len(d) < 3 {
+			fmt.Printf("Skipping line %d: Expected at least 4 columns but got %d\n", i, len(d))
 			skipped += 1
 			continue
 		}
@@ -51,10 +51,14 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Notes(d[3]) != nil {
-			fmt.Printf("Skipping line %d: Invalid notes\n", i)
-			skipped += 1
-			continue
+		if len(d) < 3 {
+			if validator.Notes(d[3]) != nil {
+				fmt.Printf("Skipping line %d: Invalid notes\n", i)
+				skipped += 1
+				continue
+			}
+		} else {
+			d = append(d, "")
 		}
 
 		t := domain.Transaction{
