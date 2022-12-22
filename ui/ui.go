@@ -35,6 +35,7 @@ func Start() {
 	panels.AddPanel("transactions", createTransactionsTable(), false, true)
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
+	panels.AddPanel("repeat", createRepeatForm(), false, false)
 	panels.AddPanel("find", createFindForm(), false, false)
 	panels.AddPanel("command", createCommandForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)

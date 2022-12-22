@@ -98,9 +98,8 @@ func readInsertForm() []domain.Transaction {
 	cents := dataf.Cents(insertInputFieldCents.GetText())
 	repeatRule := dataf.RepeatRule(insertInputFieldRepeatRule.GetText())
 	repeatUntil := dataf.Date(insertInputFieldRepeatUntil.GetText())
-	repeatFrom := dates.LastCommitted()
 
-	timestamps, err := repeater.Expand(date, repeatFrom, repeatUntil, repeatRule)
+	timestamps, err := repeater.Expand(date, repeatUntil, repeatRule)
 	if err != nil {
 		log.Fatal(err)
 	}
