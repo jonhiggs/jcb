@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/domain"
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
@@ -13,6 +14,7 @@ import (
 
 var table *cview.Table
 var transactionIds []int64
+var transactionAttributes []domain.Attributes
 var initialBalance int64
 
 func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
@@ -277,8 +279,16 @@ func updateTransactionsTable() {
 	cell.SetAlign(cview.AlignRight)
 	table.SetCell(0, 3, cell)
 
+	cell = cview.NewTableCell("")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignRight)
+	table.SetCell(0, 4, cell)
+
 	b := initialBalance
 	transactionIds = make([]int64, len(all)+1)
+	transactionAttributes = make([]domain.Attributes, len(all)+1)
 	for i, t := range all {
 		b += t.Cents
 		date := stringf.Date(t.Date)
@@ -330,6 +340,13 @@ func updateTransactionsTable() {
 		table.SetCell(i+1, 3, cell)
 
 		transactionIds[i+1] = t.Id
+		transactionAttributes[i+1] = transaction.Attributes(t.Id)
+
+		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		cell.SetAlign(cview.AlignRight)
+		table.SetCell(i+1, 4, cell)
 	}
 }
 
