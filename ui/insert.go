@@ -20,6 +20,7 @@ var insertForm *cview.Form
 var insertInputFieldDate *cview.InputField
 var insertInputFieldDescription *cview.InputField
 var insertInputFieldCents *cview.InputField
+var insertInputFieldNotes *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	openInsert()
@@ -35,6 +36,7 @@ func openInsert() {
 	insertInputFieldDate.SetText(stringf.Date(curDate))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
+	insertInputFieldNotes.SetText("")
 }
 
 func handleCloseInsert() {
@@ -79,8 +81,9 @@ func readInsertForm() domain.Transaction {
 	date := dataf.Date(insertInputFieldDate.GetText())
 	description := dataf.Description(insertInputFieldDescription.GetText())
 	cents := dataf.Cents(insertInputFieldCents.GetText())
+	notes := dataf.Notes(insertInputFieldNotes.GetText())
 
-	return domain.Transaction{-1, date, description, cents}
+	return domain.Transaction{-1, date, description, cents, notes}
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
@@ -123,9 +126,14 @@ func createInsertForm() *cview.Form {
 	insertInputFieldCents.SetLabel("Amount:")
 	insertInputFieldCents.SetFieldWidth(6)
 
+	insertInputFieldNotes = cview.NewInputField()
+	insertInputFieldNotes.SetLabel("Notes:")
+	insertInputFieldNotes.SetFieldWidth(0)
+
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldDescription)
 	insertForm.AddFormItem(insertInputFieldCents)
+	insertForm.AddFormItem(insertInputFieldNotes)
 
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
@@ -141,6 +149,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)
+	insertInputFieldNotes.SetInputCapture(c.Capture)
 
 	return insertForm
 }

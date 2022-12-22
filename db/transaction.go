@@ -24,7 +24,7 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 
 	var records []domain.Transaction
 
-	rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", "")
+	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -37,13 +37,14 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 		var dateString string
 		var description string
 		var cents int64
+		var notes string
 
-		err = rows.Scan(&id, &dateString, &description, &cents)
+		err = rows.Scan(&id, &dateString, &description, &cents, &notes)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents})
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes})
 	}
 
 	return records, nil
@@ -55,7 +56,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 	var records []domain.Transaction
 
-	rows, err = db.Query("SELECT id, date, description, cents FROM transactions WHERE committedAt IS NULL ORDER BY date, description ASC", "")
+	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt IS NULL ORDER BY date, description ASC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -68,13 +69,14 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 		var dateString string
 		var description string
 		var cents int64
+		var notes string
 
-		err = rows.Scan(&id, &dateString, &description, &cents)
+		err = rows.Scan(&id, &dateString, &description, &cents, &notes)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents})
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes})
 	}
 
 	return records, nil
@@ -85,12 +87,12 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 		return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
 	}
 
-	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents) VALUES (?, ?, ?)")
+	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents, notes) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		return -1, err
 	}
 
-	res, err := statement.Exec(t.Date, t.Description, t.Cents)
+	res, err := statement.Exec(t.Date, t.Description, t.Cents, t.Notes)
 	if err != nil {
 		return -1, err
 	}
@@ -99,12 +101,12 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 }
 
 func EditTransaction(t domain.Transaction) error {
-	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ? WHERE id = ? AND committedAt IS NULL")
+	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ?, notes = ? WHERE id = ? AND committedAt IS NULL")
 	if err != nil {
 		return err
 	}
 
-	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Id)
+	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Notes, t.Id)
 	Dirty = true
 	return err
 }
@@ -132,12 +134,13 @@ func FindTransaction(id int64) (domain.Transaction, error) {
 	var date string
 	var description string
 	var cents int64
+	var notes string
 
-	statement, _ := db.Prepare("SELECT id, date, description, cents FROM transactions WHERE id = ?")
-	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents)
+	statement, _ := db.Prepare("SELECT id, date, description, cents, notes FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes)
 	ts, _ := time.Parse(timeLayout, date)
 
-	return domain.Transaction{id, ts, description, cents}, err
+	return domain.Transaction{id, ts, description, cents, notes}, err
 }
 
 func DeleteTransaction(id int64) error {
@@ -164,6 +167,17 @@ func TransactionIsCommitted(id int64) bool {
 
 	log.Fatal("There should never be more than two items sharing an id")
 	return false
+}
+
+func TransactionNotes(id int64) string {
+	var notes string
+	statement, _ := db.Prepare("SELECT notes FROM transactions WHERE id == ?")
+	err := statement.QueryRow(id).Scan(&notes)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return notes
 }
 
 func TransactionUniq(t domain.Transaction) bool {

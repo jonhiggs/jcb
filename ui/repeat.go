@@ -64,6 +64,7 @@ func readRepeatForm() []domain.Transaction {
 	cents := dataf.Cents(table.GetCell(curRow, 2).GetText())
 	repeatRule := dataf.RepeatRule(repeatInputFieldRule.GetText())
 	repeatUntil := dataf.Date(repeatInputFieldUntil.GetText())
+	notes := transaction.Notes(transactionIds[curRow])
 
 	timestamps, err := repeater.Expand(date, repeatUntil, repeatRule)
 	if err != nil {
@@ -76,6 +77,7 @@ func readRepeatForm() []domain.Transaction {
 			ts,
 			description,
 			cents,
+			notes,
 		})
 	}
 

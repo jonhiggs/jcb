@@ -44,6 +44,10 @@ func Description(d string) string {
 	return strings.Trim(d, " ")
 }
 
+func Notes(d string) string {
+	return strings.Trim(d, " ")
+}
+
 func Id(d int64) string {
 	s := fmt.Sprintf("%d", d)
 
@@ -59,6 +63,7 @@ func Transaction(d domain.Transaction) domain.StringTransaction {
 	date := Date(d.Date)
 	description := Description(d.Description)
 	cents := Cents(d.Cents)
+	notes := Notes(d.Notes)
 
-	return domain.StringTransaction{id, date, description, cents}
+	return domain.StringTransaction{id, date, description, cents, notes}
 }

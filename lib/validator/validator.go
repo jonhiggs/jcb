@@ -32,6 +32,10 @@ func Description(s string) error {
 	return nil
 }
 
+func Notes(s string) error {
+	return nil
+}
+
 func Id(d string) error {
 	id, _ := strconv.ParseInt(d, 10, 64)
 	if id < 0 {
