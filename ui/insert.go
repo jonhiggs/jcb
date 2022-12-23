@@ -146,6 +146,9 @@ func createInsertForm() *cview.Form {
 
 	c := cbind.NewConfiguration()
 	c.SetKey(0, tcell.KeyEnter, handleInsertTransaction)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)
