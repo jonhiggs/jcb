@@ -330,6 +330,9 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 1, cell)
 
+		if len(description) > 26 {
+			description = description[0:26]
+		}
 		cell = cview.NewTableCell(fmt.Sprintf("%-26s", description))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
