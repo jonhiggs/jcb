@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"strings"
 	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -77,4 +78,42 @@ func Start() {
 
 	app.SetRoot(grid, true)
 	app.Run()
+}
+
+func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
+	pn, _ := panels.GetFrontPanel()
+	var field *cview.InputField
+	switch pn {
+	case "edit":
+		fieldId, _ := editForm.GetFocusedItemIndex()
+		field = editForm.GetFormItem(fieldId).(*cview.InputField)
+	case "insert":
+		fieldId, _ := insertForm.GetFocusedItemIndex()
+		field = insertForm.GetFormItem(fieldId).(*cview.InputField)
+	}
+
+	pos := field.GetCursorPosition()
+	text := field.GetText()
+
+	switch ev.Key() {
+	case tcell.KeyCtrlD:
+		textSlice := strings.Split(text, "")
+
+		var newSlice []string
+		for i, l := range textSlice {
+			if i == pos {
+				continue
+			}
+
+			newSlice = append(newSlice, l)
+		}
+
+		field.SetText(strings.Join(newSlice, ""))
+		field.SetCursorPosition(pos)
+	case tcell.KeyCtrlF:
+		field.SetCursorPosition(pos + 1)
+	case tcell.KeyCtrlB:
+		field.SetCursorPosition(pos - 1)
+	}
+	return nil
 }
