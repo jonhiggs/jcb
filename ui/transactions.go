@@ -183,7 +183,8 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
 	id := transactionIds[r]
-	if transaction.IsCommitted(id) {
+
+	if transaction.Attributes(id).Committed {
 		transaction.Uncommit(id)
 	} else {
 		transaction.Commit(id, initialBalance)

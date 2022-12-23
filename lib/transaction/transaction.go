@@ -99,10 +99,6 @@ func Uncommit(id int64) error {
 	return db.UncommitTransaction(id)
 }
 
-func IsCommitted(id int64) bool {
-	return db.TransactionIsCommitted(id)
-}
-
 func Notes(id int64) string {
 	return db.TransactionNotes(id)
 }

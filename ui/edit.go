@@ -21,7 +21,7 @@ var editInputFieldCents *cview.InputField
 var editInputFieldNotes *cview.InputField
 
 func handleOpenEdit() {
-	if transaction.IsCommitted(selectionId()) {
+	if transaction.Attributes(selectionId()).Committed {
 		printStatus("Cannot edit a committed transaction")
 		return
 	}
