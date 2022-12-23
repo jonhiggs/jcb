@@ -37,6 +37,9 @@ func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func runCommand(command string) {
+	if command == "" {
+		return
+	}
 	cmd := strings.Fields(command)
 	switch cmd[0] {
 	case "version":
