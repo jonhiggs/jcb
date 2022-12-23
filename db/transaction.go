@@ -109,10 +109,28 @@ func EditTransaction(t domain.Transaction) error {
 	return err
 }
 
-func CommitTransaction(id int64, balance int64) error {
+func CommitTransaction(id int64, cents int64) error {
+	balance := CommittedBalance() + cents
 	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
+
 	_, err := statement.Exec(balance, timeNow(), timeNow(), id)
 	return err
+}
+
+func CommittedBalance() int64 {
+	ct, _ := CommittedTransactions()
+	if len(ct) == 0 {
+		t, _ := FindTransaction(0)
+		return t.Cents
+	} else {
+		var balance int64
+		statement, _ := db.Prepare("SELECT balance FROM transactions WHERE committedAt IS NOT NULL ORDER BY committedAt LIMIT 1")
+		err := statement.QueryRow().Scan(&balance)
+		if err != nil {
+			log.Fatal(err)
+		}
+		return balance
+	}
 }
 
 func UncommitTransaction(id int64) error {

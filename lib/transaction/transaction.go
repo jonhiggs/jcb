@@ -2,17 +2,11 @@ package transaction
 
 import (
 	"errors"
-	"fmt"
 	"jcb/db"
 	"jcb/domain"
 	"jcb/lib/dates"
+	stringf "jcb/lib/formatter/string"
 )
-
-type balance struct {
-	Id      int64
-	Cents   int64
-	Balance int64
-}
 
 func Find(id int64) (domain.Transaction, error) {
 	return db.FindTransaction(id)
@@ -56,18 +50,49 @@ func Committed() ([]domain.Transaction, error) {
 }
 
 func Commit(id int64, initialBalance int64) error {
-	balance, err := commitSet(id, initialBalance)
-	if err != nil {
-		return err
-	}
+	ids := commitSet(id)
 
-	for _, b := range balance {
-		err = db.CommitTransaction(b.Id, b.Balance)
+	for _, i := range ids {
+		t, err := Find(i)
+		if err != nil {
+			return err
+		}
+
+		err = db.CommitTransaction(i, t.Cents)
 		if err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func CommitSingle(id int64) error {
+	t, err := Find(id)
+	if err != nil {
+		return err
+	}
+
+	ut, err := Uncommitted()
+	if err != nil {
+		return err
+	}
+
+	found := false
+	for i := len(ut) - 1; i >= 0; i-- {
+		if ut[i].Id == id {
+			found = true
+		}
+
+		if !found {
+			continue
+		}
+
+		if stringf.Date(ut[i].Date) != stringf.Date(t.Date) {
+			return errors.New("Commit older transactions first")
+		}
+	}
+
+	return db.CommitTransaction(id, t.Cents)
 }
 
 func Uncommit(id int64) error {
@@ -91,43 +116,20 @@ func Attributes(id int64) domain.Attributes {
 }
 
 // set of transactions that need to be committed before committing provided id
-func commitSet(id int64, initialBalance int64) ([]balance, error) {
-	var found bool
-
+func commitSet(id int64) []int64 {
 	uncommitted, err := db.UncommittedTransactions()
 	if err != nil {
-		return []balance{}, err
+		return []int64{}
 	}
 
-	var tset []domain.Transaction
+	var ids []int64
 	for _, t := range uncommitted {
-		tset = append(tset, t)
+		ids = append(ids, t.Id)
 
 		if t.Id == id {
-			found = true
 			break
 		}
 	}
 
-	if found {
-		bset := balanceSet(tset, initialBalance)
-		return bset, nil
-	} else {
-		return []balance{}, errors.New(fmt.Sprintf("No uncommitted transaction with id %d was found", id))
-	}
-}
-
-func balanceSet(tset []domain.Transaction, initialBalance int64) []balance {
-	bset := make([]balance, len(tset))
-	bset[len(tset)-1].Balance = initialBalance
-
-	for i := len(bset) - 1; i > 0; i-- {
-		bset[i].Id = tset[i].Id
-		bset[i].Cents = tset[i].Cents
-		bset[i-1].Balance = bset[i].Balance - bset[i].Cents
-	}
-	bset[0].Id = tset[0].Id
-	bset[0].Cents = tset[0].Cents
-
-	return bset
+	return ids
 }

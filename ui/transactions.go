@@ -192,6 +192,20 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := table.GetSelection()
+	id := transactionIds[r]
+
+	err := transaction.CommitSingle(id)
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return nil
+	}
+
+	updateTransactionsTable()
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
 	initialBalance = 0
 	table = cview.NewTable()
@@ -217,6 +231,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("x", handleDeleteTransaction)
 	c.Set("r", handleOpenRepeat)
 	c.Set("C", handleCommitTransaction)
+	c.Set("c", handleCommitSingleTransaction)
 	c.Set(":", handleOpenCommand)
 	c.Set("/", handleOpenFind)
 	c.Set("?", handleOpenFind)
