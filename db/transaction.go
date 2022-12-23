@@ -218,9 +218,10 @@ func TransactionAttributes(id int64) domain.Attributes {
 	var committedAt string
 	var updatedAt string
 	var notes string
+	var cents int64
 
-	statement, _ := db.Prepare("SELECT IFNULL(committedAt,''), updatedAt, notes FROM transactions WHERE id = ?")
-	err := statement.QueryRow(id).Scan(&committedAt, &updatedAt, &notes)
+	statement, _ := db.Prepare("SELECT IFNULL(committedAt,''), updatedAt, notes, cents FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&committedAt, &updatedAt, &notes, &cents)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -229,6 +230,7 @@ func TransactionAttributes(id int64) domain.Attributes {
 		committedAt != "",
 		notes != "",
 		parseDate(updatedAt).UnixMicro() < SaveTime.UnixMicro(),
+		cents < 0,
 	}
 }
 
