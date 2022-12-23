@@ -124,7 +124,7 @@ func createInsertForm() *cview.Form {
 
 	insertInputFieldCents = cview.NewInputField()
 	insertInputFieldCents.SetLabel("Amount:")
-	insertInputFieldCents.SetFieldWidth(6)
+	insertInputFieldCents.SetFieldWidth(10)
 
 	insertInputFieldNotes = cview.NewInputField()
 	insertInputFieldNotes.SetLabel("Notes:")

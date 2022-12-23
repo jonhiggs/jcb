@@ -112,11 +112,7 @@ func createEditForm() *cview.Form {
 
 	editInputFieldCents = cview.NewInputField()
 	editInputFieldCents.SetLabel("Amount:")
-	editInputFieldCents.SetFieldWidth(6)
-
-	editInputFieldCents = cview.NewInputField()
-	editInputFieldCents.SetLabel("Amount:")
-	editInputFieldCents.SetFieldWidth(6)
+	editInputFieldCents.SetFieldWidth(10)
 
 	editInputFieldNotes = cview.NewInputField()
 	editInputFieldNotes.SetLabel("Notes:")
