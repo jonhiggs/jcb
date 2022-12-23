@@ -63,7 +63,8 @@ func createHelp() *cview.TextView {
 	{          Scroll to previous month
 	>          Scroll to next year
 	<          Scroll to previous year
-	C          Commit all transactions to selection
+	C          Commit all prior transactions
+	c          Commit single transaction
 	r          Repeat transaction
 	:          Enter command mode
 	/          Enter find next query
