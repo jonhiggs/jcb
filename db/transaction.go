@@ -56,7 +56,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 	var records []domain.Transaction
 
-	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt IS NULL ORDER BY date, description ASC", "")
+	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt IS NULL ORDER BY date ASC, cents DESC", "")
 
 	if err != nil {
 		log.Fatal(err)
