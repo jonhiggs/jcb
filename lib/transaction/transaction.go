@@ -95,6 +95,15 @@ func CommitSingle(id int64) error {
 	return db.CommitTransaction(id, t.Cents)
 }
 
+func UncommitSingle(id int64) error {
+	ct, _ := Committed()
+	if ct[len(ct)-1].Id != id {
+		return errors.New("Only the final transaction can be uncommitted")
+	}
+
+	return db.UncommitTransaction(id)
+}
+
 func Uncommit(id int64) error {
 	return db.UncommitTransaction(id)
 }

@@ -197,7 +197,13 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := table.GetSelection()
 	id := transactionIds[r]
 
-	err := transaction.CommitSingle(id)
+	var err error
+	if transaction.Attributes(id).Committed {
+		err = transaction.UncommitSingle(id)
+	} else {
+		err = transaction.CommitSingle(id)
+	}
+
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return nil
@@ -252,8 +258,6 @@ func createTransactionsTable() *cview.Table {
 
 	table.SetSelectedFunc(func(row int, column int) {
 		handleOpenEdit()
-		//table.GetCell(row, column).SetTextColor(tcell.ColorRed.TrueColor())
-		//table.SetSelectable(false, false)
 	})
 
 	return table
