@@ -46,7 +46,7 @@ func Id(d string) error {
 
 func RepeatRule(rule string) error {
 	rule = strings.Trim(rule, " ")
-	re := regexp.MustCompile(`^[0-9]+[dwm]$`)
+	re := regexp.MustCompile(`^[0-9]+[dwmy]$`)
 
 	if !re.MatchString(rule) {
 		return errors.New("Invalid repeat rule")

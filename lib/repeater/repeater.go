@@ -53,6 +53,8 @@ func relativeDate(date time.Time, rule string, multiplier int) (time.Time, error
 		date = date.AddDate(0, 0, (multiplier * 1 * (f * 7)))
 	case "m":
 		date = date.AddDate(0, (multiplier * 1 * f), 0)
+	case "y":
+		date = date.AddDate((multiplier * 1 * f), 0, 0)
 	}
 
 	return date, nil
