@@ -103,8 +103,6 @@ func createEditForm() *cview.Form {
 	editInputFieldDate = cview.NewInputField()
 	editInputFieldDate.SetLabel("Date:")
 	editInputFieldDate.SetFieldWidth(11)
-	//editInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
-	//editInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
