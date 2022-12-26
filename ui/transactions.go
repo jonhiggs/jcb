@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 	"jcb/domain"
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
@@ -350,10 +351,10 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		table.SetCell(i+1, 1, cell)
 
-		if len(description) > 26 {
-			description = description[0:26]
+		if len(description) > config.DESC_MAX_LENGTH {
+			description = description[0:config.DESC_MAX_LENGTH]
 		}
-		cell = cview.NewTableCell(fmt.Sprintf("%-26s", description))
+		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESC_MAX_LENGTH, description))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
