@@ -22,6 +22,7 @@ var insertInputFieldDate *cview.InputField
 var insertInputFieldDescription *cview.InputField
 var insertInputFieldCents *cview.InputField
 var insertInputFieldNotes *cview.InputField
+var insertInputFieldCategory *cview.InputField
 
 func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 	openInsert()
@@ -30,14 +31,16 @@ func handleOpenInsert(ev *tcell.EventKey) *tcell.EventKey {
 
 func openInsert() {
 	panels.ShowPanel("insert")
+	panels.SendToFront("insert")
 
-	curRow, _ := table.GetSelection()
-	curDate := dataf.Date(table.GetCell(curRow, 1).GetText())
+	curRow, _ := transactionsTable.GetSelection()
+	curDate := dataf.Date(transactionsTable.GetCell(curRow, 1).GetText())
 
 	insertInputFieldDate.SetText(stringf.Date(curDate))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldNotes.SetText("")
+	insertInputFieldCategory.SetText("")
 }
 
 func handleCloseInsert() {
@@ -83,8 +86,9 @@ func readInsertForm() domain.Transaction {
 	description := dataf.Description(insertInputFieldDescription.GetText())
 	cents := dataf.Cents(insertInputFieldCents.GetText())
 	notes := dataf.Notes(insertInputFieldNotes.GetText())
+	category := dataf.Category(insertInputFieldCategory.GetText())
 
-	return domain.Transaction{-1, date, description, cents, notes}
+	return domain.Transaction{-1, date, description, cents, notes, category}
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
@@ -119,6 +123,10 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
 	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
+	insertInputFieldCategory = cview.NewInputField()
+	insertInputFieldCategory.SetLabel("Category:")
+	insertInputFieldCategory.SetFieldWidth(0)
+
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
@@ -134,13 +142,14 @@ func createInsertForm() *cview.Form {
 	insertInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
 
 	insertForm.AddFormItem(insertInputFieldDate)
+	insertForm.AddFormItem(insertInputFieldCategory)
 	insertForm.AddFormItem(insertInputFieldDescription)
 	insertForm.AddFormItem(insertInputFieldCents)
 	insertForm.AddFormItem(insertInputFieldNotes)
 
 	insertForm.SetBorder(true)
 	insertForm.SetBorderAttributes(tcell.AttrBold)
-	insertForm.SetRect(6, 4, 45, 11)
+	insertForm.SetRect(15, 4, config.MAX_WIDTH-(15*2), 13)
 	insertForm.SetTitleAlign(cview.AlignCenter)
 	insertForm.SetTitle(" Insert Transaction ")
 	insertForm.SetWrapAround(true)
@@ -156,6 +165,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)
 	insertInputFieldNotes.SetInputCapture(c.Capture)
+	insertInputFieldCategory.SetInputCapture(c.Capture)
 
 	return insertForm
 }

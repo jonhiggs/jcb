@@ -44,6 +44,10 @@ func Description(d string) string {
 	return strings.Trim(d, " ")
 }
 
+func Category(d string) string {
+	return strings.Trim(d, " ")
+}
+
 func Notes(d string) string {
 	return strings.Trim(d, " ")
 }
@@ -64,8 +68,9 @@ func Transaction(d domain.Transaction) domain.StringTransaction {
 	description := Description(d.Description)
 	cents := Cents(d.Cents)
 	notes := Notes(d.Notes)
+	category := Category(d.Category)
 
-	return domain.StringTransaction{id, date, description, cents, notes}
+	return domain.StringTransaction{id, date, description, cents, notes, category}
 }
 
 func Attributes(a domain.Attributes) string {

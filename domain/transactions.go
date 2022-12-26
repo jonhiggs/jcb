@@ -8,6 +8,7 @@ type Transaction struct {
 	Description string
 	Cents       int64
 	Notes       string
+	Category    string
 }
 
 type StringTransaction struct {
@@ -16,6 +17,7 @@ type StringTransaction struct {
 	Description string
 	Cents       string
 	Notes       string
+	Category    string
 }
 
 type Attributes struct {

@@ -36,6 +36,7 @@ func Init(file string) error {
 	    CREATE TABLE IF NOT EXISTS transactions(
 	        id INTEGER PRIMARY KEY AUTOINCREMENT,
 	        date TEXT,
+			category TEXT default '',
 			description TEXT DEFAULT '',
 			notes TEXT DEFAULT '',
 			cents INTEGER,
@@ -54,7 +55,7 @@ func Init(file string) error {
 
 	year := time.Now().Year()
 
-	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, ""}
+	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, "", ""}
 	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now(), time.Now())
 	if err != nil {
 		return err

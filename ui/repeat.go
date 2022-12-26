@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 	"jcb/db"
 	"jcb/domain"
 	"jcb/lib/repeater"
@@ -58,13 +59,14 @@ func checkRepeatForm() bool {
 func readRepeatForm() []domain.Transaction {
 	var transactions []domain.Transaction
 
-	curRow, _ := table.GetSelection()
-	date := dataf.Date(table.GetCell(curRow, 1).GetText())
-	description := dataf.Description(table.GetCell(curRow, 2).GetText())
-	cents := dataf.Cents(table.GetCell(curRow, 3).GetText())
+	curRow, _ := transactionsTable.GetSelection()
+	date := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
+	description := dataf.Description(transactionsTable.GetCell(curRow, config.DESCRIPTION_COLUMN).GetText())
+	cents := dataf.Cents(transactionsTable.GetCell(curRow, config.AMOUNT_COLUMN).GetText())
 	repeatRule := dataf.RepeatRule(repeatInputFieldRule.GetText())
 	repeatUntil := dataf.Date(repeatInputFieldUntil.GetText())
 	notes := transaction.Notes(transactionIds[curRow])
+	category := dataf.Category(transactionsTable.GetCell(curRow, config.CATEGORY_COLUMN).GetText())
 
 	timestamps, err := repeater.Expand(date, repeatUntil, repeatRule)
 	if err != nil {
@@ -78,6 +80,7 @@ func readRepeatForm() []domain.Transaction {
 			description,
 			cents,
 			notes,
+			category,
 		})
 	}
 

@@ -51,8 +51,8 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if len(d) < 3 {
-			if validator.Notes(d[3]) != nil {
+		if len(d) < 4 {
+			if validator.Notes(d[4]) != nil {
 				fmt.Printf("Skipping line %d: Invalid notes\n", i)
 				skipped += 1
 				continue
@@ -64,9 +64,10 @@ func Tsv(f string) bool {
 		t := domain.Transaction{
 			-1,
 			dataf.Date(d[0]),
-			dataf.Description(d[1]),
-			dataf.Cents(d[2]),
-			dataf.Notes(d[3]),
+			dataf.Description(d[2]),
+			dataf.Cents(d[3]),
+			dataf.Notes(d[4]),
+			dataf.Category(d[1]),
 		}
 
 		if !transaction.Uniq(t) {
