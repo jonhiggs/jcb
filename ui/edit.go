@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 	"jcb/domain"
 
 	dataf "jcb/lib/formatter/data"
@@ -107,14 +108,17 @@ func createEditForm() *cview.Form {
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
 	editInputFieldDescription.SetFieldWidth(0)
+	editInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESC_MAX_LENGTH))
 
 	editInputFieldCents = cview.NewInputField()
 	editInputFieldCents.SetLabel("Amount:")
 	editInputFieldCents.SetFieldWidth(10)
+	editInputFieldCents.SetAcceptanceFunc(cview.InputFieldFloat)
 
 	editInputFieldNotes = cview.NewInputField()
 	editInputFieldNotes.SetLabel("Notes:")
 	editInputFieldNotes.SetFieldWidth(0)
+	editInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
 
 	editForm.AddFormItem(editInputFieldDate)
 	editForm.AddFormItem(editInputFieldDescription)

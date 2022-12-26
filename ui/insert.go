@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 	"jcb/domain"
 	"jcb/lib/dates"
 	"jcb/lib/validator"
@@ -121,6 +122,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
+	insertInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESC_MAX_LENGTH))
 
 	insertInputFieldCents = cview.NewInputField()
 	insertInputFieldCents.SetLabel("Amount:")
@@ -129,6 +131,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldNotes = cview.NewInputField()
 	insertInputFieldNotes.SetLabel("Notes:")
 	insertInputFieldNotes.SetFieldWidth(0)
+	insertInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
 
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldDescription)
