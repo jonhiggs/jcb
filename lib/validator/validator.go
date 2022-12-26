@@ -32,6 +32,10 @@ func Description(s string) error {
 	return nil
 }
 
+func Category(s string) error {
+	return nil
+}
+
 func Notes(s string) error {
 	return nil
 }

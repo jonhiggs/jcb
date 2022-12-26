@@ -13,6 +13,11 @@ func handleCloseHelp() {
 	handleCloseStatus()
 }
 
+func handleOpenHelp(ev *tcell.EventKey) *tcell.EventKey {
+	openHelp()
+	return nil
+}
+
 func handleHelpScroll(ev *tcell.EventKey) *tcell.EventKey {
 	_, _, _, h := helpTextView.GetInnerRect()
 	offset, _ := helpTextView.GetScrollOffset()
@@ -30,6 +35,8 @@ func handleHelpScroll(ev *tcell.EventKey) *tcell.EventKey {
 
 func openHelp() {
 	panels.ShowPanel("help")
+	panels.SendToFront("help")
+	panels.HidePanel("report")
 	printStatus("do blah for blah")
 }
 
@@ -71,6 +78,9 @@ func createHelp() *cview.TextView {
 	?          Enter find previous query
 	n          Next matching transaction
 	N          Previous matching transaction
+	<F1>       Show the help page
+	<F2>       Show the transactions page
+	<F3>       Show the report page
 
 
  Input Field Key Bindings:
@@ -90,6 +100,9 @@ func createHelp() *cview.TextView {
 	c.Set(" ", handleHelpScroll)
 	c.Set("u", handleHelpScroll)
 	c.Set("d", handleHelpScroll)
+	c.Set("F1", handleOpenHelp)
+	c.Set("F2", handleOpenTransactions)
+	c.Set("F3", handleOpenReport)
 	c.Set("q", func(ev *tcell.EventKey) *tcell.EventKey { handleCloseHelp(); return nil })
 	helpTextView.SetInputCapture(c.Capture)
 

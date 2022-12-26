@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"jcb/config"
 	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -52,11 +53,11 @@ func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectNextMatch(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
+	curRow, _ := transactionsTable.GetSelection()
 
 	for i := curRow + 1; i != curRow; i++ {
-		if strings.Contains(strings.ToLower(table.GetCell(i, 2).GetText()), strings.ToLower(findQuery)) {
-			table.Select(i, 0)
+		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+			transactionsTable.Select(i, 0)
 			return nil
 		}
 
@@ -71,11 +72,11 @@ func handleSelectNextMatch(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectPrevMatch(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
+	curRow, _ := transactionsTable.GetSelection()
 
 	for i := curRow - 1; i != curRow; i-- {
-		if strings.Contains(strings.ToLower(table.GetCell(i, 2).GetText()), strings.ToLower(findQuery)) {
-			table.Select(i, 0)
+		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+			transactionsTable.Select(i, 0)
 			break
 		}
 

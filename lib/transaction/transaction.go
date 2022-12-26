@@ -6,6 +6,7 @@ import (
 	"jcb/domain"
 	"jcb/lib/dates"
 	stringf "jcb/lib/formatter/string"
+	"time"
 )
 
 func Find(id int64) (domain.Transaction, error) {
@@ -118,6 +119,10 @@ func Uniq(t domain.Transaction) bool {
 
 func Attributes(id int64) domain.Attributes {
 	return db.TransactionAttributes(id)
+}
+
+func Sum(startTime time.Time, endTime time.Time) int64 {
+	return db.TransactionSum(startTime, endTime)
 }
 
 // set of transactions that need to be committed before committing provided id

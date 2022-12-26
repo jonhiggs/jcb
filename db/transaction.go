@@ -10,12 +10,6 @@ import (
 	"time"
 )
 
-const (
-	TYPE_OPENING     = 0
-	TYPE_COMMITTED   = 1
-	TYPE_UNCOMMITTED = 2
-)
-
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
 func CommittedTransactions() ([]domain.Transaction, error) {
@@ -24,7 +18,7 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 
 	var records []domain.Transaction
 
-	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", "")
+	rows, err = db.Query("SELECT id, date, description, cents, notes, category FROM transactions WHERE committedAt NOT NULL ORDER BY committedAt ASC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -38,13 +32,14 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 		var description string
 		var cents int64
 		var notes string
+		var category string
 
-		err = rows.Scan(&id, &dateString, &description, &cents, &notes)
+		err = rows.Scan(&id, &dateString, &description, &cents, &notes, &category)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes})
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes, category})
 	}
 
 	return records, nil
@@ -56,7 +51,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 	var records []domain.Transaction
 
-	rows, err = db.Query("SELECT id, date, description, cents, notes FROM transactions WHERE committedAt IS NULL ORDER BY date ASC, cents DESC", "")
+	rows, err = db.Query("SELECT id, date, description, cents, notes, category FROM transactions WHERE committedAt IS NULL ORDER BY date ASC, cents DESC", "")
 
 	if err != nil {
 		log.Fatal(err)
@@ -70,13 +65,14 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 		var description string
 		var cents int64
 		var notes string
+		var category string
 
-		err = rows.Scan(&id, &dateString, &description, &cents, &notes)
+		err = rows.Scan(&id, &dateString, &description, &cents, &notes, &category)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes})
+		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes, category})
 	}
 
 	return records, nil
@@ -87,12 +83,12 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 		return -1, errors.New(fmt.Sprintf("Transaction %d already exists", t.Id))
 	}
 
-	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents, notes, updatedAt) VALUES (?, ?, ?, ?, ?)")
+	statement, err := db.Prepare("INSERT INTO transactions (date, description, cents, notes, updatedAt, category) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return -1, err
 	}
 
-	res, err := statement.Exec(t.Date, t.Description, t.Cents, t.Notes, timeNow())
+	res, err := statement.Exec(t.Date, t.Description, t.Cents, t.Notes, timeNow(), t.Category)
 	if err != nil {
 		return -1, err
 	}
@@ -100,12 +96,12 @@ func InsertTransaction(t domain.Transaction) (int64, error) {
 }
 
 func EditTransaction(t domain.Transaction) error {
-	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ?, notes = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
+	statement, err := db.Prepare("UPDATE transactions SET date = ?, description = ?, cents = ?, notes = ?, category = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
 	if err != nil {
 		return err
 	}
 
-	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Notes, timeNow(), t.Id)
+	_, err = statement.Exec(t.Date, t.Description, t.Cents, t.Notes, t.Category, timeNow(), t.Id)
 	return err
 }
 
@@ -149,12 +145,13 @@ func FindTransaction(id int64) (domain.Transaction, error) {
 	var description string
 	var cents int64
 	var notes string
+	var category string
 
-	statement, _ := db.Prepare("SELECT id, date, description, cents, notes FROM transactions WHERE id = ?")
-	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes)
+	statement, _ := db.Prepare("SELECT id, date, description, cents, notes, category FROM transactions WHERE id = ?")
+	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category)
 	ts, _ := time.Parse(timeLayout, date)
 
-	return domain.Transaction{id, ts, description, cents, notes}, err
+	return domain.Transaction{id, ts, description, cents, notes, category}, err
 }
 
 func DeleteTransaction(id int64) error {
@@ -232,6 +229,19 @@ func TransactionAttributes(id int64) domain.Attributes {
 		parseDate(updatedAt).UnixMicro() < SaveTime.UnixMicro(),
 		cents < 0,
 	}
+}
+
+func TransactionSum(startTime time.Time, endTime time.Time) int64 {
+	var sum int64
+
+	statement, _ := db.Prepare("SELECT COALESCE(SUM(cents),0) FROM transactions WHERE date >= ? AND date < ?")
+	err := statement.QueryRow(startTime, endTime).Scan(&sum)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return sum
 }
 
 func timeNow() string {

@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"jcb/config"
 	"strings"
 	"time"
 
@@ -34,6 +35,7 @@ func Start() {
 
 	panels = cview.NewPanels()
 	panels.AddPanel("transactions", createTransactionsTable(), false, true)
+	panels.AddPanel("report", createReportTable(), false, false)
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
 	panels.AddPanel("repeat", createRepeatForm(), false, false)
@@ -41,12 +43,6 @@ func Start() {
 	panels.AddPanel("command", createCommandForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
 	panels.AddPanel("help", createHelp(), false, false)
-
-	grid := cview.NewGrid()
-	grid.SetRows(0)
-	grid.SetColumns(72, 0)
-	grid.SetBorders(false)
-	grid.AddItem(panels, 0, 0, 1, 1, 0, 0, true)
 
 	c := cbind.NewConfiguration()
 	handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
@@ -69,14 +65,15 @@ func Start() {
 	app.SetInputCapture(c.Capture)
 
 	app.SetAfterResizeFunc(func(w int, h int) {
-		table.SetRect(0, 0, 72, h-1)
-		status.SetRect(0, h-1, 72, h)
-		helpTextView.SetRect(0, 0, 72, h-1)
-		findForm.SetRect(0, h-1, 72, h)
-		commandForm.SetRect(0, h-1, 72, h)
+		transactionsTable.SetRect(0, 0, config.MAX_WIDTH, h-1)
+		status.SetRect(0, h-1, config.MAX_WIDTH, h)
+		helpTextView.SetRect(0, 0, config.MAX_WIDTH, h-1)
+		reportTable.SetRect(0, 0, w, h-1)
+		findForm.SetRect(0, h-1, config.MAX_WIDTH, h)
+		commandForm.SetRect(0, h-1, config.MAX_WIDTH, h)
 	})
 
-	app.SetRoot(grid, true)
+	app.SetRoot(panels, true)
 	app.Run()
 }
 

@@ -44,6 +44,14 @@ func Description(s string) string {
 	return strings.Trim(s, " ")
 }
 
+func Category(s string) string {
+	if validator.Category(s) != nil {
+		log.Fatal("cannot convert invalid cateogry to data")
+	}
+
+	return strings.Trim(s, " ")
+}
+
 func Notes(s string) string {
 	if validator.Notes(s) != nil {
 		log.Fatal("cannot convert invalid notes to data")
@@ -93,5 +101,6 @@ func Transaction(d domain.StringTransaction) domain.Transaction {
 		Description(d.Description),
 		Cents(d.Cents),
 		Notes(d.Notes),
+		Category(d.Category),
 	}
 }

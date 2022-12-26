@@ -13,34 +13,41 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-var table *cview.Table
+var transactionsTable *cview.Table
 var transactionIds []int64
 var transactionAttributes []domain.Attributes
 var initialBalance int64
 
+func handleOpenTransactions(ev *tcell.EventKey) *tcell.EventKey {
+	panels.ShowPanel("transactions")
+	panels.HidePanel("report")
+	panels.SendToFront("transactions")
+	return nil
+}
+
 func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := table.GetSelection()
-	if table.GetRowCount() > r+1 {
-		table.Select(r+1, 0)
+	r, _ := transactionsTable.GetSelection()
+	if transactionsTable.GetRowCount() > r+1 {
+		transactionsTable.Select(r+1, 0)
 	}
 
 	return nil
 }
 
 func handleSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := table.GetSelection()
-	table.Select(r-1, 0)
+	r, _ := transactionsTable.GetSelection()
+	transactionsTable.Select(r-1, 0)
 	return nil
 }
 
 func handleHalfPageDown(ev *tcell.EventKey) *tcell.EventKey {
 	_, h := app.GetScreenSize()
-	r, _ := table.GetSelection()
+	r, _ := transactionsTable.GetSelection()
 
-	if r+(h/2) < table.GetRowCount() {
-		table.Select(r+(h/2), 0)
+	if r+(h/2) < transactionsTable.GetRowCount() {
+		transactionsTable.Select(r+(h/2), 0)
 	} else {
-		table.Select(table.GetRowCount()-1, 0)
+		transactionsTable.Select(transactionsTable.GetRowCount()-1, 0)
 	}
 
 	return nil
@@ -48,12 +55,12 @@ func handleHalfPageDown(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 	_, h := app.GetScreenSize()
-	r, _ := table.GetSelection()
+	r, _ := transactionsTable.GetSelection()
 
 	if r-(h/2) > 0 {
-		table.Select(r-(h/2), 0)
+		transactionsTable.Select(r-(h/2), 0)
 	} else {
-		table.Select(0, 0)
+		transactionsTable.Select(0, 0)
 	}
 
 	return nil
@@ -66,23 +73,23 @@ func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 
 		for i, v := range transactionIds {
 			if firstUncommitted.Id == v {
-				table.Select(i, 0)
+				transactionsTable.Select(i, 0)
 				return nil
 			}
 		}
 	}
 
-	table.Select(len(transactionIds)-1, 0)
+	transactionsTable.Select(len(transactionIds)-1, 0)
 	return nil
 }
 
 func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
-	curDescription := table.GetCell(curRow, 2).GetText()
+	curRow, _ := transactionsTable.GetSelection()
+	curDescription := transactionsTable.GetCell(curRow, config.DESCRIPTION_COLUMN).GetText()
 
 	for i := curRow + 1; i != curRow; i++ {
-		if table.GetCell(i, 2).GetText() == curDescription {
-			table.Select(i, 0)
+		if transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText() == curDescription {
+			transactionsTable.Select(i, 0)
 			break
 		}
 
@@ -95,63 +102,63 @@ func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
-	curMonth := dataf.Date(table.GetCell(curRow, 1).GetText()).Month()
+	curRow, _ := transactionsTable.GetSelection()
+	curMonth := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Month()
 
 	for i := curRow + 1; i < len(transactionIds); i++ {
-		month := dataf.Date(table.GetCell(i, 1).GetText()).Month()
+		month := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Month()
 		if int(month) > int(curMonth) {
-			table.Select(i, 0)
+			transactionsTable.Select(i, 0)
 			return nil
 		}
 	}
 
-	table.Select(len(transactionIds)-1, 0)
+	transactionsTable.Select(len(transactionIds)-1, 0)
 
 	return nil
 }
 
 func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
-	curMonth := dataf.Date(table.GetCell(curRow, 1).GetText()).Month()
+	curRow, _ := transactionsTable.GetSelection()
+	curMonth := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Month()
 
 	for i := curRow + 1; i > 0; i-- {
-		month := dataf.Date(table.GetCell(i, 1).GetText()).Month()
+		month := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Month()
 		if int(month) < int(curMonth) {
-			table.Select(i, 0)
+			transactionsTable.Select(i, 0)
 			return nil
 		}
 	}
 
-	table.Select(1, 0)
+	transactionsTable.Select(1, 0)
 
 	return nil
 }
 
 func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := table.GetSelection()
-	curYear := dataf.Date(table.GetCell(curRow, 1).GetText()).Year()
+	curRow, _ := transactionsTable.GetSelection()
+	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
 
 	if ev.Rune() == '<' {
 		for i := curRow; i > 0; i-- {
-			year := dataf.Date(table.GetCell(i, 1).GetText()).Year()
+			year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
 			if int(year) != int(curYear) {
-				table.Select(i, 0)
+				transactionsTable.Select(i, 0)
 				return nil
 			}
 		}
 
-		table.Select(1, 0)
+		transactionsTable.Select(1, 0)
 	} else {
 		for i := curRow; i < len(transactionIds)-1; i++ {
-			year := dataf.Date(table.GetCell(i, 1).GetText()).Year()
+			year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
 			if int(year) != int(curYear) {
-				table.Select(i, 0)
+				transactionsTable.Select(i, 0)
 				return nil
 			}
 		}
 
-		table.Select(len(transactionIds)-1, 0)
+		transactionsTable.Select(len(transactionIds)-1, 0)
 	}
 
 	return nil
@@ -160,7 +167,7 @@ func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	id := selectionId()
 
-	curRow, _ := table.GetSelection()
+	curRow, _ := transactionsTable.GetSelection()
 	var r int
 	if curRow == len(transactionIds)-1 {
 		r = curRow - 1
@@ -174,15 +181,15 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	table.RemoveRow(curRow)
+	transactionsTable.RemoveRow(curRow)
 	updateTransactionsTable()
-	table.Select(r, 0)
+	transactionsTable.Select(r, 0)
 
 	return nil
 }
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := table.GetSelection()
+	r, _ := transactionsTable.GetSelection()
 	id := transactionIds[r]
 
 	if transaction.Attributes(id).Committed {
@@ -195,7 +202,7 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := table.GetSelection()
+	r, _ := transactionsTable.GetSelection()
 	id := transactionIds[r]
 
 	var err error
@@ -216,15 +223,15 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func createTransactionsTable() *cview.Table {
 	initialBalance = 0
-	table = cview.NewTable()
-	table.Select(0, 0)
-	table.SetBorders(false)
-	table.SetFixed(1, 1)
-	table.SetSelectable(true, false)
-	table.SetSeparator(' ')
-	table.SetRect(0, 0, 72, 20)
-	table.SetScrollBarVisibility(cview.ScrollBarNever)
-	table.SetSelectionChangedFunc(func(r int, c int) { handleCloseStatus() })
+	transactionsTable = cview.NewTable()
+	transactionsTable.Select(0, 0)
+	transactionsTable.SetBorders(false)
+	transactionsTable.SetFixed(1, 1)
+	transactionsTable.SetSelectable(true, false)
+	transactionsTable.SetSeparator(' ')
+	transactionsTable.SetRect(0, 0, config.MAX_WIDTH, 20)
+	transactionsTable.SetScrollBarVisibility(cview.ScrollBarNever)
+	transactionsTable.SetSelectionChangedFunc(func(r int, c int) { handleCloseStatus() })
 
 	c := cbind.NewConfiguration()
 	c.Set("i", handleOpenInsert)
@@ -247,21 +254,24 @@ func createTransactionsTable() *cview.Table {
 	c.Set("N", handleSelectPrevMatch)
 	c.Set(">", handleSelectYear)
 	c.Set("<", handleSelectYear)
-	table.SetInputCapture(c.Capture)
+	c.Set("F1", handleOpenHelp)
+	c.Set("F2", handleOpenTransactions)
+	c.Set("F3", handleOpenReport)
+	transactionsTable.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
 
-	table.SetDoneFunc(func(key tcell.Key) {
+	transactionsTable.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
-			table.SetSelectable(true, true)
+			transactionsTable.SetSelectable(true, true)
 		}
 	})
 
-	table.SetSelectedFunc(func(row int, column int) {
+	transactionsTable.SetSelectedFunc(func(row int, column int) {
 		handleOpenEdit()
 	})
 
-	return table
+	return transactionsTable
 }
 
 func updateTransactionsTable() {
@@ -272,40 +282,49 @@ func updateTransactionsTable() {
 		all = append(all, t)
 	}
 
-	cell := cview.NewTableCell("")
+	var cell *cview.TableCell
+
+	cell = cview.NewTableCell("")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	table.SetCell(0, 0, cell)
+	transactionsTable.SetCell(0, config.ATTR_COLUMN, cell)
 
 	cell = cview.NewTableCell("DATE")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
-	table.SetCell(0, 1, cell)
+	transactionsTable.SetCell(0, config.DATE_COLUMN, cell)
+
+	cell = cview.NewTableCell("CATEGORY")
+	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
+	cell.SetSelectable(false)
+	cell.SetAlign(cview.AlignLeft)
+	transactionsTable.SetCell(0, config.CATEGORY_COLUMN, cell)
 
 	cell = cview.NewTableCell("DESCRIPTION")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
-	table.SetCell(0, 2, cell)
+	transactionsTable.SetCell(0, config.DESCRIPTION_COLUMN, cell)
 
 	cell = cview.NewTableCell("AMOUNT")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	table.SetCell(0, 3, cell)
+	transactionsTable.SetCell(0, config.AMOUNT_COLUMN, cell)
 
 	cell = cview.NewTableCell("BALANCE")
 	cell.SetTextColor(tcell.ColorYellow)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	table.SetCell(0, 4, cell)
+	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
 	b := initialBalance
 	transactionIds = make([]int64, len(all)+1)
@@ -342,14 +361,18 @@ func updateTransactionsTable() {
 		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
-		cell.SetAlign(cview.AlignRight)
-		table.SetCell(i+1, 0, cell)
+		transactionsTable.SetCell(i+1, config.ATTR_COLUMN, cell)
+
+		cell = cview.NewTableCell(fmt.Sprintf("%-10s", stringf.Category(t.Category)))
+		cell.SetTextColor(color)
+		cell.SetAttributes(attributes)
+		transactionsTable.SetCell(i+1, config.CATEGORY_COLUMN, cell)
 
 		cell = cview.NewTableCell(date)
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
-		table.SetCell(i+1, 1, cell)
+		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
 
 		if len(description) > config.DESC_MAX_LENGTH {
 			description = description[0:config.DESC_MAX_LENGTH]
@@ -358,32 +381,32 @@ func updateTransactionsTable() {
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
-		table.SetCell(i+1, 2, cell)
+		transactionsTable.SetCell(i+1, config.DESCRIPTION_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
-		table.SetCell(i+1, 3, cell)
+		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprintf("%10s", balance))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
-		table.SetCell(i+1, 4, cell)
+		transactionsTable.SetCell(i+1, config.BALANCE_COLUMN, cell)
 	}
 }
 
 func selectTransaction(id int64) {
 	for i, v := range transactionIds {
 		if v == id {
-			table.Select(i, 0)
+			transactionsTable.Select(i, 0)
 		}
 	}
 
 }
 
 func selectionId() int64 {
-	r, _ := table.GetSelection()
+	r, _ := transactionsTable.GetSelection()
 	return transactionIds[r]
 }

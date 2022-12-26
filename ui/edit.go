@@ -20,6 +20,7 @@ var editInputFieldDate *cview.InputField
 var editInputFieldDescription *cview.InputField
 var editInputFieldCents *cview.InputField
 var editInputFieldNotes *cview.InputField
+var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
 	if transaction.Attributes(selectionId()).Committed {
@@ -28,6 +29,7 @@ func handleOpenEdit() {
 	}
 
 	panels.ShowPanel("edit")
+	panels.SendToFront("edit")
 
 	t, _ := transaction.Find(selectionId())
 	ts := stringf.Transaction(t)
@@ -36,6 +38,7 @@ func handleOpenEdit() {
 	editInputFieldDescription.SetText(ts.Description)
 	editInputFieldCents.SetText(ts.Cents)
 	editInputFieldNotes.SetText(transaction.Notes(selectionId()))
+	editInputFieldCategory.SetText(ts.Category)
 }
 
 func handleCloseEdit() {
@@ -48,6 +51,7 @@ func readEditForm() domain.Transaction {
 	description := dataf.Description(editInputFieldDescription.GetText())
 	cents := dataf.Cents(editInputFieldCents.GetText())
 	notes := dataf.Notes(editInputFieldNotes.GetText())
+	category := dataf.Category(editInputFieldCategory.GetText())
 
 	return domain.Transaction{
 		selectionId(),
@@ -55,6 +59,7 @@ func readEditForm() domain.Transaction {
 		description,
 		cents,
 		notes,
+		category,
 	}
 }
 
@@ -105,6 +110,10 @@ func createEditForm() *cview.Form {
 	editInputFieldDate.SetLabel("Date:")
 	editInputFieldDate.SetFieldWidth(11)
 
+	editInputFieldCategory = cview.NewInputField()
+	editInputFieldCategory.SetLabel("Category:")
+	editInputFieldCategory.SetFieldWidth(0)
+
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
 	editInputFieldDescription.SetFieldWidth(0)
@@ -121,13 +130,14 @@ func createEditForm() *cview.Form {
 	editInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
 
 	editForm.AddFormItem(editInputFieldDate)
+	editForm.AddFormItem(editInputFieldCategory)
 	editForm.AddFormItem(editInputFieldDescription)
 	editForm.AddFormItem(editInputFieldCents)
 	editForm.AddFormItem(editInputFieldNotes)
 
 	editForm.SetBorder(true)
 	editForm.SetBorderAttributes(tcell.AttrBold)
-	editForm.SetRect(6, 4, 45, 11)
+	editForm.SetRect(15, 4, config.MAX_WIDTH-(15*2), 13)
 	editForm.SetTitleAlign(cview.AlignCenter)
 	editForm.SetTitle(" Edit Transaction ")
 	editForm.SetWrapAround(true)
@@ -140,6 +150,7 @@ func createEditForm() *cview.Form {
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	editInputFieldDate.SetInputCapture(c.Capture)
+	editInputFieldCategory.SetInputCapture(c.Capture)
 	editInputFieldDescription.SetInputCapture(c.Capture)
 	editInputFieldCents.SetInputCapture(c.Capture)
 	editInputFieldNotes.SetInputCapture(c.Capture)
