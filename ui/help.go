@@ -62,8 +62,9 @@ func createHelp() *cview.TextView {
 	<enter>    Edit selected transaction
 	j          Select next transaction
 	k          Select previous transaction
-	d          Scroll half a page down
-	u          Scroll half a page up
+	^d         Scroll half a page down
+	t          Tag selected transaction
+	^u         Scroll half a page up
 	0          Select oldest uncommmitted transaction
 	*          Select similar transaction
 	}          Scroll to next month
@@ -73,6 +74,10 @@ func createHelp() *cview.TextView {
 	C          Commit all prior transactions
 	c          Commit single transaction
 	r          Repeat transaction
+	D          Edit category
+	d          Edit description
+	=          Edit amount
+	@          Edit date
 	:          Enter command mode
 	/          Enter find next query
 	?          Enter find previous query
@@ -81,6 +86,12 @@ func createHelp() *cview.TextView {
 	<F1>       Show the help page
 	<F2>       Show the transactions page
 	<F3>       Show the report page
+	;x         Delete tagged transactions
+	;t         Untag tagged transactions
+	;D         Edit category of tagged transactions
+	;d         Edit description of tagged transactions
+	;=         Edit amount of tagged transactions
+	;@         Edit date of tagged transactions
 
 
  Input Field Key Bindings:

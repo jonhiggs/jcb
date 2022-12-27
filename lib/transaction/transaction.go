@@ -21,6 +21,9 @@ func Insert(t domain.Transaction) (int64, error) {
 }
 
 func Edit(t domain.Transaction) error {
+	if Attributes(t.Id).Committed {
+		return errors.New("Cannot edit a committed transaction")
+	}
 	if t.Id == 0 && t.Date.Unix() > dates.FirstUncommitted().Unix() {
 		return errors.New("Date of opening balance must be before the first transaction")
 	}
@@ -59,24 +62,14 @@ func Commit(id int64, initialBalance int64) error {
 			return err
 		}
 
-		err = db.CommitTransaction(i, t.Cents)
-		if err != nil {
-			return err
-		}
+		db.CommitTransaction(i, t.Cents)
 	}
 	return nil
 }
 
 func CommitSingle(id int64) error {
-	t, err := Find(id)
-	if err != nil {
-		return err
-	}
-
-	ut, err := Uncommitted()
-	if err != nil {
-		return err
-	}
+	t, _ := Find(id)
+	ut, _ := Uncommitted()
 
 	found := false
 	for i := len(ut) - 1; i >= 0; i-- {
@@ -93,7 +86,8 @@ func CommitSingle(id int64) error {
 		}
 	}
 
-	return db.CommitTransaction(id, t.Cents)
+	db.CommitTransaction(id, t.Cents)
+	return nil
 }
 
 func UncommitSingle(id int64) error {

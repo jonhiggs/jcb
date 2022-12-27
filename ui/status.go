@@ -11,6 +11,8 @@ func handleCloseStatus() {
 func printStatus(message string) {
 	status.SetText(message)
 	panels.ShowPanel("status")
+	panels.HidePanel("command")
+	panels.HidePanel("prompt")
 	panels.SendToBack("status")
 }
 
