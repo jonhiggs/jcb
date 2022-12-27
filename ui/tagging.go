@@ -114,15 +114,22 @@ func updateCategory(category string, rows []int) {
 		return
 	}
 
-	categoryValue := dataf.Category(category)
+	value := dataf.Category(category)
+	skipped := 0
 
 	for _, r := range rows {
 		t, _ := transaction.Find(transactionIds[r])
-		t.Category = categoryValue
+		if t.Category == value {
+			skipped += 1
+			continue
+		}
+
+		t.Category = value
 		transaction.Edit(t)
 	}
 
-	printStatus(fmt.Sprintf("Updated category for %d transactions", len(rows)))
+	modified := len(rows) - skipped
+	printStatus(fmt.Sprintf("Updated category for %d transactions", modified))
 	updateTransactionsTable()
 }
 
@@ -133,15 +140,23 @@ func updateDescription(description string, rows []int) {
 		return
 	}
 
-	descriptionValue := dataf.Description(description)
+	value := dataf.Description(description)
+	skipped := 0
 
 	for _, r := range rows {
 		t, _ := transaction.Find(transactionIds[r])
-		t.Description = descriptionValue
+
+		if t.Description == value {
+			skipped += 1
+			continue
+		}
+
+		t.Description = value
 		transaction.Edit(t)
 	}
 
-	printStatus(fmt.Sprintf("Updated description for %d transactions", len(rows)))
+	modified := len(rows) - skipped
+	printStatus(fmt.Sprintf("Updated description for %d transactions", modified))
 	updateTransactionsTable()
 }
 
@@ -152,17 +167,26 @@ func updateCents(cents string, rows []int) {
 		return
 	}
 
-	centsValue := dataf.Cents(cents)
+	value := dataf.Cents(cents)
+	skipped := 0
+
 	for _, r := range rows {
 		t, _ := transaction.Find(transactionIds[r])
-		t.Cents = centsValue
+
+		if t.Cents == value {
+			skipped += 1
+			continue
+		}
+
+		t.Cents = value
 		err = transaction.Edit(t)
 		if err != nil {
 			printStatus(fmt.Sprint(err))
 		}
 	}
 
-	printStatus(fmt.Sprintf("Updated amount for %d transactions", len(rows)))
+	modified := len(rows) - skipped
+	printStatus(fmt.Sprintf("Updated amount for %d transactions", modified))
 	updateTransactionsTable()
 }
 
@@ -174,11 +198,18 @@ func updateDate(date string, rows []int) {
 	}
 
 	id := selectionId()
+	value := dataf.Date(date)
+	skipped := 0
 
-	dateValue := dataf.Date(date)
 	for _, r := range rows {
 		t, _ := transaction.Find(transactionIds[r])
-		t.Date = dateValue
+
+		if t.Date == value {
+			skipped += 1
+			continue
+		}
+
+		t.Date = value
 		err = transaction.Edit(t)
 		if err != nil {
 			printStatus(fmt.Sprint(err))
@@ -187,5 +218,7 @@ func updateDate(date string, rows []int) {
 
 	updateTransactionsTable()
 	selectTransaction(id)
-	printStatus(fmt.Sprintf("Updated date for %d transactions", len(rows)))
+
+	modified := len(rows) - skipped
+	printStatus(fmt.Sprintf("Updated date for %d transactions", modified))
 }
