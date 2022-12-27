@@ -7,6 +7,7 @@ import (
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -182,6 +183,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	transactionsTable.RemoveRow(curRow)
+	removeTag(curRow)
 	updateTransactionsTable()
 	transactionsTable.Select(r, 0)
 
@@ -221,6 +223,74 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+	if isCommitted(r) {
+		printStatus("Cannot edit committed transactions")
+		return nil
+	}
+
+	openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		r, _ := transactionsTable.GetSelection()
+		updateCents(promptInputField.GetText(), []int{r})
+		return nil
+	})
+
+	return nil
+}
+
+func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+	if isCommitted(r) {
+		printStatus("Cannot edit committed transactions")
+		return nil
+	}
+
+	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		r, _ := transactionsTable.GetSelection()
+		updateCategory(promptInputField.GetText(), []int{r})
+		return nil
+	})
+
+	return nil
+}
+
+func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+	if isCommitted(r) {
+		printStatus("Cannot edit committed transactions")
+		return nil
+	}
+
+	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		r, _ := transactionsTable.GetSelection()
+		updateDescription(promptInputField.GetText(), []int{r})
+		return nil
+	})
+
+	return nil
+}
+
+func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+	if isCommitted(r) {
+		printStatus("Cannot edit committed transactions")
+		return nil
+	}
+
+	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		r, _ := transactionsTable.GetSelection()
+		updateDate(promptInputField.GetText(), []int{r})
+		return nil
+	})
+
+	return nil
+}
+
 func createTransactionsTable() *cview.Table {
 	initialBalance = 0
 	transactionsTable = cview.NewTable()
@@ -245,11 +315,14 @@ func createTransactionsTable() *cview.Table {
 	c.Set("{", handleSelectMonthPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("r", handleOpenRepeat)
+	c.Set("t", handleTag)
 	c.Set("C", handleCommitTransaction)
 	c.Set("c", handleCommitSingleTransaction)
 	c.Set(":", handleOpenCommand)
+	c.Set(";", handleTagCommand)
 	c.Set("/", handleOpenFind)
 	c.Set("?", handleOpenFind)
+	c.Set("T", handleOpenFind)
 	c.Set("n", handleSelectNextMatch)
 	c.Set("N", handleSelectPrevMatch)
 	c.Set(">", handleSelectYear)
@@ -257,6 +330,10 @@ func createTransactionsTable() *cview.Table {
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)
+	c.Set("=", handleEditCents)
+	c.Set("D", handleEditCategory)
+	c.Set("d", handleEditDescription)
+	c.Set("@", handleEditDate)
 	transactionsTable.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
@@ -345,11 +422,14 @@ func updateTransactionsTable() {
 
 		var color tcell.Color
 		var attributes tcell.AttrMask
-		if b < 0 {
-			color = tcell.ColorRed
+
+		if isTagged(i + 1) {
+			color = tcell.ColorGreen
 		} else if isCommitted {
 			color = tcell.ColorWhite
 			attributes = 0
+		} else if b < 0 {
+			color = tcell.ColorRed
 		} else {
 			color = tcell.ColorBlue
 			attributes = tcell.AttrBold
@@ -397,6 +477,7 @@ func updateTransactionsTable() {
 	}
 }
 
+// select transaction by id
 func selectTransaction(id int64) {
 	for i, v := range transactionIds {
 		if v == id {
@@ -406,7 +487,36 @@ func selectTransaction(id int64) {
 
 }
 
+// get the id of the selection
 func selectionId() int64 {
 	r, _ := transactionsTable.GetSelection()
 	return transactionIds[r]
+}
+
+func isCommitted(r int) bool {
+	if transactionsTable.GetCell(r, config.ATTR_COLUMN).GetText()[0:1] == "C" {
+		return true
+	} else {
+		return false
+	}
+}
+
+func selectedAmount() string {
+	r, _ := transactionsTable.GetSelection()
+	return strings.Trim(transactionsTable.GetCell(r, config.AMOUNT_COLUMN).GetText(), " ")
+}
+
+func selectedCategory() string {
+	r, _ := transactionsTable.GetSelection()
+	return strings.Trim(transactionsTable.GetCell(r, config.CATEGORY_COLUMN).GetText(), " ")
+}
+
+func selectedDescription() string {
+	r, _ := transactionsTable.GetSelection()
+	return strings.Trim(transactionsTable.GetCell(r, config.DESCRIPTION_COLUMN).GetText(), " ")
+}
+
+func selectedDate() string {
+	r, _ := transactionsTable.GetSelection()
+	return strings.Trim(transactionsTable.GetCell(r, config.DATE_COLUMN).GetText(), " ")
 }

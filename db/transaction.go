@@ -54,7 +54,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 	rows, err = db.Query("SELECT id, date, description, cents, notes, category FROM transactions WHERE committedAt IS NULL ORDER BY date ASC, cents DESC", "")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprintf("UncommitTransaction(): %s", err))
 	}
 
 	defer rows.Close()
@@ -69,7 +69,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 
 		err = rows.Scan(&id, &dateString, &description, &cents, &notes, &category)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(fmt.Sprintf("UncommitTransaction(): %s", err))
 		}
 
 		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes, category})
@@ -105,12 +105,14 @@ func EditTransaction(t domain.Transaction) error {
 	return err
 }
 
-func CommitTransaction(id int64, cents int64) error {
+func CommitTransaction(id int64, cents int64) {
 	balance := CommittedBalance() + cents
 	statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
 
 	_, err := statement.Exec(balance, timeNow(), timeNow(), id)
-	return err
+	if err != nil {
+		log.Fatal(fmt.Sprintf("CommitTransaction(): %s", err))
+	}
 }
 
 func CommittedBalance() int64 {
@@ -120,10 +122,10 @@ func CommittedBalance() int64 {
 		return t.Cents
 	} else {
 		var balance int64
-		statement, _ := db.Prepare("SELECT balance FROM transactions WHERE committedAt IS NOT NULL ORDER BY committedAt LIMIT 1")
+		statement, _ := db.Prepare("SELECT IFNULL(balance, (SELECT cents FROM transactions WHERE id=0)) FROM transactions WHERE committedAt IS NOT NULL ORDER BY committedAt LIMIT 1;")
 		err := statement.QueryRow().Scan(&balance)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(fmt.Sprintf("CommittedBalance(): %s", err))
 		}
 		return balance
 	}
@@ -149,6 +151,9 @@ func FindTransaction(id int64) (domain.Transaction, error) {
 
 	statement, _ := db.Prepare("SELECT id, date, description, cents, notes, category FROM transactions WHERE id = ?")
 	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("FindTransaction(): %s", err))
+	}
 	ts, _ := time.Parse(timeLayout, date)
 
 	return domain.Transaction{id, ts, description, cents, notes, category}, err

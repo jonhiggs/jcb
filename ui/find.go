@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/config"
 	"strings"
 
@@ -17,17 +18,22 @@ func handleOpenFind(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("find")
 	panels.SendToFront("find")
 
-	findInputField.SetLabel(string(ev.Rune()))
 	c := cbind.NewConfiguration()
 	switch ev.Rune() {
 	case '/':
+		findInputField.SetLabel("/")
 		c.SetKey(0, tcell.KeyEnter, handleFindForwards)
+		findInputField.SetText("")
 	case '?':
+		findInputField.SetLabel("?")
 		c.SetKey(0, tcell.KeyEnter, handleFindBackwards)
+		findInputField.SetText("")
+	case 'T':
+		findInputField.SetLabel("Tag matched transactions:")
+		findInputField.SetText(selectedDescription())
+		c.SetKey(0, tcell.KeyEnter, handleTagMatches)
 	}
 	findInputField.SetInputCapture(c.Capture)
-
-	findInputField.SetText("")
 	findForm.SetFocus(0)
 	return nil
 }
@@ -84,6 +90,33 @@ func handleSelectPrevMatch(ev *tcell.EventKey) *tcell.EventKey {
 			i = len(transactionIds) - 1
 		}
 	}
+
+	return nil
+}
+
+func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
+	curRow, _ := transactionsTable.GetSelection()
+	findQuery = findInputField.GetText()
+
+	matchCount := 0
+
+	for i := 1; i < len(transactionIds); i++ {
+		if isCommitted(i) || isTagged(i) {
+			continue
+		}
+
+		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+			matchCount += 1
+			applyTag(i)
+		}
+	}
+
+	transactionsTable.Select(curRow, 0)
+
+	printStatus(fmt.Sprintf("Tagged %d transactions", matchCount))
+
+	updateTransactionsTable()
+	handleCloseFind()
 
 	return nil
 }

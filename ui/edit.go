@@ -72,6 +72,7 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	err := transaction.Edit(t)
 	if err == nil {
 		updateTransactionsTable()
+		selectTransaction(t.Id)
 		handleCloseEdit()
 	} else {
 		printStatus(fmt.Sprint(err))
