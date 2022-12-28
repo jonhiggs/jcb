@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"jcb/config"
+
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -20,7 +22,6 @@ func createPromptForm() *cview.Form {
 	promptForm.SetFieldBackgroundColorFocused(tcell.ColorBlack)
 
 	promptInputField = cview.NewInputField()
-	promptInputField.SetFieldWidth(24)
 
 	promptForm.AddFormItem(promptInputField)
 
@@ -40,7 +41,11 @@ func openPrompt(label string, text string, enterFunc func(ev *tcell.EventKey) *t
 
 	c := cbind.NewConfiguration()
 	c.SetKey(0, tcell.KeyEnter, enterFunc)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	promptInputField.SetInputCapture(c.Capture)
+	promptInputField.SetFieldWidth(config.MAX_WIDTH - len(label))
 	promptForm.SetFocus(0)
 	return
 }

@@ -90,6 +90,15 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case "insert":
 		fieldId, _ := insertForm.GetFocusedItemIndex()
 		field = insertForm.GetFormItem(fieldId).(*cview.InputField)
+	case "prompt":
+		fieldId, _ := promptForm.GetFocusedItemIndex()
+		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
+	case "find":
+		fieldId, _ := findForm.GetFocusedItemIndex()
+		field = findForm.GetFormItem(fieldId).(*cview.InputField)
+	case "command":
+		fieldId, _ := commandForm.GetFocusedItemIndex()
+		field = commandForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
 	pos := field.GetCursorPosition()
