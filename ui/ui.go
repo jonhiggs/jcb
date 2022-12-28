@@ -14,6 +14,7 @@ var app *cview.Application
 var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
+var findQuery string
 
 func Start() {
 	app = cview.NewApplication()
@@ -48,11 +49,11 @@ func Start() {
 		if pn == "transactions" {
 			printStatus("To quit, use the command ':q'.")
 		} else {
-			handleCloseInsert()
-			handleCloseEdit()
-			handleClosePrompt()
-			handleCloseRepeat()
-			handleCloseHelp()
+			closeInsert()
+			closeEdit()
+			closePrompt()
+			closeRepeat()
+			closeHelp()
 		}
 		return nil
 	}

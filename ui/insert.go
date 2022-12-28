@@ -43,7 +43,7 @@ func openInsert() {
 	insertInputFieldCategory.SetText("")
 }
 
-func handleCloseInsert() {
+func closeInsert() {
 	panels.HidePanel("insert")
 	insertForm.SetFocus(0)
 }
@@ -108,13 +108,13 @@ func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	updateTransactionsTable()
 	selectTransaction(id)
 
-	handleCloseInsert()
+	closeInsert()
 	return nil
 }
 
 func createInsertForm() *cview.Form {
 	insertForm = cview.NewForm()
-	insertForm.SetCancelFunc(handleCloseInsert)
+	insertForm.SetCancelFunc(closeInsert)
 
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")

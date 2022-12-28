@@ -4,7 +4,7 @@ import "code.rocketnine.space/tslocum/cview"
 
 var status *cview.TextView
 
-func handleCloseStatus() {
+func closeStatus() {
 	panels.HidePanel("status")
 }
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/domain"
-	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"strings"
@@ -19,278 +18,6 @@ var transactionIds []int64
 var transactionAttributes []domain.Attributes
 var initialBalance int64
 
-func handleOpenTransactions(ev *tcell.EventKey) *tcell.EventKey {
-	panels.ShowPanel("transactions")
-	panels.HidePanel("report")
-	panels.SendToFront("transactions")
-	return nil
-}
-
-func handleSelectNext(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if transactionsTable.GetRowCount() > r+1 {
-		transactionsTable.Select(r+1, 0)
-	}
-
-	return nil
-}
-
-func handleSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	transactionsTable.Select(r-1, 0)
-	return nil
-}
-
-func handleHalfPageDown(ev *tcell.EventKey) *tcell.EventKey {
-	_, h := app.GetScreenSize()
-	r, _ := transactionsTable.GetSelection()
-
-	if r+(h/2) < transactionsTable.GetRowCount() {
-		transactionsTable.Select(r+(h/2), 0)
-	} else {
-		transactionsTable.Select(transactionsTable.GetRowCount()-1, 0)
-	}
-
-	return nil
-}
-
-func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
-	_, h := app.GetScreenSize()
-	r, _ := transactionsTable.GetSelection()
-
-	if r-(h/2) > 0 {
-		transactionsTable.Select(r-(h/2), 0)
-	} else {
-		transactionsTable.Select(0, 0)
-	}
-
-	return nil
-}
-
-func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	uncommitted, _ := transaction.Uncommitted()
-	if len(uncommitted) > 0 {
-		firstUncommitted := uncommitted[0]
-
-		for i, v := range transactionIds {
-			if firstUncommitted.Id == v {
-				transactionsTable.Select(i, 0)
-				return nil
-			}
-		}
-	}
-
-	transactionsTable.Select(len(transactionIds)-1, 0)
-	return nil
-}
-
-func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
-	curDescription := transactionsTable.GetCell(curRow, config.DESCRIPTION_COLUMN).GetText()
-
-	for i := curRow + 1; i != curRow; i++ {
-		if transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText() == curDescription {
-			transactionsTable.Select(i, 0)
-			break
-		}
-
-		if i == len(transactionIds) {
-			i = 0
-		}
-	}
-
-	return nil
-}
-
-func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
-	curMonth := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Month()
-
-	for i := curRow + 1; i < len(transactionIds); i++ {
-		month := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Month()
-		if int(month) > int(curMonth) {
-			transactionsTable.Select(i, 0)
-			return nil
-		}
-	}
-
-	transactionsTable.Select(len(transactionIds)-1, 0)
-
-	return nil
-}
-
-func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
-	curMonth := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Month()
-
-	for i := curRow + 1; i > 0; i-- {
-		month := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Month()
-		if int(month) < int(curMonth) {
-			transactionsTable.Select(i, 0)
-			return nil
-		}
-	}
-
-	transactionsTable.Select(1, 0)
-
-	return nil
-}
-
-func handleSelectYear(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
-	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
-
-	if ev.Rune() == '<' {
-		for i := curRow; i > 0; i-- {
-			year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-			if int(year) != int(curYear) {
-				transactionsTable.Select(i, 0)
-				return nil
-			}
-		}
-
-		transactionsTable.Select(1, 0)
-	} else {
-		for i := curRow; i < len(transactionIds)-1; i++ {
-			year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-			if int(year) != int(curYear) {
-				transactionsTable.Select(i, 0)
-				return nil
-			}
-		}
-
-		transactionsTable.Select(len(transactionIds)-1, 0)
-	}
-
-	return nil
-}
-
-func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	id := selectionId()
-
-	curRow, _ := transactionsTable.GetSelection()
-	var r int
-	if curRow == len(transactionIds)-1 {
-		r = curRow - 1
-	} else {
-		r = curRow
-	}
-
-	err := transaction.Delete(id)
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return nil
-	}
-
-	transactionsTable.RemoveRow(curRow)
-	removeTag(curRow)
-	updateTransactionsTable()
-	transactionsTable.Select(r, 0)
-
-	return nil
-}
-
-func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
-
-	if transaction.Attributes(id).Committed {
-		transaction.Uncommit(id)
-	} else {
-		transaction.Commit(id, initialBalance)
-	}
-	updateTransactionsTable()
-	return nil
-}
-
-func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
-
-	var err error
-	if transaction.Attributes(id).Committed {
-		err = transaction.UncommitSingle(id)
-	} else {
-		err = transaction.CommitSingle(id)
-	}
-
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return nil
-	}
-
-	updateTransactionsTable()
-	return nil
-}
-
-func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCents(promptInputField.GetText(), []int{r})
-		return nil
-	})
-
-	return nil
-}
-
-func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCategory(promptInputField.GetText(), []int{r})
-		return nil
-	})
-
-	return nil
-}
-
-func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateDescription(promptInputField.GetText(), []int{r})
-		return nil
-	})
-
-	return nil
-}
-
-func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateDate(promptInputField.GetText(), []int{r})
-		return nil
-	})
-
-	return nil
-}
-
 func createTransactionsTable() *cview.Table {
 	initialBalance = 0
 	transactionsTable = cview.NewTable()
@@ -301,7 +28,7 @@ func createTransactionsTable() *cview.Table {
 	transactionsTable.SetSeparator(' ')
 	transactionsTable.SetRect(0, 0, config.MAX_WIDTH, 20)
 	transactionsTable.SetScrollBarVisibility(cview.ScrollBarNever)
-	transactionsTable.SetSelectionChangedFunc(func(r int, c int) { handleCloseStatus() })
+	transactionsTable.SetSelectionChangedFunc(func(r int, c int) { closeStatus() })
 
 	c := cbind.NewConfiguration()
 	c.Set("i", handleOpenInsert)
@@ -315,18 +42,18 @@ func createTransactionsTable() *cview.Table {
 	c.Set("{", handleSelectMonthPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("r", handleOpenRepeat)
-	c.Set("t", handleTag)
+	c.Set("t", handleTagToggle)
 	c.Set("C", handleCommitTransaction)
 	c.Set("c", handleCommitSingleTransaction)
 	c.Set(":", handleCommand)
 	c.Set(";", handleTagCommand)
-	c.Set("/", handleFind)
-	c.Set("?", handleFind)
-	c.Set("T", handleFind)
-	c.Set("n", handleFindForwards)
-	c.Set("N", handleFindBackwards)
-	c.Set(">", handleSelectYear)
-	c.Set("<", handleSelectYear)
+	c.Set("/", handleFindForwards)
+	c.Set("?", handleFindBackwards)
+	c.Set("T", handleTagMatches)
+	c.Set("n", handleSelectMatchNext)
+	c.Set("N", handleSelectMatchPrev)
+	c.Set(">", handleSelectYearNext)
+	c.Set("<", handleSelectYearPrev)
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)

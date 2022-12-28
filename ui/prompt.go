@@ -14,7 +14,7 @@ var promptInputField *cview.InputField
 func createPromptForm() *cview.Form {
 	promptForm = cview.NewForm()
 	promptForm.SetBorder(false)
-	promptForm.SetCancelFunc(handleClosePrompt)
+	promptForm.SetCancelFunc(closePrompt)
 	promptForm.SetItemPadding(0)
 	promptForm.SetPadding(0, 0, 0, 0)
 	promptForm.SetLabelColor(tcell.ColorWhite)
@@ -28,7 +28,7 @@ func createPromptForm() *cview.Form {
 	return promptForm
 }
 
-func handleClosePrompt() {
+func closePrompt() {
 	panels.HidePanel("prompt")
 }
 

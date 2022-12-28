@@ -33,7 +33,7 @@ func openRepeat() {
 	repeatInputFieldUntil.SetText(fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year()))
 }
 
-func handleCloseRepeat() {
+func closeRepeat() {
 	panels.HidePanel("repeat")
 	repeatForm.SetFocus(0)
 }
@@ -105,13 +105,13 @@ func handleRepeatTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	updateTransactionsTable()
 	selectTransaction(id)
 
-	handleCloseRepeat()
+	closeRepeat()
 	return nil
 }
 
 func createRepeatForm() *cview.Form {
 	repeatForm = cview.NewForm()
-	repeatForm.SetCancelFunc(handleCloseRepeat)
+	repeatForm.SetCancelFunc(closeRepeat)
 
 	repeatInputFieldRule = cview.NewInputField()
 	repeatInputFieldRule.SetLabel("Frequency:")
