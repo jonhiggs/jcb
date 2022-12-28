@@ -43,7 +43,7 @@ func createReportTable() *cview.Table {
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)
-	c.Set(":", handleOpenCommand)
+	c.Set(":", handleCommand)
 	reportTable.SetInputCapture(c.Capture)
 
 	reportTable.SetDoneFunc(func(key tcell.Key) {

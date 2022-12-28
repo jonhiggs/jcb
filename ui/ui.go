@@ -40,7 +40,6 @@ func Start() {
 	panels.AddPanel("edit", createEditForm(), false, false)
 	panels.AddPanel("repeat", createRepeatForm(), false, false)
 	panels.AddPanel("find", createFindForm(), false, false)
-	panels.AddPanel("command", createCommandForm(), false, false)
 	panels.AddPanel("prompt", createPromptForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
 	panels.AddPanel("help", createHelp(), false, false)
@@ -56,7 +55,6 @@ func Start() {
 			handleCloseFind()
 			handleClosePrompt()
 			handleCloseRepeat()
-			handleCloseCommand()
 			handleCloseHelp()
 		}
 		return nil
@@ -73,7 +71,6 @@ func Start() {
 		reportTable.SetRect(0, 0, w, h-1)
 		findForm.SetRect(0, h-1, config.MAX_WIDTH, h)
 		promptForm.SetRect(0, h-1, config.MAX_WIDTH, h)
-		commandForm.SetRect(0, h-1, config.MAX_WIDTH, h)
 	})
 
 	app.SetRoot(panels, true)
@@ -96,9 +93,6 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case "find":
 		fieldId, _ := findForm.GetFocusedItemIndex()
 		field = findForm.GetFormItem(fieldId).(*cview.InputField)
-	case "command":
-		fieldId, _ := commandForm.GetFocusedItemIndex()
-		field = commandForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
 	pos := field.GetCursorPosition()
