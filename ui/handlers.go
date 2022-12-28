@@ -247,7 +247,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	transactionsTable.RemoveRow(curRow)
-	removeTag(curRow)
+	removeTag(transactionIds[curRow])
 	updateTransactionsTable()
 	transactionsTable.Select(r, 0)
 
@@ -297,7 +297,7 @@ func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		updateCents(promptInputField.GetText(), []int{r})
+		updateCents(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -314,7 +314,7 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		updateCategory(promptInputField.GetText(), []int{r})
+		updateCategory(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -331,7 +331,7 @@ func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		updateDescription(promptInputField.GetText(), []int{r})
+		updateDescription(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -348,7 +348,7 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		updateDate(promptInputField.GetText(), []int{r})
+		updateDate(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -357,14 +357,19 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
-	if isTagged(r) {
-		removeTag(r)
-	} else {
-		applyTag(r)
+	if isCommitted(r) {
+		printStatus("Cannot tag committed transactions")
+		return nil
 	}
 
-	handleSelectNext(ev)
+	if isTagged(transactionIds[r]) {
+		removeTag(transactionIds[r])
+	} else {
+		applyTag(transactionIds[r])
+	}
+
 	updateTransactionsTable()
+	handleSelectNext(ev)
 
 	return nil
 }
@@ -373,7 +378,8 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Tag matched transactions:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		findQuery = promptInputField.GetText()
-		tagMatches()
+		startingRow, _ := transactionsTable.GetSelection()
+		tagMatches(transactionIds[startingRow])
 		return nil
 	})
 
@@ -384,52 +390,52 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 	screen := app.GetScreen()
 	cmdEv := screen.PollEvent()
 
-	startingTransaction, _ := transactionsTable.GetSelection()
+	startingRow, _ := transactionsTable.GetSelection()
 
 	switch e := cmdEv.(type) {
 	case *tcell.EventKey:
 		switch e.Rune() {
 		case 'x':
-			for _, r := range taggedTransactions {
+			for _, r := range taggedTransactionIds {
 				selectTransaction(transactionIds[r])
 				handleDeleteTransaction(e)
-				startingTransaction, _ = transactionsTable.GetSelection()
+				startingRow, _ = transactionsTable.GetSelection()
 			}
 		case 't':
-			for _, r := range taggedTransactions {
+			for _, r := range taggedTransactionIds {
 				removeTag(r)
 			}
 		case 'D':
 			openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				category := dataf.Category(promptInputField.GetText())
-				updateCategory(category, taggedTransactions)
+				updateCategory(category, taggedTransactionIds)
 				return nil
 			})
 		case 'd':
 			openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				updateDescription(promptInputField.GetText(), taggedTransactions)
+				updateDescription(promptInputField.GetText(), taggedTransactionIds)
 				return nil
 			})
 		case '=':
 			openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				cents := promptInputField.GetText()
-				updateCents(cents, taggedTransactions)
+				updateCents(cents, taggedTransactionIds)
 				return nil
 			})
 		case '@':
 			openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				date := promptInputField.GetText()
-				updateDate(date, taggedTransactions)
+				updateDate(date, taggedTransactionIds)
 				return nil
 			})
 		}
 	}
 
-	transactionsTable.Select(startingTransaction, 0)
+	transactionsTable.Select(startingRow, 0)
 	updateTransactionsTable()
 	return nil
 }

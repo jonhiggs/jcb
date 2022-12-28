@@ -26,9 +26,11 @@ func DeleteChar(field *cview.InputField) {
 }
 
 func BackwardChar(field *cview.InputField) {
+	pos := field.GetCursorPosition()
 	field.SetCursorPosition(pos - 1)
 }
 
 func ForwardChar(field *cview.InputField) {
+	pos := field.GetCursorPosition()
 	field.SetCursorPosition(pos - 1)
 }

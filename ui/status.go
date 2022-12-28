@@ -8,6 +8,10 @@ func closeStatus() {
 	panels.HidePanel("status")
 }
 
+func clearStatus() {
+	status.SetText("")
+}
+
 func printStatus(message string) {
 	status.SetText(message)
 	panels.ShowPanel("status")

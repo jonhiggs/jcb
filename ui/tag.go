@@ -3,14 +3,15 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
+	"jcb/lib/transaction"
 	"strings"
 )
 
-var taggedTransactions []int
+var taggedTransactionIds []int64
 
-func isTagged(row int) bool {
-	for _, r := range taggedTransactions {
-		if r == row {
+func isTagged(id int64) bool {
+	for _, i := range taggedTransactionIds {
+		if i == id {
 			return true
 		}
 	}
@@ -18,42 +19,35 @@ func isTagged(row int) bool {
 	return false
 }
 
-func applyTag(row int) {
-	if isCommitted(row) {
-		printStatus("Cannot tag committed transactions")
-	} else {
-		taggedTransactions = append(taggedTransactions, row)
-	}
+func applyTag(id int64) {
+	taggedTransactionIds = append(taggedTransactionIds, id)
 }
 
-func removeTag(row int) {
-	var t []int
-	for _, r := range taggedTransactions {
-		if r != row {
-			t = append(t, r)
+func removeTag(id int64) {
+	var newTransactionIds []int64
+	for _, i := range taggedTransactionIds {
+		if i != id {
+			newTransactionIds = append(newTransactionIds, i)
 		}
 	}
-	taggedTransactions = t
+	taggedTransactionIds = newTransactionIds
 }
 
-func tagMatches() {
-	curRow, _ := transactionsTable.GetSelection()
-
+func tagMatches(id int64) {
 	matchCount := 0
 
-	for i := 1; i < len(transactionIds); i++ {
-		if isCommitted(i) || isTagged(i) {
+	for r, i := range transactionIds {
+		if transaction.Attributes(id).Committed || isTagged(i) {
 			continue
 		}
 
-		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+		if strings.Contains(strings.ToLower(transactionsTable.GetCell(r, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
 			matchCount += 1
 			applyTag(i)
 		}
 	}
 
-	transactionsTable.Select(curRow, 0)
-
+	selectTransaction(id)
 	printStatus(fmt.Sprintf("Tagged %d transactions", matchCount))
 	updateTransactionsTable()
 }
