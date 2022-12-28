@@ -15,18 +15,6 @@ import (
 
 var reportTable *cview.Table
 
-func handleCloseReport(ev *tcell.EventKey) *tcell.EventKey {
-	panels.HidePanel("report")
-	return nil
-}
-
-func handleOpenReport(ev *tcell.EventKey) *tcell.EventKey {
-	updateReportTable()
-	panels.ShowPanel("report")
-	panels.SendToFront("report")
-	return nil
-}
-
 func createReportTable() *cview.Table {
 	reportTable = cview.NewTable()
 	reportTable.Select(0, 0)
@@ -36,7 +24,7 @@ func createReportTable() *cview.Table {
 	reportTable.SetSeparator(' ')
 	reportTable.SetRect(0, 0, config.MAX_WIDTH, 20)
 	reportTable.SetScrollBarVisibility(cview.ScrollBarNever)
-	reportTable.SetSelectionChangedFunc(func(r int, c int) { handleCloseStatus() })
+	reportTable.SetSelectionChangedFunc(func(r int, c int) { closeStatus() })
 
 	c := cbind.NewConfiguration()
 	c.Set("q", handleCloseReport)

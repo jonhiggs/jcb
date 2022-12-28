@@ -41,7 +41,7 @@ func handleOpenEdit() {
 	editInputFieldCategory.SetText(ts.Category)
 }
 
-func handleCloseEdit() {
+func closeEdit() {
 	panels.HidePanel("edit")
 	editForm.SetFocus(0)
 }
@@ -73,7 +73,7 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	if err == nil {
 		updateTransactionsTable()
 		selectTransaction(t.Id)
-		handleCloseEdit()
+		closeEdit()
 	} else {
 		printStatus(fmt.Sprint(err))
 	}
@@ -105,7 +105,7 @@ func checkEditForm() bool {
 
 func createEditForm() *cview.Form {
 	editForm = cview.NewForm()
-	editForm.SetCancelFunc(handleCloseEdit)
+	editForm.SetCancelFunc(closeEdit)
 
 	editInputFieldDate = cview.NewInputField()
 	editInputFieldDate.SetLabel("Date:")

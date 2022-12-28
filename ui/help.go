@@ -8,29 +8,9 @@ import (
 
 var helpTextView *cview.TextView
 
-func handleCloseHelp() {
+func closeHelp() {
 	panels.HidePanel("help")
-	handleCloseStatus()
-}
-
-func handleOpenHelp(ev *tcell.EventKey) *tcell.EventKey {
-	openHelp()
-	return nil
-}
-
-func handleHelpScroll(ev *tcell.EventKey) *tcell.EventKey {
-	_, _, _, h := helpTextView.GetInnerRect()
-	offset, _ := helpTextView.GetScrollOffset()
-	switch ev.Rune() {
-	case ' ', 'd':
-		pos := offset + (h / 2)
-		helpTextView.ScrollTo(pos, 0)
-	case 'u':
-		pos := offset - (h / 2)
-		helpTextView.ScrollTo(pos, 0)
-	}
-
-	return nil
+	closeStatus()
 }
 
 func openHelp() {
@@ -105,7 +85,7 @@ func createHelp() *cview.TextView {
 	M-f        Forward word
 	M-b        Backwards word
 `)
-	helpTextView.SetDoneFunc(func(key tcell.Key) { handleCloseHelp() })
+	helpTextView.SetDoneFunc(func(key tcell.Key) { closeHelp() })
 
 	c := cbind.NewConfiguration()
 	c.Set(" ", handleHelpScroll)
@@ -114,7 +94,7 @@ func createHelp() *cview.TextView {
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)
-	c.Set("q", func(ev *tcell.EventKey) *tcell.EventKey { handleCloseHelp(); return nil })
+	c.Set("q", func(ev *tcell.EventKey) *tcell.EventKey { closeHelp(); return nil })
 	helpTextView.SetInputCapture(c.Capture)
 
 	return helpTextView

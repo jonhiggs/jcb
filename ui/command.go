@@ -5,19 +5,7 @@ import (
 	"jcb/config"
 	"jcb/db"
 	"strings"
-
-	"github.com/gdamore/tcell/v2"
 )
-
-func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
-	openPrompt(":", "", func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		runCommand(promptInputField.GetText())
-		return nil
-	})
-
-	return nil
-}
 
 func runCommand(command string) {
 	if command == "" {
