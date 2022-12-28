@@ -2,7 +2,7 @@ package ui
 
 import (
 	"jcb/config"
-	"strings"
+	promptBindings "jcb/ui/prompt-bindings"
 	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -90,27 +90,14 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	pos := field.GetCursorPosition()
-	text := field.GetText()
 
 	switch ev.Key() {
 	case tcell.KeyCtrlD:
-		textSlice := strings.Split(text, "")
-
-		var newSlice []string
-		for i, l := range textSlice {
-			if i == pos {
-				continue
-			}
-
-			newSlice = append(newSlice, l)
-		}
-
-		field.SetText(strings.Join(newSlice, ""))
-		field.SetCursorPosition(pos)
+		promptBindings.DeleteChar(field)
 	case tcell.KeyCtrlF:
-		field.SetCursorPosition(pos + 1)
+		promptBindings.ForwardChar(field)
 	case tcell.KeyCtrlB:
-		field.SetCursorPosition(pos - 1)
+		promptBindings.BackwardChar(field)
 	}
 	return nil
 }
