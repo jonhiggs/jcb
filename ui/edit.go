@@ -118,7 +118,7 @@ func createEditForm() *cview.Form {
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
 	editInputFieldDescription.SetFieldWidth(0)
-	editInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESC_MAX_LENGTH))
+	editInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESCRIPTION_MAX_LENGTH))
 
 	editInputFieldCents = cview.NewInputField()
 	editInputFieldCents.SetLabel("Amount:")
