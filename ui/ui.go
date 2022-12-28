@@ -14,7 +14,6 @@ var app *cview.Application
 var panels *cview.Panels
 var lowestBalance int64
 var lowestBalanceDate time.Time
-var find *cview.TextView
 
 func Start() {
 	app = cview.NewApplication()
@@ -39,7 +38,6 @@ func Start() {
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
 	panels.AddPanel("repeat", createRepeatForm(), false, false)
-	panels.AddPanel("find", createFindForm(), false, false)
 	panels.AddPanel("prompt", createPromptForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
 	panels.AddPanel("help", createHelp(), false, false)
@@ -52,7 +50,6 @@ func Start() {
 		} else {
 			handleCloseInsert()
 			handleCloseEdit()
-			handleCloseFind()
 			handleClosePrompt()
 			handleCloseRepeat()
 			handleCloseHelp()
@@ -69,7 +66,6 @@ func Start() {
 		status.SetRect(0, h-1, config.MAX_WIDTH, h)
 		helpTextView.SetRect(0, 0, config.MAX_WIDTH, h-1)
 		reportTable.SetRect(0, 0, w, h-1)
-		findForm.SetRect(0, h-1, config.MAX_WIDTH, h)
 		promptForm.SetRect(0, h-1, config.MAX_WIDTH, h)
 	})
 
@@ -90,9 +86,6 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case "prompt":
 		fieldId, _ := promptForm.GetFocusedItemIndex()
 		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
-	case "find":
-		fieldId, _ := findForm.GetFocusedItemIndex()
-		field = findForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
 	pos := field.GetCursorPosition()
