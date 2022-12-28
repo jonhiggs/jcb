@@ -82,11 +82,15 @@ func createCommandForm() *cview.Form {
 	commandInputField = cview.NewInputField()
 	commandInputField.SetFieldWidth(24)
 	commandInputField.SetLabel(":")
+	commandInputField.SetFieldWidth(config.MAX_WIDTH - 1)
 
 	commandForm.AddFormItem(commandInputField)
 
 	c := cbind.NewConfiguration()
 	c.SetKey(0, tcell.KeyEnter, handleCommand)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	commandInputField.SetInputCapture(c.Capture)
 
 	return commandForm

@@ -18,21 +18,29 @@ func handleOpenFind(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("find")
 	panels.SendToFront("find")
 
+	var label string
+
 	c := cbind.NewConfiguration()
 	switch ev.Rune() {
 	case '/':
-		findInputField.SetLabel("/")
+		label = "/"
 		c.SetKey(0, tcell.KeyEnter, handleFindForwards)
 		findInputField.SetText("")
 	case '?':
-		findInputField.SetLabel("?")
+		label = "?"
 		c.SetKey(0, tcell.KeyEnter, handleFindBackwards)
 		findInputField.SetText("")
 	case 'T':
-		findInputField.SetLabel("Tag matched transactions:")
+		label = "Tag matched transactions:"
 		findInputField.SetText(selectedDescription())
 		c.SetKey(0, tcell.KeyEnter, handleTagMatches)
 	}
+
+	findInputField.SetLabel(label)
+	findInputField.SetFieldWidth(config.MAX_WIDTH - len(label))
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	findInputField.SetInputCapture(c.Capture)
 	findForm.SetFocus(0)
 	return nil
