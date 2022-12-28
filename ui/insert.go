@@ -130,7 +130,7 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
-	insertInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESC_MAX_LENGTH))
+	insertInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESCRIPTION_MAX_LENGTH))
 
 	insertInputFieldCents = cview.NewInputField()
 	insertInputFieldCents.SetLabel("Amount:")

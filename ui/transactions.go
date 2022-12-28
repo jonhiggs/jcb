@@ -181,10 +181,10 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
 
-		if len(description) > config.DESC_MAX_LENGTH {
-			description = description[0:config.DESC_MAX_LENGTH]
+		if len(description) > config.DESCRIPTION_MAX_LENGTH {
+			description = description[0:config.DESCRIPTION_MAX_LENGTH]
 		}
-		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESC_MAX_LENGTH, description))
+		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, description))
 		cell.SetTextColor(color)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
