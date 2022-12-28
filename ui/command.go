@@ -6,32 +6,15 @@ import (
 	"jcb/db"
 	"strings"
 
-	"code.rocketnine.space/tslocum/cbind"
-	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
 
-var commandForm *cview.Form
-var commandInputField *cview.InputField
-
-func handleCloseCommand() {
-	panels.HidePanel("command")
-}
-
-func handleOpenCommand(ev *tcell.EventKey) *tcell.EventKey {
-	panels.ShowPanel("command")
-	panels.SendToFront("command")
-
-	commandInputField.SetText("")
-	commandForm.SetFocus(0)
-	return nil
-}
-
 func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
-	runCommand(commandInputField.GetText())
-
-	commandInputField.SetText("")
-	panels.HidePanel("command")
+	openPrompt(":", "", func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		runCommand(promptInputField.GetText())
+		return nil
+	})
 
 	return nil
 }
@@ -65,33 +48,6 @@ func runCommand(command string) {
 	case "q!":
 		app.Stop()
 	default:
-		printStatus(fmt.Sprintf("Unknown command '%s'", commandInputField.GetText()))
+		printStatus(fmt.Sprintf("Unknown command '%s'", promptInputField.GetText()))
 	}
-}
-
-func createCommandForm() *cview.Form {
-	commandForm = cview.NewForm()
-	commandForm.SetBorder(false)
-	commandForm.SetCancelFunc(handleCloseCommand)
-	commandForm.SetItemPadding(0)
-	commandForm.SetPadding(0, 0, 0, 0)
-	commandForm.SetLabelColor(tcell.ColorWhite)
-	commandForm.SetFieldBackgroundColor(tcell.ColorBlack)
-	commandForm.SetFieldBackgroundColorFocused(tcell.ColorBlack)
-
-	commandInputField = cview.NewInputField()
-	commandInputField.SetFieldWidth(24)
-	commandInputField.SetLabel(":")
-	commandInputField.SetFieldWidth(config.MAX_WIDTH - 1)
-
-	commandForm.AddFormItem(commandInputField)
-
-	c := cbind.NewConfiguration()
-	c.SetKey(0, tcell.KeyEnter, handleCommand)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
-	commandInputField.SetInputCapture(c.Capture)
-
-	return commandForm
 }

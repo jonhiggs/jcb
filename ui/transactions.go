@@ -318,7 +318,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("t", handleTag)
 	c.Set("C", handleCommitTransaction)
 	c.Set("c", handleCommitSingleTransaction)
-	c.Set(":", handleOpenCommand)
+	c.Set(":", handleCommand)
 	c.Set(";", handleTagCommand)
 	c.Set("/", handleOpenFind)
 	c.Set("?", handleOpenFind)
