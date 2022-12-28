@@ -150,7 +150,7 @@ func updateTransactionsTable() {
 		var color tcell.Color
 		var attributes tcell.AttrMask
 
-		if isTagged(i + 1) {
+		if isTagged(t.Id) {
 			color = tcell.ColorGreen
 		} else if isCommitted {
 			color = tcell.ColorWhite

@@ -89,8 +89,6 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
-	pos := field.GetCursorPosition()
-
 	switch ev.Key() {
 	case tcell.KeyCtrlD:
 		promptBindings.DeleteChar(field)

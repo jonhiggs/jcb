@@ -7,7 +7,7 @@ import (
 	"jcb/lib/validator"
 )
 
-func updateCategory(category string, rows []int) {
+func updateCategory(category string, ids []int64) {
 	err := validator.Category(category)
 	if err != nil {
 		printStatus(fmt.Sprintf("%s", err))
@@ -17,8 +17,8 @@ func updateCategory(category string, rows []int) {
 	value := dataf.Category(category)
 	skipped := 0
 
-	for _, r := range rows {
-		t, _ := transaction.Find(transactionIds[r])
+	for _, id := range ids {
+		t, _ := transaction.Find(id)
 		if t.Category == value {
 			skipped += 1
 			continue
@@ -28,12 +28,12 @@ func updateCategory(category string, rows []int) {
 		transaction.Edit(t)
 	}
 
-	modified := len(rows) - skipped
+	modified := len(ids) - skipped
 	printStatus(fmt.Sprintf("Updated category for %d transactions", modified))
 	updateTransactionsTable()
 }
 
-func updateDescription(description string, rows []int) {
+func updateDescription(description string, ids []int64) {
 	err := validator.Description(description)
 	if err != nil {
 		printStatus(fmt.Sprintf("%s", err))
@@ -43,8 +43,8 @@ func updateDescription(description string, rows []int) {
 	value := dataf.Description(description)
 	skipped := 0
 
-	for _, r := range rows {
-		t, _ := transaction.Find(transactionIds[r])
+	for _, id := range ids {
+		t, _ := transaction.Find(id)
 
 		if t.Description == value {
 			skipped += 1
@@ -55,12 +55,12 @@ func updateDescription(description string, rows []int) {
 		transaction.Edit(t)
 	}
 
-	modified := len(rows) - skipped
+	modified := len(ids) - skipped
 	printStatus(fmt.Sprintf("Updated description for %d transactions", modified))
 	updateTransactionsTable()
 }
 
-func updateCents(cents string, rows []int) {
+func updateCents(cents string, ids []int64) {
 	err := validator.Cents(cents)
 	if err != nil {
 		printStatus(fmt.Sprintf("%s", err))
@@ -70,8 +70,8 @@ func updateCents(cents string, rows []int) {
 	value := dataf.Cents(cents)
 	skipped := 0
 
-	for _, r := range rows {
-		t, _ := transaction.Find(transactionIds[r])
+	for _, id := range ids {
+		t, _ := transaction.Find(id)
 
 		if t.Cents == value {
 			skipped += 1
@@ -85,24 +85,24 @@ func updateCents(cents string, rows []int) {
 		}
 	}
 
-	modified := len(rows) - skipped
+	modified := len(ids) - skipped
 	printStatus(fmt.Sprintf("Updated amount for %d transactions", modified))
 	updateTransactionsTable()
 }
 
-func updateDate(date string, rows []int) {
+func updateDate(date string, ids []int64) {
 	err := validator.Date(date)
 	if err != nil {
 		printStatus(fmt.Sprintf("%s", err))
 		return
 	}
 
-	id := selectionId()
+	startingId := selectionId()
 	value := dataf.Date(date)
 	skipped := 0
 
-	for _, r := range rows {
-		t, _ := transaction.Find(transactionIds[r])
+	for _, id := range ids {
+		t, _ := transaction.Find(id)
 
 		if t.Date == value {
 			skipped += 1
@@ -117,8 +117,8 @@ func updateDate(date string, rows []int) {
 	}
 
 	updateTransactionsTable()
-	selectTransaction(id)
+	selectTransaction(startingId)
 
-	modified := len(rows) - skipped
+	modified := len(ids) - skipped
 	printStatus(fmt.Sprintf("Updated date for %d transactions", modified))
 }
