@@ -123,7 +123,7 @@ func createRepeatForm() *cview.Form {
 	repeatInputFieldUntil.SetLabel("End:")
 	repeatInputFieldUntil.SetFieldWidth(11)
 	repeatInputFieldUntil.SetText(fmt.Sprintf("%d-12-31"))
-	repeatInputFieldUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
+	//repeatInputFieldUntil.SetAcceptanceFunc(dateInputFieldAcceptance)
 
 	repeatForm.AddFormItem(repeatInputFieldRule)
 	repeatForm.AddFormItem(repeatInputFieldUntil)

@@ -9,6 +9,7 @@ import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
+	acceptanceFunction "jcb/ui/acceptance-functions"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -110,25 +111,27 @@ func createEditForm() *cview.Form {
 	editInputFieldDate = cview.NewInputField()
 	editInputFieldDate.SetLabel("Date:")
 	editInputFieldDate.SetFieldWidth(11)
+	editInputFieldDate.SetAcceptanceFunc(acceptanceFunction.Date)
 
 	editInputFieldCategory = cview.NewInputField()
 	editInputFieldCategory.SetLabel("Category:")
 	editInputFieldCategory.SetFieldWidth(0)
+	editInputFieldCategory.SetAcceptanceFunc(acceptanceFunction.Category)
 
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
 	editInputFieldDescription.SetFieldWidth(0)
-	editInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESCRIPTION_MAX_LENGTH))
+	editInputFieldDescription.SetAcceptanceFunc(acceptanceFunction.Description)
 
 	editInputFieldCents = cview.NewInputField()
 	editInputFieldCents.SetLabel("Amount:")
 	editInputFieldCents.SetFieldWidth(10)
-	editInputFieldCents.SetAcceptanceFunc(cview.InputFieldFloat)
+	editInputFieldCents.SetAcceptanceFunc(acceptanceFunction.Cents)
 
 	editInputFieldNotes = cview.NewInputField()
 	editInputFieldNotes.SetLabel("Notes:")
 	editInputFieldNotes.SetFieldWidth(0)
-	editInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
+	editInputFieldNotes.SetAcceptanceFunc(acceptanceFunction.Notes)
 
 	editForm.AddFormItem(editInputFieldDate)
 	editForm.AddFormItem(editInputFieldCategory)

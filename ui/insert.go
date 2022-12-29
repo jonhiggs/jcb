@@ -6,7 +6,7 @@ import (
 	"jcb/domain"
 	"jcb/lib/dates"
 	"jcb/lib/validator"
-	"regexp"
+	acceptanceFunction "jcb/ui/acceptance-functions"
 
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
@@ -46,11 +46,6 @@ func openInsert() {
 func closeInsert() {
 	panels.HidePanel("insert")
 	insertForm.SetFocus(0)
-}
-
-func dateInputFieldAcceptance(s string, c rune) bool {
-	valid_char, _ := regexp.MatchString(`[\d\-]*`, string(c))
-	return valid_char
 }
 
 func checkInsertForm() bool {
@@ -120,26 +115,28 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate.SetLabel("Date:")
 	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
 	insertInputFieldDate.SetFieldWidth(11)
-	insertInputFieldDate.SetAcceptanceFunc(dateInputFieldAcceptance)
+	insertInputFieldDate.SetAcceptanceFunc(acceptanceFunction.Date)
 	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
 	insertInputFieldCategory = cview.NewInputField()
 	insertInputFieldCategory.SetLabel("Category:")
 	insertInputFieldCategory.SetFieldWidth(0)
+	insertInputFieldCategory.SetAcceptanceFunc(acceptanceFunction.Category)
 
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
-	insertInputFieldDescription.SetAcceptanceFunc(cview.InputFieldMaxLength(config.DESCRIPTION_MAX_LENGTH))
+	insertInputFieldDescription.SetAcceptanceFunc(acceptanceFunction.Description)
 
 	insertInputFieldCents = cview.NewInputField()
 	insertInputFieldCents.SetLabel("Amount:")
 	insertInputFieldCents.SetFieldWidth(10)
+	insertInputFieldCents.SetAcceptanceFunc(acceptanceFunction.Cents)
 
 	insertInputFieldNotes = cview.NewInputField()
 	insertInputFieldNotes.SetLabel("Notes:")
 	insertInputFieldNotes.SetFieldWidth(0)
-	insertInputFieldNotes.SetAcceptanceFunc(cview.InputFieldMaxLength(config.NOTES_MAX_LENGTH))
+	insertInputFieldNotes.SetAcceptanceFunc(acceptanceFunction.Notes)
 
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldCategory)

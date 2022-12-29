@@ -5,6 +5,7 @@ import (
 	"jcb/config"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
+	acceptanceFunction "jcb/ui/acceptance-functions"
 	"strconv"
 	"strings"
 
@@ -175,7 +176,7 @@ func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 		findQuery = promptInputField.GetText()
 		handleSelectMatchNext(ev)
 		return nil
-	})
+	}, acceptanceFunction.Any)
 
 	return nil
 }
@@ -186,7 +187,7 @@ func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 		findQuery = promptInputField.GetText()
 		handleSelectMatchPrev(ev)
 		return nil
-	})
+	}, acceptanceFunction.Any)
 
 	return nil
 }
@@ -299,7 +300,7 @@ func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateCents(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	})
+	}, acceptanceFunction.Cents)
 
 	return nil
 }
@@ -316,7 +317,7 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateCategory(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	})
+	}, acceptanceFunction.Category)
 
 	return nil
 }
@@ -333,7 +334,7 @@ func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateDescription(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	})
+	}, acceptanceFunction.Description)
 
 	return nil
 }
@@ -350,7 +351,7 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateDate(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	})
+	}, acceptanceFunction.Date)
 
 	return nil
 }
@@ -381,7 +382,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		startingRow, _ := transactionsTable.GetSelection()
 		tagMatches(transactionIds[startingRow])
 		return nil
-	})
+	}, acceptanceFunction.Any)
 
 	return nil
 }
@@ -411,27 +412,27 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				category := dataf.Category(promptInputField.GetText())
 				updateCategory(category, taggedTransactionIds)
 				return nil
-			})
+			}, acceptanceFunction.Category)
 		case 'd':
 			openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				updateDescription(promptInputField.GetText(), taggedTransactionIds)
 				return nil
-			})
+			}, acceptanceFunction.Description)
 		case '=':
 			openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				cents := promptInputField.GetText()
 				updateCents(cents, taggedTransactionIds)
 				return nil
-			})
+			}, acceptanceFunction.Description)
 		case '@':
 			openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				date := promptInputField.GetText()
 				updateDate(date, taggedTransactionIds)
 				return nil
-			})
+			}, acceptanceFunction.Cents)
 		}
 	}
 
@@ -457,7 +458,7 @@ func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		runCommand(promptInputField.GetText())
 		return nil
-	})
+	}, acceptanceFunction.Any)
 
 	return nil
 }
