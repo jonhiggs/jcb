@@ -24,7 +24,7 @@ func Edit(t domain.Transaction) error {
 	if Attributes(t.Id).Committed {
 		return errors.New("Cannot edit a committed transaction")
 	}
-	if t.Id == 0 && t.Date.Unix() > dates.FirstUncommitted().Unix() {
+	if t.Id == 0 && len(Uncommitted()) > 1 && t.Date.Unix() > dates.FirstUncommitted().Unix() {
 		return errors.New("Date of opening balance must be before the first transaction")
 	}
 	if t.Date.Unix() < dates.LastCommitted().Unix() {
@@ -46,20 +46,18 @@ func Delete(id int64) error {
 }
 
 func All() []domain.Transaction {
-	committed, _ := Committed()
-	uncommitted, _ := Uncommitted()
-	all := committed
-	for _, t := range uncommitted {
+	all := Committed()
+	for _, t := range Uncommitted() {
 		all = append(all, t)
 	}
 	return all
 }
 
-func Uncommitted() ([]domain.Transaction, error) {
+func Uncommitted() []domain.Transaction {
 	return db.UncommittedTransactions()
 }
 
-func Committed() ([]domain.Transaction, error) {
+func Committed() []domain.Transaction {
 	return db.CommittedTransactions()
 }
 
@@ -79,7 +77,7 @@ func Commit(id int64, initialBalance int64) error {
 
 func CommitSingle(id int64) error {
 	t, _ := Find(id)
-	ut, _ := Uncommitted()
+	ut := Uncommitted()
 
 	found := false
 	for i := len(ut) - 1; i >= 0; i-- {
@@ -101,7 +99,7 @@ func CommitSingle(id int64) error {
 }
 
 func UncommitSingle(id int64) error {
-	ct, _ := Committed()
+	ct := Committed()
 	if ct[len(ct)-1].Id != id {
 		return errors.New("Only the final transaction can be uncommitted")
 	}
@@ -131,13 +129,8 @@ func Sum(startTime time.Time, endTime time.Time) int64 {
 
 // set of transactions that need to be committed before committing provided id
 func commitSet(id int64) []int64 {
-	uncommitted, err := db.UncommittedTransactions()
-	if err != nil {
-		return []int64{}
-	}
-
 	var ids []int64
-	for _, t := range uncommitted {
+	for _, t := range db.UncommittedTransactions() {
 		ids = append(ids, t.Id)
 
 		if t.Id == id {
