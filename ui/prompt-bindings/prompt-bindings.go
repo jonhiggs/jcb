@@ -32,5 +32,6 @@ func BackwardChar(field *cview.InputField) {
 
 func ForwardChar(field *cview.InputField) {
 	pos := field.GetCursorPosition()
-	field.SetCursorPosition(pos - 1)
+	field.SetCursorPosition(pos + 1)
 }
+
