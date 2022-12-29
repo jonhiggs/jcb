@@ -356,7 +356,14 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		updateDate(promptInputField.GetText(), []int64{transactionIds[r]})
+
+		dateString := promptInputField.GetText()
+		if db.DateLastCommitted().Unix() > dataf.Date(dateString).Unix() {
+			printStatus("Date must not be before the last committed transaction")
+			return nil
+		}
+
+		updateDate(dateString, []int64{transactionIds[r]})
 		return nil
 	}, acceptanceFunction.Date)
 
