@@ -82,7 +82,7 @@ func makeWorkingFile() string {
 	dstFile := fmt.Sprintf("%s/.%s.tmp", filepath.Dir(saveFile), filepath.Base(saveFile))
 	_, err = os.Stat(dstFile)
 	if err == nil {
-		fmt.Println("An unsaved file has been found. Would you like to restore it? [y|n]")
+		fmt.Fprint(os.Stderr, "An unsaved file has been found. Would you like to restore it? [y|n] ")
 		var choice rune
 		fmt.Scanf("%c", &choice)
 
