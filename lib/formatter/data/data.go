@@ -28,11 +28,18 @@ func Cents(s string) int64 {
 }
 
 func Date(s string) time.Time {
+	splitDate := strings.Split(strings.Trim(s, " "), "-")
+	year, _ := strconv.Atoi(splitDate[0])
+	month, _ := strconv.Atoi(splitDate[1])
+	day, _ := strconv.Atoi(splitDate[2])
+
+	s = fmt.Sprintf("%04d-%02d-%02d", year, month, day)
+
 	if validator.Date(s) != nil {
 		log.Fatal(fmt.Sprintf("cannot convert invalid date '%s' to data", s))
 	}
 
-	r, _ := time.Parse("2006-01-02", strings.Trim(s, " "))
+	r, _ := time.Parse("2006-01-02", s)
 	return r
 }
 
