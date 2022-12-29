@@ -9,7 +9,7 @@ import (
 const VERSION = "0.0.0"
 
 const MAX_WIDTH = 80
-const INFO_WIDTH = 14
+const INFO_WIDTH = 20
 
 const DESCRIPTION_MAX_LENGTH = 32
 const CATEGORY_MAX_LENGTH = 10
