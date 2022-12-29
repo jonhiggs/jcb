@@ -44,7 +44,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("}", handleSelectMonthNext)
 	c.Set("{", handleSelectMonthPrev)
 	c.Set("x", handleDeleteTransaction)
-	c.Set("r", handleOpenRepeat)
+	c.Set("r", handleRepeat)
 	c.Set("t", handleTagToggle)
 	c.Set("C", handleCommitTransaction)
 	c.Set("c", handleCommitSingleTransaction)

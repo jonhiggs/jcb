@@ -38,7 +38,6 @@ func Start() {
 	panels.AddPanel("report", createReportTable(), false, false)
 	panels.AddPanel("insert", createInsertForm(), false, false)
 	panels.AddPanel("edit", createEditForm(), false, false)
-	panels.AddPanel("repeat", createRepeatForm(), false, false)
 	panels.AddPanel("prompt", createPromptForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
 	panels.AddPanel("info", createInfoTextView(), false, false)
@@ -57,7 +56,6 @@ func Start() {
 			closeInsert()
 			closeEdit()
 			closePrompt()
-			closeRepeat()
 			closeHelp()
 		}
 		return nil
