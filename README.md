@@ -2,11 +2,10 @@
 
 A TUI personal budgeting program.
 
-If you're familiar with Mutt and/or vim, you'll find jcb quite intuitive.
+If you're familiar with Mutt or vim, you'll find jcb quite intuitive.
 
 
 ## Workflow
-
 
 Create the transactions, either by importing them from your bank, or creating them in the application.
 
@@ -17,6 +16,11 @@ Commit the record of the transaction. This marks the transaction as read-only an
 Use the report to help you make financial decisions.
 
 Repeat.
+
+
+## Getting Started
+
+
 
 
 ## Features
