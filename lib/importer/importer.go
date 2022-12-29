@@ -39,20 +39,26 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Description(d[1]) != nil {
+		if validator.Category(d[1]) != nil {
+			fmt.Printf("Skipping line %d: Invalid category\n", i)
+			skipped += 1
+			continue
+		}
+
+		if validator.Description(d[2]) != nil {
 			fmt.Printf("Skipping line %d: Invalid description\n", i)
 			skipped += 1
 			continue
 		}
 
-		if validator.Cents(d[2]) != nil {
+		if validator.Cents(d[3]) != nil {
 			fmt.Printf("Skipping line %d: Invalid amount\n", i)
 			skipped += 1
 			continue
 		}
 
-		if len(d) < 4 {
-			if validator.Notes(d[4]) != nil {
+		if len(d) < 5 {
+			if validator.Notes(d[5]) != nil {
 				fmt.Printf("Skipping line %d: Invalid notes\n", i)
 				skipped += 1
 				continue
