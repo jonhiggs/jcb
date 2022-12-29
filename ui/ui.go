@@ -41,7 +41,12 @@ func Start() {
 	panels.AddPanel("repeat", createRepeatForm(), false, false)
 	panels.AddPanel("prompt", createPromptForm(), false, false)
 	panels.AddPanel("status", createStatusTextView(), false, false)
+	panels.AddPanel("info", createInfoTextView(), false, false)
 	panels.AddPanel("help", createHelp(), false, false)
+
+	panels.ShowPanel("info")
+	panels.SendToBack("info")
+	updateInfo()
 
 	c := cbind.NewConfiguration()
 	handleExit := func(ev *tcell.EventKey) *tcell.EventKey {
@@ -64,7 +69,8 @@ func Start() {
 
 	app.SetAfterResizeFunc(func(w int, h int) {
 		transactionsTable.SetRect(0, 0, config.MAX_WIDTH, h-1)
-		status.SetRect(0, h-1, config.MAX_WIDTH, h)
+		status.SetRect(0, h-1, config.MAX_WIDTH-config.INFO_WIDTH, h)
+		info.SetRect(config.MAX_WIDTH-config.INFO_WIDTH, h-1, config.INFO_WIDTH, h)
 		helpTextView.SetRect(0, 0, config.MAX_WIDTH, h-1)
 		reportTable.SetRect(0, 0, w, h-1)
 		promptForm.SetRect(0, h-1, config.MAX_WIDTH, h)

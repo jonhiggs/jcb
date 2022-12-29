@@ -28,7 +28,10 @@ func createTransactionsTable() *cview.Table {
 	transactionsTable.SetSeparator(' ')
 	transactionsTable.SetRect(0, 0, config.MAX_WIDTH, 20)
 	transactionsTable.SetScrollBarVisibility(cview.ScrollBarNever)
-	transactionsTable.SetSelectionChangedFunc(func(r int, c int) { closeStatus() })
+	transactionsTable.SetSelectionChangedFunc(func(r int, c int) {
+		closeStatus()
+		updateInfo()
+	})
 
 	c := cbind.NewConfiguration()
 	c.Set("i", handleOpenInsert)
