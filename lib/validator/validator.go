@@ -2,6 +2,7 @@ package validator
 
 import (
 	"errors"
+	"fmt"
 	"jcb/domain"
 	"regexp"
 	"strconv"
@@ -21,7 +22,14 @@ func Cents(s string) error {
 }
 
 func Date(s string) error {
-	_, e := time.Parse("2006-01-02", strings.Trim(s, " "))
+	splitDate := strings.Split(strings.Trim(s, " "), "-")
+	year, _ := strconv.Atoi(splitDate[0])
+	month, _ := strconv.Atoi(splitDate[1])
+	day, _ := strconv.Atoi(splitDate[2])
+
+	s = fmt.Sprintf("%04d-%02d-%02d", year, month, day)
+
+	_, e := time.Parse("2006-01-02", s)
 	if e != nil {
 		return errors.New("Invalid date")
 	}
