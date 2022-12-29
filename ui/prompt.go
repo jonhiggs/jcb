@@ -32,7 +32,12 @@ func closePrompt() {
 	panels.HidePanel("prompt")
 }
 
-func openPrompt(label string, text string, enterFunc func(ev *tcell.EventKey) *tcell.EventKey) {
+func openPrompt(
+	label string,
+	text string,
+	enterFunc func(ev *tcell.EventKey) *tcell.EventKey,
+	acceptanceFunc func(textToCheck string, lastChar rune) bool,
+) {
 	panels.ShowPanel("prompt")
 	panels.SendToFront("prompt")
 
@@ -46,6 +51,7 @@ func openPrompt(label string, text string, enterFunc func(ev *tcell.EventKey) *t
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	promptInputField.SetInputCapture(c.Capture)
 	promptInputField.SetFieldWidth(config.MAX_WIDTH - len(label))
+	promptInputField.SetAcceptanceFunc(acceptanceFunc)
 	promptForm.SetFocus(0)
 	return
 }
