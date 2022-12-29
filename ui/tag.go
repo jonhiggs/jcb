@@ -19,6 +19,7 @@ func isTagged(id int64) bool {
 
 func applyTag(id int64) {
 	taggedTransactionIds = append(taggedTransactionIds, id)
+	updateInfo()
 }
 
 func removeTag(id int64) {
@@ -29,6 +30,7 @@ func removeTag(id int64) {
 		}
 	}
 	taggedTransactionIds = newTransactionIds
+	updateInfo()
 }
 
 func tagMatches(id int64) {
