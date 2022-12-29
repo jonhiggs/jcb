@@ -2,9 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"jcb/config"
 	"jcb/lib/transaction"
-	"strings"
 )
 
 var taggedTransactionIds []int64
@@ -37,11 +35,11 @@ func tagMatches(id int64) {
 	matchCount := 0
 
 	for r, i := range transactionIds {
-		if transaction.Attributes(id).Committed || isTagged(i) {
+		if transaction.Attributes(i).Committed || isTagged(i) {
 			continue
 		}
 
-		if strings.Contains(strings.ToLower(transactionsTable.GetCell(r, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+		if matchesQuery(r) {
 			matchCount += 1
 			applyTag(i)
 		}

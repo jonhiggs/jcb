@@ -7,7 +7,6 @@ import (
 	"jcb/lib/transaction"
 	acceptanceFunction "jcb/ui/acceptance-functions"
 	"strconv"
-	"strings"
 
 	"github.com/gdamore/tcell/v2"
 )
@@ -196,7 +195,8 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
 
 	for i := curRow + 1; i != curRow; i++ {
-		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+
+		if matchesQuery(i) {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -215,7 +215,7 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
 
 	for i := curRow - 1; i != curRow; i-- {
-		if strings.Contains(strings.ToLower(transactionsTable.GetCell(i, config.DESCRIPTION_COLUMN).GetText()), strings.ToLower(findQuery)) {
+		if matchesQuery(i) {
 			transactionsTable.Select(i, 0)
 			break
 		}
