@@ -83,11 +83,7 @@ func createTransactionsTable() *cview.Table {
 
 func updateTransactionsTable() {
 	committed, _ := transaction.Committed()
-	uncommitted, _ := transaction.Uncommitted()
-	all := committed
-	for _, t := range uncommitted {
-		all = append(all, t)
-	}
+	all := transaction.All()
 
 	var cell *cview.TableCell
 
