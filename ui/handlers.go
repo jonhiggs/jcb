@@ -3,13 +3,20 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
+	"jcb/db"
 	dataf "jcb/lib/formatter/data"
+	"jcb/lib/repeater"
 	"jcb/lib/transaction"
 	acceptanceFunction "jcb/ui/acceptance-functions"
+	"log"
 	"strconv"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 )
+
+var repeatRuleValue string
+var repeatUntilValue time.Time
 
 func handleOpenTransactions(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("transactions")
@@ -460,6 +467,30 @@ func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}, acceptanceFunction.Any)
 
+	return nil
+}
+
+func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt("Repeat pattern:", "1m", func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+		repeatRuleValue = promptInputField.GetText()
+
+		text := fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year())
+		openPrompt("Repeat until:", text, func(ev *tcell.EventKey) *tcell.EventKey {
+			panels.HidePanel("prompt")
+			repeatUntilValue = dataf.Date(promptInputField.GetText())
+
+			err := repeater.Insert(selectionId(), repeatRuleValue, repeatUntilValue)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			updateTransactionsTable()
+			return nil
+		}, acceptanceFunction.Date)
+
+		return nil
+	}, acceptanceFunction.Any)
 	return nil
 }
 

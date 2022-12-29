@@ -1,13 +1,40 @@
 package repeater
 
 import (
+	"jcb/domain"
 	"jcb/lib/dates"
+	"jcb/lib/transaction"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func Expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error) {
+func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
+	t, _ := transaction.Find(id)
+
+	timestamps, err := expand(t.Date, repeatUntil, repeatRule)
+	if err != nil {
+		return err
+	}
+
+	for _, ts := range timestamps {
+		id, err = transaction.Insert(
+			domain.Transaction{
+				-1,
+				ts,
+				t.Description,
+				t.Cents,
+				t.Notes,
+				t.Category,
+			})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error) {
 	if strings.HasPrefix(rule, "0") {
 		if date.Unix() < dates.LastCommitted().Unix() {
 			return []time.Time{}, nil
