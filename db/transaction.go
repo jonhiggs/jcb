@@ -12,7 +12,7 @@ import (
 
 const timeLayout = "2006-01-02 15:04:05.999999999-07:00"
 
-func CommittedTransactions() ([]domain.Transaction, error) {
+func CommittedTransactions() []domain.Transaction {
 	var rows *sql.Rows
 	var err error
 
@@ -42,10 +42,10 @@ func CommittedTransactions() ([]domain.Transaction, error) {
 		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes, category})
 	}
 
-	return records, nil
+	return records
 }
 
-func UncommittedTransactions() ([]domain.Transaction, error) {
+func UncommittedTransactions() []domain.Transaction {
 	var rows *sql.Rows
 	var err error
 
@@ -75,7 +75,7 @@ func UncommittedTransactions() ([]domain.Transaction, error) {
 		records = append(records, domain.Transaction{id, parseDate(dateString), description, cents, notes, category})
 	}
 
-	return records, nil
+	return records
 }
 
 func InsertTransaction(t domain.Transaction) (int64, error) {
@@ -116,8 +116,7 @@ func CommitTransaction(id int64, cents int64) {
 }
 
 func CommittedBalance() int64 {
-	ct, _ := CommittedTransactions()
-	if len(ct) == 0 {
+	if len(CommittedTransactions()) == 0 {
 		t, _ := FindTransaction(0)
 		return t.Cents
 	} else {
