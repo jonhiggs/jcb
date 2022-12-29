@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/db"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
@@ -100,9 +101,15 @@ func updateDate(date string, ids []int64) {
 	startingId := selectionId()
 	value := dataf.Date(date)
 	skipped := 0
+	lastCommittedDate := db.DateLastCommitted()
 
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
+
+		if lastCommittedDate.Unix() > value.Unix() {
+			skipped += 1
+			continue
+		}
 
 		if t.Date == value {
 			skipped += 1
