@@ -45,6 +45,16 @@ func Delete(id int64) error {
 	return db.DeleteTransaction(id)
 }
 
+func All() []domain.Transaction {
+	committed, _ := Committed()
+	uncommitted, _ := Uncommitted()
+	all := committed
+	for _, t := range uncommitted {
+		all = append(all, t)
+	}
+	return all
+}
+
 func Uncommitted() ([]domain.Transaction, error) {
 	return db.UncommittedTransactions()
 }
