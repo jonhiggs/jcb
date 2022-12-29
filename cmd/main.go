@@ -37,7 +37,7 @@ func main() {
 	file := config.DefaultFile()
 	tsvFile := ""
 	exportTsv := false
-	fmt.Printf("Loading file %s\n", file)
+	fmt.Fprintf(os.Stderr, "Loading file %s\n", file)
 
 	results, _, err := optparse.Parse(options, os.Args)
 	if err != nil {
