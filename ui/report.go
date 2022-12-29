@@ -28,6 +28,8 @@ func createReportTable() *cview.Table {
 
 	c := cbind.NewConfiguration()
 	c.Set("q", handleCloseReport)
+	c.Set("j", handleReportSelectNext)
+	c.Set("k", handleReportSelectPrev)
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)

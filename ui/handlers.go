@@ -513,3 +513,18 @@ func handleHelpScroll(ev *tcell.EventKey) *tcell.EventKey {
 
 	return nil
 }
+
+func handleReportSelectNext(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := reportTable.GetSelection()
+	if r < reportTable.GetRowCount()-2 {
+		reportTable.Select(r+1, 0)
+	}
+
+	return nil
+}
+
+func handleReportSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := reportTable.GetSelection()
+	reportTable.Select(r-1, 0)
+	return nil
+}
