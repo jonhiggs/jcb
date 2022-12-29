@@ -102,6 +102,8 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		promptBindings.BackwardChar(field)
 	case tcell.KeyCtrlW:
 		promptBindings.UnixWordRubout(field)
+	case tcell.KeyBackspace2:
+		promptBindings.OtherUnixWordRubout(field)
 	}
 	return nil
 }

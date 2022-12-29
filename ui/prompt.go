@@ -50,6 +50,7 @@ func openPrompt(
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
 	promptInputField.SetInputCapture(c.Capture)
 	promptInputField.SetFieldWidth(config.MAX_WIDTH - len(label))
 	promptInputField.SetAcceptanceFunc(acceptanceFunc)
