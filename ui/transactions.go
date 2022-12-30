@@ -157,10 +157,10 @@ func updateTransactionsTable() {
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
-		if isTagged(t.Id) {
-			colorFg = config.COLOR_TAGGED_FG
-			colorBg = config.COLOR_TAGGED_BG
-		} else if isCommitted {
+		transactionIds[i+1] = t.Id
+		transactionAttributes[i+1] = transaction.Attributes(t.Id)
+
+		if isCommitted {
 			colorFg = config.COLOR_COMMITTED_FG
 			colorBg = config.COLOR_COMMITTED_BG
 			attributes = 0
@@ -169,8 +169,15 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_UNCOMMITTED_BG
 		}
 
-		transactionIds[i+1] = t.Id
-		transactionAttributes[i+1] = transaction.Attributes(t.Id)
+		if !transactionAttributes[i+1].Saved {
+			colorFg = config.COLOR_MODIFIED_FG
+			colorBg = config.COLOR_MODIFIED_BG
+		}
+
+		if isTagged(t.Id) {
+			colorFg = config.COLOR_TAGGED_FG
+			colorBg = config.COLOR_TAGGED_BG
+		}
 
 		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
 		cell.SetTextColor(colorFg)
