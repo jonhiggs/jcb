@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/domain"
+	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"strings"
@@ -88,51 +89,51 @@ func updateTransactionsTable() {
 	var cell *cview.TableCell
 
 	cell = cview.NewTableCell("")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.ATTR_COLUMN, cell)
 
 	cell = cview.NewTableCell("DATE")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.DATE_COLUMN, cell)
 
 	cell = cview.NewTableCell("CATEGORY")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.CATEGORY_COLUMN, cell)
 
 	cell = cview.NewTableCell("DESCRIPTION")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.DESCRIPTION_COLUMN, cell)
 
 	cell = cview.NewTableCell("AMOUNT")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.AMOUNT_COLUMN, cell)
 
 	cell = cview.NewTableCell("BALANCE")
-	cell.SetTextColor(tcell.ColorYellow)
+	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
-	cell.SetBackgroundColor(tcell.Color25)
+	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
 	b := initialBalance
@@ -152,36 +153,40 @@ func updateTransactionsTable() {
 			}
 		}
 
-		var color tcell.Color
+		var colorFg tcell.Color
+		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
 		if isTagged(t.Id) {
-			color = tcell.ColorGreen
+			colorFg = config.COLOR_TAGGED_FG
+			colorBg = config.COLOR_TAGGED_BG
 		} else if isCommitted {
-			color = tcell.ColorWhite
+			colorFg = config.COLOR_COMMITTED_FG
+			colorBg = config.COLOR_COMMITTED_BG
 			attributes = 0
-		} else if b < 0 {
-			color = tcell.ColorRed
 		} else {
-			color = tcell.ColorBlue
-			attributes = tcell.AttrBold
+			colorFg = config.COLOR_UNCOMMITTED_FG
+			colorBg = config.COLOR_UNCOMMITTED_BG
 		}
 
 		transactionIds[i+1] = t.Id
 		transactionAttributes[i+1] = transaction.Attributes(t.Id)
 
 		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
-		cell.SetTextColor(color)
+		cell.SetTextColor(colorFg)
+		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.ATTR_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprintf("%-10s", stringf.Category(t.Category)))
-		cell.SetTextColor(color)
+		cell.SetTextColor(colorFg)
+		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.CATEGORY_COLUMN, cell)
 
 		cell = cview.NewTableCell(date)
-		cell.SetTextColor(color)
+		cell.SetTextColor(colorFg)
+		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
@@ -190,20 +195,31 @@ func updateTransactionsTable() {
 			description = description[0:config.DESCRIPTION_MAX_LENGTH]
 		}
 		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, description))
-		cell.SetTextColor(color)
+		cell.SetTextColor(colorFg)
+		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DESCRIPTION_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
-		cell.SetTextColor(color)
+		if dataf.Cents(cents) < 0 {
+			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
+		} else {
+			cell.SetTextColor(config.COLOR_POSITIVE_FG)
+		}
+		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprintf("%10s", balance))
-		cell.SetTextColor(color)
-		cell.SetAttributes(attributes)
+		if dataf.Cents(balance) < 0 {
+			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
+		} else {
+			cell.SetTextColor(config.COLOR_POSITIVE_FG)
+		}
+		cell.SetBackgroundColor(colorBg)
+		cell.SetAttributes(tcell.AttrBold)
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.BALANCE_COLUMN, cell)
 	}

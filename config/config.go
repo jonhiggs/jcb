@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/gdamore/tcell/v2"
 )
 
 const VERSION = "0.0.0"
@@ -21,6 +23,19 @@ const CATEGORY_COLUMN = 2
 const DESCRIPTION_COLUMN = 3
 const AMOUNT_COLUMN = 4
 const BALANCE_COLUMN = 5
+
+const COLOR_TITLE_FG = tcell.ColorYellow
+const COLOR_TITLE_BG = tcell.Color25
+const COLOR_LIGHT_BG = tcell.Color232
+const COLOR_COMMITTED_FG = tcell.Color81
+const COLOR_COMMITTED_BG = tcell.ColorBlack
+const COLOR_UNCOMMITTED_FG = tcell.ColorWhite
+const COLOR_UNCOMMITTED_BG = tcell.ColorBlack
+const COLOR_TAGGED_FG = tcell.ColorGreen
+const COLOR_TAGGED_BG = tcell.Color234
+const COLOR_NEGATIVE_FG = tcell.Color160
+const COLOR_POSITIVE_FG = tcell.Color40
+const COLOR_INFO_FG = tcell.Color238
 
 func DefaultFile() string {
 	home, ok := os.LookupEnv("HOME")
