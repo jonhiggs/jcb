@@ -7,6 +7,7 @@ import (
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
+	"jcb/lib/validator"
 	acceptanceFunction "jcb/ui/acceptance-functions"
 	"log"
 	"strconv"
@@ -481,13 +482,26 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Repeat pattern:", "1m", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		repeatRuleValue = promptInputField.GetText()
+		err := validator.RepeatRule(repeatRuleValue)
+		if err != nil {
+			printStatus(fmt.Sprint(err))
+			return nil
+		}
 
 		text := fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year())
 		openPrompt("Repeat until:", text, func(ev *tcell.EventKey) *tcell.EventKey {
 			panels.HidePanel("prompt")
-			repeatUntilValue = dataf.Date(promptInputField.GetText())
+			repeatUntilString := promptInputField.GetText()
 
-			err := repeater.Insert(selectionId(), repeatRuleValue, repeatUntilValue)
+			err := validator.Date(repeatUntilString)
+			if err != nil {
+				printStatus(fmt.Sprint(err))
+				return nil
+			}
+
+			repeatUntilValue = dataf.Date(repeatUntilString)
+
+			err = repeater.Insert(selectionId(), repeatRuleValue, repeatUntilValue)
 			if err != nil {
 				log.Fatal(err)
 			}
