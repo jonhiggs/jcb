@@ -44,6 +44,8 @@ func createTransactionsTable() *cview.Table {
 	c.Set("*", handleSelectSimilar)
 	c.Set("}", handleSelectMonthNext)
 	c.Set("{", handleSelectMonthPrev)
+	c.Set("]", handleSelectModifiedNext)
+	c.Set("[", handleSelectModifiedPrev)
 	c.Set("x", handleDeleteTransaction)
 	c.Set("r", handleRepeat)
 	c.Set("t", handleTagToggle)

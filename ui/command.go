@@ -18,6 +18,7 @@ func runCommand(command string) {
 	case "w":
 		db.Save()
 		updateTransactionsTable()
+		updateInfo()
 		printStatus("File saved")
 	case "refresh":
 		updateTransactionsTable()
