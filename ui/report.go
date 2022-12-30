@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"jcb/config"
 	"jcb/lib/category"
 	stringf "jcb/lib/formatter/string"
@@ -70,17 +69,20 @@ func updateReportTable() {
 
 	for i, c := range columns {
 		cell = cview.NewTableCell(c)
-		cell.SetTextColor(tcell.ColorYellow)
+		cell.SetTextColor(tcell.ColorWhite)
 		cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
+		cell.SetBackgroundColor(tcell.Color25)
 		reportTable.SetCell(0, i, cell)
 	}
 
 	for row, catName := range category.All() {
 		for col, _ := range columns {
 			if col == 0 {
-				cell = cview.NewTableCell(fmt.Sprintf("%-10s", catName))
+				cell = cview.NewTableCell(catName)
+				cell.SetTextColor(tcell.ColorYellow)
+				cell.SetAttributes(tcell.AttrBold)
 			} else {
 				var startTime time.Time
 				var endTime time.Time
@@ -95,7 +97,13 @@ func updateReportTable() {
 				}
 
 				cents := category.Sum(catName, startTime, endTime)
-				cell = cview.NewTableCell(stringf.Cents(cents))
+				cell = cview.NewTableCell(" " + stringf.Cents(cents))
+
+				if col == 13 {
+					cell.SetAttributes(tcell.AttrBold)
+					cell.SetBackgroundColor(tcell.Color235)
+				}
+
 				cell.SetAlign(cview.AlignRight)
 			}
 			reportTable.SetCell(row+1, col, cell)
@@ -127,10 +135,18 @@ func updateReportTable() {
 		}
 
 		cents := transaction.Sum(startTime, endTime)
-		cell = cview.NewTableCell(stringf.Cents(cents))
-		cell.SetAttributes(tcell.AttrUnderline)
+		cell = cview.NewTableCell(" " + stringf.Cents(cents))
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
+		cell.SetAttributes(tcell.AttrBold)
+		cell.SetBackgroundColor(tcell.Color235)
+
+		if cents < 0 {
+			cell.SetTextColor(tcell.ColorRed)
+		} else {
+			cell.SetTextColor(tcell.ColorGreen)
+		}
+
 		reportTable.SetCell(row, col, cell)
 	}
 }
