@@ -92,6 +92,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.ATTR_COLUMN, cell)
 
 	cell = cview.NewTableCell("DATE")
@@ -99,6 +100,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.DATE_COLUMN, cell)
 
 	cell = cview.NewTableCell("CATEGORY")
@@ -106,6 +108,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.CATEGORY_COLUMN, cell)
 
 	cell = cview.NewTableCell("DESCRIPTION")
@@ -113,6 +116,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignLeft)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.DESCRIPTION_COLUMN, cell)
 
 	cell = cview.NewTableCell("AMOUNT")
@@ -120,6 +124,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.AMOUNT_COLUMN, cell)
 
 	cell = cview.NewTableCell("BALANCE")
@@ -127,6 +132,7 @@ func updateTransactionsTable() {
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 	cell.SetSelectable(false)
 	cell.SetAlign(cview.AlignRight)
+	cell.SetBackgroundColor(tcell.Color25)
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
 	b := initialBalance

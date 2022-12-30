@@ -69,7 +69,7 @@ func updateReportTable() {
 
 	for i, c := range columns {
 		cell = cview.NewTableCell(c)
-		cell.SetTextColor(tcell.ColorWhite)
+		cell.SetTextColor(tcell.ColorYellow)
 		cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
