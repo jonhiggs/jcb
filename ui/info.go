@@ -14,7 +14,20 @@ func updateInfo() {
 	if row == 0 {
 		row = 1
 	}
-	info.SetText(fmt.Sprintf("[%d:%d] [%d]", row, len(transactionIds)-1, len(taggedTransactionIds)))
+
+	modifedCount := 0
+
+	for i, t := range transactionAttributes {
+		if i == 0 {
+			continue
+		}
+
+		if !t.Saved {
+			modifedCount += 1
+		}
+	}
+
+	info.SetText(fmt.Sprintf("[%d:%d] [%d] [%d]", row, len(transactionIds)-1, modifedCount, len(taggedTransactionIds)))
 }
 
 func createInfoTextView() *cview.TextView {

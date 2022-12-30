@@ -49,6 +49,8 @@ func createHelp() *cview.TextView {
 	*          Select similar transaction
 	}          Scroll to next month
 	{          Scroll to previous month
+	]          Scroll next modified transaction
+	[          Scroll previous modified transaction
 	>          Scroll to next year
 	<          Scroll to previous year
 	C          Commit all prior transactions

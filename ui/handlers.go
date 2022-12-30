@@ -178,6 +178,41 @@ func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+
+	for i := r - 1; i != r; i-- {
+		if i == 0 {
+			i = len(transactionIds) - 1
+			continue
+		}
+
+		if !transactionAttributes[i].Saved {
+			transactionsTable.Select(i, 0)
+			return nil
+		}
+	}
+
+	return nil
+}
+
+func handleSelectModifiedNext(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := transactionsTable.GetSelection()
+
+	for i := r + 1; i != r; i++ {
+		if !transactionAttributes[i].Saved {
+			transactionsTable.Select(i, 0)
+			return nil
+		}
+
+		if i == len(transactionIds)-1 {
+			i = 0
+		}
+	}
+
+	return nil
+}
+
 func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("/", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
