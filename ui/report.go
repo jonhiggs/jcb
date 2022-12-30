@@ -51,7 +51,7 @@ func updateReportTable() {
 	year := st.Date.Year()
 
 	columns := []string{
-		"",
+		"CATEGORY",
 		"JAN",
 		"FEB",
 		"MAR",
@@ -69,11 +69,16 @@ func updateReportTable() {
 
 	for i, c := range columns {
 		cell = cview.NewTableCell(c)
-		cell.SetTextColor(tcell.ColorYellow)
+		cell.SetTextColor(config.COLOR_TITLE_FG)
 		cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
 		cell.SetSelectable(false)
-		cell.SetAlign(cview.AlignRight)
-		cell.SetBackgroundColor(tcell.Color25)
+		cell.SetBackgroundColor(config.COLOR_TITLE_BG)
+		if i == 0 {
+			cell.SetAlign(cview.AlignLeft)
+		} else {
+			cell.SetAlign(cview.AlignRight)
+		}
+
 		reportTable.SetCell(0, i, cell)
 	}
 
@@ -81,8 +86,7 @@ func updateReportTable() {
 		for col, _ := range columns {
 			if col == 0 {
 				cell = cview.NewTableCell(catName)
-				cell.SetTextColor(tcell.ColorYellow)
-				cell.SetAttributes(tcell.AttrBold)
+				cell.SetTextColor(config.COLOR_TITLE_FG)
 			} else {
 				var startTime time.Time
 				var endTime time.Time
@@ -101,7 +105,7 @@ func updateReportTable() {
 
 				if col == 13 {
 					cell.SetAttributes(tcell.AttrBold)
-					cell.SetBackgroundColor(tcell.Color235)
+					cell.SetBackgroundColor(config.COLOR_LIGHT_BG)
 				}
 
 				cell.SetAlign(cview.AlignRight)
@@ -139,12 +143,12 @@ func updateReportTable() {
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
 		cell.SetAttributes(tcell.AttrBold)
-		cell.SetBackgroundColor(tcell.Color235)
+		cell.SetBackgroundColor(config.COLOR_LIGHT_BG)
 
 		if cents < 0 {
-			cell.SetTextColor(tcell.ColorRed)
+			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
-			cell.SetTextColor(tcell.ColorGreen)
+			cell.SetTextColor(config.COLOR_POSITIVE_FG)
 		}
 
 		reportTable.SetCell(row, col, cell)

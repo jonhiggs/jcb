@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/config"
 
 	"code.rocketnine.space/tslocum/cview"
 )
@@ -19,5 +20,6 @@ func updateInfo() {
 func createInfoTextView() *cview.TextView {
 	info = cview.NewTextView()
 	info.SetTextAlign(cview.AlignRight)
+	info.SetTextColor(config.COLOR_INFO_FG)
 	return info
 }
