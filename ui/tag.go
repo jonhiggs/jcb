@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"jcb/lib/find"
 	"jcb/lib/transaction"
 )
 
@@ -41,7 +42,7 @@ func tagMatches(id int64) {
 			continue
 		}
 
-		if matchesQuery(r) {
+		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
 			applyTag(i)
 		}

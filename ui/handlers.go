@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/db"
+	"jcb/lib/find"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
@@ -180,7 +181,13 @@ func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("/", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		findQuery = promptInputField.GetText()
+
+		err := find.SetQuery(promptInputField.GetText())
+		if err != nil {
+			printStatus(fmt.Sprintf("%s", err))
+			return nil
+		}
+
 		handleSelectMatchNext(ev)
 		return nil
 	}, acceptanceFunction.Any)
@@ -191,7 +198,13 @@ func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("?", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		findQuery = promptInputField.GetText()
+
+		err := find.SetQuery(promptInputField.GetText())
+		if err != nil {
+			printStatus(fmt.Sprintf("%s", err))
+			return nil
+		}
+
 		handleSelectMatchPrev(ev)
 		return nil
 	}, acceptanceFunction.Any)
@@ -204,12 +217,12 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 
 	for i := curRow + 1; i != curRow; i++ {
 
-		if matchesQuery(i) {
+		if find.TableRowMatches(transactionsTable, i) {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
 
-		if i == len(transactionIds) {
+		if i == len(transactionIds)-1 {
 			i = 0
 		}
 	}
@@ -223,9 +236,9 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
 
 	for i := curRow - 1; i != curRow; i-- {
-		if matchesQuery(i) {
+		if find.TableRowMatches(transactionsTable, i) {
 			transactionsTable.Select(i, 0)
-			break
+			return nil
 		}
 
 		if i == 0 {
@@ -393,7 +406,13 @@ func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Tag matched transactions:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		findQuery = promptInputField.GetText()
+
+		err := find.SetQuery(promptInputField.GetText())
+		if err != nil {
+			printStatus(fmt.Sprintf("%s", err))
+			return nil
+		}
+
 		startingRow, _ := transactionsTable.GetSelection()
 		tagMatches(transactionIds[startingRow])
 		return nil

@@ -3,7 +3,6 @@ package ui
 import (
 	"jcb/config"
 	promptBindings "jcb/ui/prompt-bindings"
-	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -12,9 +11,6 @@ import (
 
 var app *cview.Application
 var panels *cview.Panels
-var lowestBalance int64
-var lowestBalanceDate time.Time
-var findQuery string
 
 func Start() {
 	app = cview.NewApplication()
