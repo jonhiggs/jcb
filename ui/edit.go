@@ -153,6 +153,8 @@ func createEditForm() *cview.Form {
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
 	editInputFieldDate.SetInputCapture(c.Capture)
 	editInputFieldCategory.SetInputCapture(c.Capture)
 	editInputFieldDescription.SetInputCapture(c.Capture)
