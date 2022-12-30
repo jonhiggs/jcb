@@ -268,14 +268,3 @@ func selectedDate() string {
 	r, _ := transactionsTable.GetSelection()
 	return strings.Trim(transactionsTable.GetCell(r, config.DATE_COLUMN).GetText(), " ")
 }
-
-func matchesQuery(row int) bool {
-	stringsSlice := []string{
-		transactionsTable.GetCell(row, config.CATEGORY_COLUMN).GetText(),
-		transactionsTable.GetCell(row, config.DESCRIPTION_COLUMN).GetText(),
-	}
-
-	s := strings.Join(stringsSlice, " ")
-
-	return strings.Contains(strings.ToLower(s), strings.ToLower(findQuery))
-}
