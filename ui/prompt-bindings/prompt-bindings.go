@@ -36,36 +36,37 @@ func ForwardChar(field *cview.InputField) {
 }
 
 func UnixWordRubout(field *cview.InputField) {
-	pos := field.GetCursorPosition()
-	i := 0
-
-	for pos > 0 {
-		if field.GetText()[pos-1] == ' ' && i > 0 {
-			break
-		}
-
-		// delete all the spaces before considering anything deleted
-		if field.GetText()[pos-1] != ' ' {
-			i += 1
-		}
-
-		BackwardChar(field)
-		DeleteChar(field)
-		pos -= 1
-	}
+	separators := []rune{' '}
+	deleteBackwardsWithSeparators(field, separators)
 }
 
 func OtherUnixWordRubout(field *cview.InputField) {
+	separators := []rune{' ', '-', '.', '/'}
+	deleteBackwardsWithSeparators(field, separators)
+}
+
+func deleteBackwardsWithSeparators(field *cview.InputField, separators []rune) {
 	pos := field.GetCursorPosition()
 	i := 0
 
+all:
 	for pos > 0 {
-		if (field.GetText()[pos-1] == ' ' || field.GetText()[pos-1] == '-') && i > 0 {
-			break
+		if i > 0 {
+			for _, s := range separators {
+				if field.GetText()[pos-1] == byte(s) {
+					break all
+				}
+			}
 		}
 
 		// delete all the spaces before considering anything deleted
-		if field.GetText()[pos-1] != ' ' {
+		foundSeparator := false
+		for _, s := range separators {
+			if field.GetText()[pos-1] == byte(s) {
+				foundSeparator = true
+			}
+		}
+		if !foundSeparator {
 			i += 1
 		}
 
