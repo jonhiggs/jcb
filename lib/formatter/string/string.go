@@ -78,17 +78,17 @@ func Attributes(a domain.Attributes) string {
 	if a.Committed {
 		s += "C"
 	} else {
-		s += "-"
+		s += " "
 	}
 
 	if a.Notes {
 		s += "n"
 	} else {
-		s += "-"
+		s += " "
 	}
 
 	if a.Saved {
-		s += "-"
+		s += " "
 	} else {
 		s += "+"
 	}
