@@ -17,11 +17,12 @@ func openHelp() {
 	panels.ShowPanel("help")
 	panels.SendToFront("help")
 	panels.HidePanel("report")
-	printStatus("do blah for blah")
+	printStatus("Press <space> to scroll further")
 }
 
 func createHelp() *cview.TextView {
 	helpTextView = cview.NewTextView()
+	helpTextView.SetScrollBarVisibility(cview.ScrollBarNever)
 	helpTextView.SetText(
 		`
  Commands:
