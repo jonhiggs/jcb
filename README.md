@@ -2,6 +2,8 @@
 
 A TUI personal budgeting program.
 
+(Still under heavy development, but should be usable)
+
 The goal is not to completely automate away the process of data-entry, but to eliminate the tedium of repetitive tasks. I think it is important to consider each transaction (or class of transaction). You can easily select all transactions that match a pattern perform operations across the group.
 
 
