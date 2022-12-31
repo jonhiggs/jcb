@@ -22,6 +22,7 @@ var repeatUntilValue time.Time
 
 func handleOpenTransactions(ev *tcell.EventKey) *tcell.EventKey {
 	panels.ShowPanel("transactions")
+	panels.ShowPanel("info")
 	panels.HidePanel("report")
 	panels.SendToFront("transactions")
 	return nil
@@ -517,6 +518,7 @@ func handleCloseReport(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleOpenReport(ev *tcell.EventKey) *tcell.EventKey {
 	updateReportTable()
+	panels.HidePanel("info")
 	panels.ShowPanel("report")
 	panels.SendToFront("report")
 	return nil
@@ -570,6 +572,7 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleOpenHelp(ev *tcell.EventKey) *tcell.EventKey {
+	panels.HidePanel("info")
 	openHelp()
 	return nil
 }
