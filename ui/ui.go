@@ -3,6 +3,7 @@ package ui
 import (
 	"jcb/config"
 	promptBindings "jcb/ui/prompt-bindings"
+	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -101,5 +102,30 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyBackspace2:
 		promptBindings.OtherUnixWordRubout(field)
 	}
+
+	// this is a workaround in a cview bug that prevents a dash from being
+	// dropped into the start of an InputField.
+	if ev.Rune() == '-' {
+		var text string
+		pos := field.GetCursorPosition()
+
+		textSlice := strings.Split(field.GetText(), "")
+		for i, c := range textSlice {
+			if i == pos {
+				text = text + "-"
+			}
+			text = text + c
+		}
+
+		if pos == len(text) {
+			text = text + "-"
+		}
+
+		field.SetText(text)
+		if pos < len(text) {
+			field.SetCursorPosition(pos + 1)
+		}
+	}
+
 	return nil
 }
