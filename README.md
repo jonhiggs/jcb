@@ -1,10 +1,15 @@
 # jcb
 
-A TUI personal budgeting program.
+A powerful TUI personal budgeting program.
 
-(Still under heavy development, but should be usable)
 
-The goal is not to completely automate away the process of data-entry, but to eliminate the tedium of repetitive tasks. I think it is important to consider each transaction (or class of transaction). You can easily select all transactions that match a pattern perform operations across the group.
+jcb has the design goals of:
+
+1. Input and manipulate data quickly.
+1. Report where your money is being spent.
+1. Forecast your future bank balance.
+
+
 
 
 ## Workflow
@@ -23,14 +28,6 @@ Repeat.
 ## Getting Started
 
 
-
-
-## Features
-
-- Tag and simultaneously operate on many transactions.
-- Create repeating transactions.
-- Fast navigation with vimlike key bindings.
-- Import from TSV
 
 
 ## The UI
@@ -62,3 +59,10 @@ That tells you that:
 - There are a total of twenty-seven transactions.
 - That one transaction has been modified but not saved.
 - That zero transactions are tagged.
+
+
+---
+
+In keeping with the Unix philosophy, it does not connect to your bank at all. Instead, you can produce and import transactions from a TSV file.
+
+It does not manage multiple bank accounts.
