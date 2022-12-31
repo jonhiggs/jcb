@@ -34,6 +34,14 @@ func removeTag(id int64) {
 	updateInfo()
 }
 
+func toggleTag(id int64) {
+	if isTagged(id) {
+		removeTag(id)
+	} else {
+		applyTag(id)
+	}
+}
+
 func tagMatches(id int64) {
 	matchCount := 0
 
@@ -50,5 +58,23 @@ func tagMatches(id int64) {
 
 	selectTransaction(id)
 	printStatus(fmt.Sprintf("Tagged %d transactions", matchCount))
+	updateTransactionsTable()
+}
+
+func untagMatches(id int64) {
+	matchCount := 0
+
+	for _, i := range taggedTransactionIds {
+		selectTransaction(i)
+		r, _ := transactionsTable.GetSelection()
+
+		if find.TableRowMatches(transactionsTable, r) {
+			matchCount += 1
+			removeTag(i)
+		}
+	}
+
+	selectTransaction(id)
+	printStatus(fmt.Sprintf("Untagged %d transactions", matchCount))
 	updateTransactionsTable()
 }

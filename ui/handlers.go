@@ -458,6 +458,24 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt("Untag matched transactions:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+		panels.HidePanel("prompt")
+
+		err := find.SetQuery(promptInputField.GetText())
+		if err != nil {
+			printStatus(fmt.Sprintf("%s", err))
+			return nil
+		}
+
+		startingRow, _ := transactionsTable.GetSelection()
+		untagMatches(transactionIds[startingRow])
+		return nil
+	}, acceptanceFunction.Any)
+
+	return nil
+}
+
 func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 	screen := app.GetScreen()
 	cmdEv := screen.PollEvent()
@@ -504,6 +522,13 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				updateDate(date, taggedTransactionIds)
 				return nil
 			}, acceptanceFunction.Cents)
+		}
+
+		switch e.Key() {
+		case tcell.KeyCtrlT:
+			for _, r := range taggedTransactionIds {
+				removeTag(r)
+			}
 		}
 	}
 

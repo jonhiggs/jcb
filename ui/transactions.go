@@ -56,6 +56,7 @@ func createTransactionsTable() *cview.Table {
 	c.Set("/", handleFindForwards)
 	c.Set("?", handleFindBackwards)
 	c.Set("T", handleTagMatches)
+	c.SetRune(tcell.ModCtrl, 'T', handleUntagMatches)
 	c.Set("n", handleSelectMatchNext)
 	c.Set("N", handleSelectMatchPrev)
 	c.Set(">", handleSelectYearNext)
