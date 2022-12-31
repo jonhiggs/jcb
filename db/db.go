@@ -26,6 +26,7 @@ func Init(file string) error {
 	SaveTime = time.Now()
 	workingFile = makeWorkingFile()
 
+	fmt.Fprintf(os.Stderr, "Loading file %s\n", file)
 	db, err = sql.Open("sqlite3", workingFile)
 
 	if err != nil {
