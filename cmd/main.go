@@ -51,7 +51,7 @@ func main() {
 		case "file":
 			file = result.Optarg
 		case "version":
-			println(config.VERSION)
+			println("jcb v" + config.VERSION)
 			return
 		case "import-tsv":
 			tsvFile = result.Optarg
