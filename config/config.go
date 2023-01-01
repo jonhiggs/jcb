@@ -45,9 +45,14 @@ const COLOR_FORMFIELD_FOCUSED_BG = tcell.Color23
 const COLOR_FORM_LABLE_FG = tcell.ColorWhite
 
 func DefaultFile() string {
-	home, ok := os.LookupEnv("HOME")
+	data_dir, ok := os.LookupEnv("XDG_DATA_HOME")
+
 	if !ok {
-		log.Fatal("Cannot determine home directory set the default database file.")
+		home, ok := os.LookupEnv("HOME")
+		if !ok {
+			log.Fatal("Cannot determine home directory set the default database file.")
+		}
+		data_dir = fmt.Sprintf("%s/.local/share/jcb", home)
 	}
-	return fmt.Sprintf("%s/.config/jcb/data.db", home)
+	return fmt.Sprintf("%s/data.db", data_dir)
 }
