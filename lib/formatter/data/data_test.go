@@ -50,6 +50,22 @@ func TestDescription(t *testing.T) {
 	}
 }
 
+func TestCategory(t *testing.T) {
+	testA := Category("   testing    ")
+
+	if testA != "testing" {
+		t.Error("testA")
+	}
+}
+
+func TestNotes(t *testing.T) {
+	testA := Notes("   testing    ")
+
+	if testA != "testing" {
+		t.Error("testA")
+	}
+}
+
 func TestId(t *testing.T) {
 	var got int64
 	var expect int64
@@ -82,6 +98,12 @@ func TestRepeatRule(t *testing.T) {
 	if got != expect {
 		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
 	}
+
+	got = RepeatRule("1y")
+	expect = "1y"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
 }
 
 func TestRepeatRuleUnit(t *testing.T) {
@@ -105,6 +127,12 @@ func TestRepeatRuleUnit(t *testing.T) {
 	if got != expect {
 		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
 	}
+
+	got = RepeatRuleUnit("3y")
+	expect = "y"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
 }
 
 func TestRepeatRuleFrequency(t *testing.T) {
@@ -125,6 +153,12 @@ func TestRepeatRuleFrequency(t *testing.T) {
 
 	got = RepeatRuleFrequency("3m")
 	expect = 3
+	if got != expect {
+		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+	}
+
+	got = RepeatRuleFrequency("1y")
+	expect = 1
 	if got != expect {
 		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
 	}
