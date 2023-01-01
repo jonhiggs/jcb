@@ -49,6 +49,7 @@ func openPrompt(
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)

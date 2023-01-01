@@ -56,6 +56,13 @@ func OtherUnixWordRubout(field *cview.InputField) {
 	deleteBackwardsWithSeparators(field, separators)
 }
 
+func KillLine(field *cview.InputField) {
+	pos := field.GetCursorPosition()
+	text := field.GetText()
+	killRing = text[pos:len(text)]
+	field.SetText(text[0:pos])
+}
+
 func deleteBackwardsWithSeparators(field *cview.InputField, separators []rune) {
 	pos := field.GetCursorPosition()
 	i := 0

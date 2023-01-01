@@ -98,6 +98,8 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		promptBindings.ForwardChar(field)
 	case tcell.KeyCtrlB:
 		promptBindings.BackwardChar(field)
+	case tcell.KeyCtrlK:
+		promptBindings.KillLine(field)
 	case tcell.KeyCtrlW:
 		promptBindings.UnixWordRubout(field)
 	case tcell.KeyCtrlY:
