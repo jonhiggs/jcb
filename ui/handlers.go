@@ -10,10 +10,14 @@ import (
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	acceptanceFunction "jcb/ui/acceptance-functions"
+	promptBindings "jcb/ui/prompt-bindings"
 	"log"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
+	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -631,5 +635,73 @@ func handleReportSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 func handleReportSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := reportTable.GetSelection()
 	reportTable.Select(r-1, 0)
+	return nil
+}
+
+func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
+	pn, _ := panels.GetFrontPanel()
+	var field *cview.InputField
+	switch pn {
+	case "edit":
+		fieldId, _ := editForm.GetFocusedItemIndex()
+		field = editForm.GetFormItem(fieldId).(*cview.InputField)
+	case "insert":
+		fieldId, _ := insertForm.GetFocusedItemIndex()
+		field = insertForm.GetFormItem(fieldId).(*cview.InputField)
+	case "prompt":
+		fieldId, _ := promptForm.GetFocusedItemIndex()
+		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
+	}
+
+	switch ev.Key() {
+	case tcell.KeyCtrlD:
+		promptBindings.DeleteChar(field)
+	case tcell.KeyCtrlF:
+		promptBindings.ForwardChar(field)
+	case tcell.KeyCtrlB:
+		promptBindings.BackwardChar(field)
+	case tcell.KeyCtrlK:
+		promptBindings.KillLine(field)
+	case tcell.KeyCtrlW:
+		promptBindings.UnixWordRubout(field)
+	case tcell.KeyCtrlY:
+		promptBindings.Yank(field)
+	}
+
+	isChar, _ := regexp.MatchString(`[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),\./<>?;':\"\[\]\{\}\-+]`, string(ev.Rune()))
+	if ev.Modifiers() == tcell.ModAlt {
+		switch ev.Key() {
+		case tcell.KeyBackspace2:
+			promptBindings.OtherUnixWordRubout(field)
+		}
+
+		switch ev.Rune() {
+		case 'd':
+			promptBindings.DeleteWord(field)
+		}
+	} else if isChar {
+		// this is to workaround some bugs in cview that prevents a dash editing
+		// inputs at or near symbols.
+		var text string
+		pos := field.GetCursorPosition()
+
+		textSlice := strings.Split(field.GetText(), "")
+		for i, c := range textSlice {
+			if i == pos {
+				text = text + string(ev.Rune())
+			}
+			text = text + c
+		}
+
+		if pos == len(text) {
+			text = text + string(ev.Rune())
+		}
+
+		field.SetText(text)
+		if pos < len(text) {
+			field.SetCursorPosition(pos + 1)
+		}
+	}
+
 	return nil
 }

@@ -56,11 +56,48 @@ func OtherUnixWordRubout(field *cview.InputField) {
 	deleteBackwardsWithSeparators(field, separators)
 }
 
+func DeleteWord(field *cview.InputField) {
+	separators := []rune{' ', '-', '.', '/'}
+	deleteForwardsWithSeparators(field, separators)
+}
+
 func KillLine(field *cview.InputField) {
 	pos := field.GetCursorPosition()
 	text := field.GetText()
 	killRing = text[pos:len(text)]
 	field.SetText(text[0:pos])
+}
+
+func deleteForwardsWithSeparators(field *cview.InputField, separators []rune) {
+	pos := field.GetCursorPosition()
+	i := 0
+
+	var yankString string
+
+all:
+	for pos < len(field.GetText()) {
+		if i > 0 {
+			for _, s := range separators {
+				if field.GetText()[pos] == byte(s) {
+					break all
+				}
+			}
+		}
+
+		// delete all the spaces before considering anything deleted
+		foundSeparator := false
+		for _, s := range separators {
+			if field.GetText()[pos] == byte(s) {
+				foundSeparator = true
+			}
+		}
+		if !foundSeparator {
+			i += 1
+		}
+
+		yankString += DeleteChar(field)
+	}
+	killRingInsert(yankString)
 }
 
 func deleteBackwardsWithSeparators(field *cview.InputField, separators []rune) {

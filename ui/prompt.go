@@ -52,6 +52,7 @@ func openPrompt(
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handleInputFormCustomBindings)
+	c.SetRune(tcell.ModAlt, 'd', handleInputFormCustomBindings)
 	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
 	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
 		c.SetRune(0, k, handleInputFormCustomBindings)
