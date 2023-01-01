@@ -6,15 +6,21 @@ import (
 	"code.rocketnine.space/tslocum/cview"
 )
 
-func DeleteChar(field *cview.InputField) {
+// XXX: not a ring, but one day it might be
+var killRing string
+
+// returns the deleted character
+func DeleteChar(field *cview.InputField) string {
 	pos := field.GetCursorPosition()
 	text := field.GetText()
+	var deletedChar string
 
 	textSlice := strings.Split(text, "")
 
 	var newSlice []string
 	for i, l := range textSlice {
 		if i == pos {
+			deletedChar = l
 			continue
 		}
 
@@ -23,6 +29,7 @@ func DeleteChar(field *cview.InputField) {
 
 	field.SetText(strings.Join(newSlice, ""))
 	field.SetCursorPosition(pos)
+	return deletedChar
 }
 
 func BackwardChar(field *cview.InputField) {
@@ -53,6 +60,8 @@ func deleteBackwardsWithSeparators(field *cview.InputField, separators []rune) {
 	pos := field.GetCursorPosition()
 	i := 0
 
+	var yankString string
+
 all:
 	for pos > 0 {
 		if i > 0 {
@@ -75,7 +84,42 @@ all:
 		}
 
 		BackwardChar(field)
-		DeleteChar(field)
+		yankString += DeleteChar(field)
 		pos -= 1
 	}
+	killRingInsert(reverse(yankString))
+}
+
+func Yank(field *cview.InputField) {
+	pos := field.GetCursorPosition()
+	text := field.GetText()
+
+	var newText string
+
+	for i, l := range strings.Split(text, "") {
+		if i == pos {
+			newText += killRing
+		}
+
+		newText += l
+	}
+
+	if pos == len(text) {
+		newText += killRing
+	}
+
+	field.SetText(newText)
+	field.SetCursorPosition(pos + len(killRing))
+}
+
+func killRingInsert(s string) {
+	killRing = s
+}
+
+func reverse(s string) string {
+	var newString string
+	for i := len(s) - 1; i >= 0; i-- {
+		newString = newString + string(s[i])
+	}
+	return newString
 }
