@@ -39,6 +39,29 @@ func BackwardChar(field *cview.InputField) {
 	}
 }
 
+func BackwardWord(field *cview.InputField) {
+	separators := []rune{' ', '-', '.', '/'}
+	foundChar := false
+
+all:
+	for field.GetCursorPosition() > 0 {
+		char := field.GetText()[field.GetCursorPosition()-1]
+		for _, s := range separators {
+			if char == byte(s) {
+				if foundChar {
+					return
+				} else {
+					BackwardChar(field)
+					continue all
+				}
+			}
+		}
+
+		foundChar = true
+		BackwardChar(field)
+	}
+}
+
 func ForwardChar(field *cview.InputField) {
 	pos := field.GetCursorPosition()
 	if pos < len(field.GetText()) {

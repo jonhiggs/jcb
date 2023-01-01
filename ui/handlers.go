@@ -680,6 +680,8 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 			promptBindings.DeleteWord(field)
 		case 'f':
 			promptBindings.ForwardWord(field)
+		case 'b':
+			promptBindings.BackwardWord(field)
 		}
 	} else if isChar {
 		// this is to workaround some bugs in cview that prevents a dash editing
