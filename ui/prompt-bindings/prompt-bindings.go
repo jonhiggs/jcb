@@ -27,12 +27,16 @@ func DeleteChar(field *cview.InputField) {
 
 func BackwardChar(field *cview.InputField) {
 	pos := field.GetCursorPosition()
-	field.SetCursorPosition(pos - 1)
+	if pos > 0 {
+		field.SetCursorPosition(pos - 1)
+	}
 }
 
 func ForwardChar(field *cview.InputField) {
 	pos := field.GetCursorPosition()
-	field.SetCursorPosition(pos + 1)
+	if pos < len(field.GetText()) {
+		field.SetCursorPosition(pos + 1)
+	}
 }
 
 func UnixWordRubout(field *cview.InputField) {
