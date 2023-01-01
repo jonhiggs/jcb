@@ -155,7 +155,12 @@ func createEditForm() *cview.Form {
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handleInputFormCustomBindings)
+	c.SetRune(tcell.ModAlt, 'd', handleInputFormCustomBindings)
+	c.SetRune(tcell.ModAlt, 'f', handleInputFormCustomBindings)
+	c.SetRune(tcell.ModAlt, 'b', handleInputFormCustomBindings)
 	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
 	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
 		c.SetRune(0, k, handleInputFormCustomBindings)

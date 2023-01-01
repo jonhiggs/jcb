@@ -2,9 +2,6 @@ package ui
 
 import (
 	"jcb/config"
-	promptBindings "jcb/ui/prompt-bindings"
-	"regexp"
-	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -74,60 +71,4 @@ func Start() {
 
 	app.SetRoot(panels, true)
 	app.Run()
-}
-
-func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
-	pn, _ := panels.GetFrontPanel()
-	var field *cview.InputField
-	switch pn {
-	case "edit":
-		fieldId, _ := editForm.GetFocusedItemIndex()
-		field = editForm.GetFormItem(fieldId).(*cview.InputField)
-	case "insert":
-		fieldId, _ := insertForm.GetFocusedItemIndex()
-		field = insertForm.GetFormItem(fieldId).(*cview.InputField)
-	case "prompt":
-		fieldId, _ := promptForm.GetFocusedItemIndex()
-		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
-	}
-
-	switch ev.Key() {
-	case tcell.KeyCtrlD:
-		promptBindings.DeleteChar(field)
-	case tcell.KeyCtrlF:
-		promptBindings.ForwardChar(field)
-	case tcell.KeyCtrlB:
-		promptBindings.BackwardChar(field)
-	case tcell.KeyCtrlW:
-		promptBindings.UnixWordRubout(field)
-	case tcell.KeyBackspace2:
-		promptBindings.OtherUnixWordRubout(field)
-	}
-
-	// this is to workaround some bugs in cview that prevents a dash editing
-	// inputs at or near symbols.
-	isChar, _ := regexp.MatchString(`[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),\./<>?;':\"\[\]\{\}\-+]`, string(ev.Rune()))
-	if isChar {
-		var text string
-		pos := field.GetCursorPosition()
-
-		textSlice := strings.Split(field.GetText(), "")
-		for i, c := range textSlice {
-			if i == pos {
-				text = text + string(ev.Rune())
-			}
-			text = text + c
-		}
-
-		if pos == len(text) {
-			text = text + string(ev.Rune())
-		}
-
-		field.SetText(text)
-		if pos < len(text) {
-			field.SetCursorPosition(pos + 1)
-		}
-	}
-
-	return nil
 }
