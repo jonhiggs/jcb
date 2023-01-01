@@ -162,7 +162,9 @@ func createInsertForm() *cview.Form {
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
 	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
-	c.SetRune(0, '-', handleInputFormCustomBindings)
+	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
+		c.SetRune(0, k, handleInputFormCustomBindings)
+	}
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)

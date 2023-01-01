@@ -3,6 +3,7 @@ package ui
 import (
 	"jcb/config"
 	promptBindings "jcb/ui/prompt-bindings"
+	"regexp"
 	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -103,22 +104,23 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		promptBindings.OtherUnixWordRubout(field)
 	}
 
-	// this is a workaround in a cview bug that prevents a dash from being
-	// dropped into the start of an InputField.
-	if ev.Rune() == '-' {
+	// this is to workaround some bugs in cview that prevents a dash editing
+	// inputs at or near symbols.
+	isChar, _ := regexp.MatchString(`[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),\./<>?;':\"\[\]\{\}\-+]`, string(ev.Rune()))
+	if isChar {
 		var text string
 		pos := field.GetCursorPosition()
 
 		textSlice := strings.Split(field.GetText(), "")
 		for i, c := range textSlice {
 			if i == pos {
-				text = text + "-"
+				text = text + string(ev.Rune())
 			}
 			text = text + c
 		}
 
 		if pos == len(text) {
-			text = text + "-"
+			text = text + string(ev.Rune())
 		}
 
 		field.SetText(text)
