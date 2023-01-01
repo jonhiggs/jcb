@@ -9,8 +9,7 @@ jcb has the design goals of:
 1. Report where your money is being spent.
 1. Forecast your future bank balance.
 
-
-
+![transactions](./doc/images/transactions.png)
 
 ## Workflow
 
