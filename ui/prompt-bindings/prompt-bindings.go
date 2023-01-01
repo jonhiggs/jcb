@@ -46,6 +46,29 @@ func ForwardChar(field *cview.InputField) {
 	}
 }
 
+func ForwardWord(field *cview.InputField) {
+	separators := []rune{' ', '-', '.', '/'}
+	foundChar := false
+
+all:
+	for field.GetCursorPosition() < len(field.GetText()) {
+		char := field.GetText()[field.GetCursorPosition()]
+		for _, s := range separators {
+			if char == byte(s) {
+				if foundChar {
+					return
+				} else {
+					ForwardChar(field)
+					continue all
+				}
+			}
+		}
+
+		foundChar = true
+		ForwardChar(field)
+	}
+}
+
 func UnixWordRubout(field *cview.InputField) {
 	separators := []rune{' '}
 	deleteBackwardsWithSeparators(field, separators)
