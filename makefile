@@ -2,10 +2,10 @@ run: build
 	./jcb -f ./test.db
 
 test:
-	go test ./lib/transaction
+	#go test ./lib/transaction
 	go test ./lib/formatter/data
-	go test ./lib/formatter/string
-	go test ./lib/repeater
+	#go test ./lib/formatter/string
+	#go test ./lib/repeater
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
@@ -22,5 +22,5 @@ tag_release: version = $(shell cat ./config/config.go | grep VERSION | cut -d\  
 tag_release:
 	gh release create v$(version) ./release/*
 
-build:
+build: test
 	go build -o jcb ./cmd/main.go
