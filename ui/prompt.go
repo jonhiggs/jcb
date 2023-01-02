@@ -44,7 +44,7 @@ func openPrompt(
 	promptInputField.SetLabel(label)
 	promptInputField.SetText(text)
 
-	c := inputBindings.Configuration(handleInputFormCustomBindings)
+	c := inputBindings.Configuration(HandleInputFormCustomBindings)
 	c.SetKey(0, tcell.KeyEnter, enterFunc)
 
 	promptInputField.SetInputCapture(c.Capture)

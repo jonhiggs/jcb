@@ -638,7 +638,7 @@ func handleReportSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
+func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	pn, _ := panels.GetFrontPanel()
 	var field *cview.InputField
 	switch pn {
