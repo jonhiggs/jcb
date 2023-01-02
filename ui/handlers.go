@@ -10,7 +10,7 @@ import (
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	acceptanceFunction "jcb/ui/acceptance-functions"
-	promptBindings "jcb/ui/prompt-bindings"
+	inputBindings "jcb/ui/input-bindings"
 	"log"
 	"regexp"
 	"strconv"
@@ -655,33 +655,33 @@ func handleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 
 	switch ev.Key() {
 	case tcell.KeyCtrlD:
-		promptBindings.DeleteChar(field)
+		inputBindings.DeleteChar(field)
 	case tcell.KeyCtrlF:
-		promptBindings.ForwardChar(field)
+		inputBindings.ForwardChar(field)
 	case tcell.KeyCtrlB:
-		promptBindings.BackwardChar(field)
+		inputBindings.BackwardChar(field)
 	case tcell.KeyCtrlK:
-		promptBindings.KillLine(field)
+		inputBindings.KillLine(field)
 	case tcell.KeyCtrlW:
-		promptBindings.UnixWordRubout(field)
+		inputBindings.UnixWordRubout(field)
 	case tcell.KeyCtrlY:
-		promptBindings.Yank(field)
+		inputBindings.Yank(field)
 	}
 
 	isChar, _ := regexp.MatchString(`[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),\./<>?;':\"\[\]\{\}\-+]`, string(ev.Rune()))
 	if ev.Modifiers() == tcell.ModAlt {
 		switch ev.Key() {
 		case tcell.KeyBackspace2:
-			promptBindings.OtherUnixWordRubout(field)
+			inputBindings.OtherUnixWordRubout(field)
 		}
 
 		switch ev.Rune() {
 		case 'd':
-			promptBindings.DeleteWord(field)
+			inputBindings.DeleteWord(field)
 		case 'f':
-			promptBindings.ForwardWord(field)
+			inputBindings.ForwardWord(field)
 		case 'b':
-			promptBindings.BackwardWord(field)
+			inputBindings.BackwardWord(field)
 		}
 	} else if isChar {
 		// this is to workaround some bugs in cview that prevents a dash editing

@@ -1,13 +1,35 @@
-package promptBindings
+package inputBindings
 
 import (
 	"strings"
 
+	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
+	"github.com/gdamore/tcell/v2"
 )
 
 // XXX: not a ring, but one day it might be
 var killRing string
+
+func Configuration(handler func(ev *tcell.EventKey) *tcell.EventKey) *cbind.Configuration {
+	c := cbind.NewConfiguration()
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handler)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handler)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handler)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handler)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handler)
+	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handler)
+	c.SetRune(tcell.ModAlt, 'd', handler)
+	c.SetRune(tcell.ModAlt, 'f', handler)
+	c.SetRune(tcell.ModAlt, 'b', handler)
+	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handler)
+
+	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
+		c.SetRune(0, k, handler)
+	}
+
+	return c
+}
 
 // returns the deleted character
 func DeleteChar(field *cview.InputField) string {
