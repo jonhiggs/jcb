@@ -70,6 +70,36 @@ func TestDescription(t *testing.T) {
 	}
 }
 
+func TestNotes(t *testing.T) {
+	var got string
+	var expect string
+	var err error
+
+	got = Category("   notes    ")
+	expect = "notes"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+}
+
+func TestCategory(t *testing.T) {
+	var got string
+	var expect string
+	var err error
+
+	got = Category("   category    ")
+	expect = "category"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+	if err != nil {
+		t.Error(fmt.Sprintf("no error expected for %s", expect))
+	}
+}
+
 func TestId(t *testing.T) {
 	var got string
 	var expect string
@@ -81,11 +111,34 @@ func TestId(t *testing.T) {
 	}
 }
 
+func TestAttributes(t *testing.T) {
+	var got string
+	var expect string
+
+	got = Attributes(domain.Attributes{true, true, true, true})
+	expect = "Cn "
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+
+	got = Attributes(domain.Attributes{true, true, false, true})
+	expect = "Cn+"
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+
+	got = Attributes(domain.Attributes{false, false, true, true})
+	expect = "   "
+	if got != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+	}
+}
+
 func TestTransaction(t *testing.T) {
 	var got domain.StringTransaction
 	var expect string
 
-	got = Transaction(domain.Transaction{1, time.Now(), "testing", 1200, ""})
+	got = Transaction(domain.Transaction{1, time.Now(), "testing", 1200, "notes", "category"})
 	expect = "testing"
 	if got.Description != expect {
 		t.Error(fmt.Sprintf("got %s, expected %s", got.Description, expect))
@@ -96,4 +149,13 @@ func TestTransaction(t *testing.T) {
 		t.Error(fmt.Sprintf("got %s, expected %s", got.Cents, expect))
 	}
 
+	expect = "notes"
+	if got.Notes != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got.Notes, expect))
+	}
+
+	expect = "category"
+	if got.Category != expect {
+		t.Error(fmt.Sprintf("got %s, expected %s", got.Category, expect))
+	}
 }
