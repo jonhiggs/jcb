@@ -7,12 +7,12 @@ import (
 	"jcb/lib/dates"
 	"jcb/lib/validator"
 	acceptanceFunction "jcb/ui/acceptance-functions"
+	inputBindings "jcb/ui/input-bindings"
 
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 
-	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -155,21 +155,9 @@ func createInsertForm() *cview.Form {
 	insertForm.SetFieldBackgroundColor(config.COLOR_FORMFIELD_BG)
 	insertForm.SetFieldBackgroundColorFocused(config.COLOR_FORMFIELD_FOCUSED_BG)
 
-	c := cbind.NewConfiguration()
+	c := inputBindings.Configuration(handleInputFormCustomBindings)
 	c.SetKey(0, tcell.KeyEnter, handleInsertTransaction)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'd', handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'f', handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'b', handleInputFormCustomBindings)
-	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
-	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
-		c.SetRune(0, k, handleInputFormCustomBindings)
-	}
+
 	insertInputFieldDate.SetInputCapture(c.Capture)
 	insertInputFieldDescription.SetInputCapture(c.Capture)
 	insertInputFieldCents.SetInputCapture(c.Capture)

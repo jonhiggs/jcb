@@ -2,8 +2,8 @@ package ui
 
 import (
 	"jcb/config"
+	inputBindings "jcb/ui/input-bindings"
 
-	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -44,21 +44,9 @@ func openPrompt(
 	promptInputField.SetLabel(label)
 	promptInputField.SetText(text)
 
-	c := cbind.NewConfiguration()
+	c := inputBindings.Configuration(handleInputFormCustomBindings)
 	c.SetKey(0, tcell.KeyEnter, enterFunc)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlD, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlF, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlB, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlK, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlW, handleInputFormCustomBindings)
-	c.SetKey(tcell.ModCtrl, tcell.KeyCtrlY, handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'd', handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'f', handleInputFormCustomBindings)
-	c.SetRune(tcell.ModAlt, 'b', handleInputFormCustomBindings)
-	c.SetKey(tcell.ModAlt, tcell.KeyBackspace2, handleInputFormCustomBindings)
-	for _, k := range []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*(),./<>?;':\"[]{}-+") {
-		c.SetRune(0, k, handleInputFormCustomBindings)
-	}
+
 	promptInputField.SetInputCapture(c.Capture)
 	promptInputField.SetFieldWidth(config.MAX_WIDTH - len(label))
 	promptInputField.SetAcceptanceFunc(acceptanceFunc)
