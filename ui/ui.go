@@ -1,7 +1,9 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/config"
+	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -56,7 +58,18 @@ func Start() {
 		return nil
 	}
 
+	handleSuspend := func(ev *tcell.EventKey) *tcell.EventKey {
+		app.Suspend(func() {
+			// XXX: I wish this was better but it will do for now.
+			fmt.Println("Press <Ctrl-Z> again to suspend")
+			time.Sleep(1 * time.Second)
+		})
+
+		return nil
+	}
+
 	c.SetRune(tcell.ModCtrl, 'c', handleExit)
+	c.SetRune(tcell.ModCtrl, 'z', handleSuspend)
 
 	app.SetInputCapture(c.Capture)
 
