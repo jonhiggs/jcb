@@ -136,6 +136,28 @@ func KillLine(field *cview.InputField) {
 	field.SetText(text[0:pos])
 }
 
+func Yank(field *cview.InputField) {
+	pos := field.GetCursorPosition()
+	text := field.GetText()
+
+	var newText string
+
+	for i, l := range strings.Split(text, "") {
+		if i == pos {
+			newText += killRing
+		}
+
+		newText += l
+	}
+
+	if pos == len(text) {
+		newText += killRing
+	}
+
+	field.SetText(newText)
+	field.SetCursorPosition(pos + len(killRing))
+}
+
 func deleteForwardsWithSeparators(field *cview.InputField, separators []rune) {
 	pos := field.GetCursorPosition()
 	i := 0
@@ -200,28 +222,6 @@ all:
 		pos -= 1
 	}
 	killRingInsert(reverse(yankString))
-}
-
-func Yank(field *cview.InputField) {
-	pos := field.GetCursorPosition()
-	text := field.GetText()
-
-	var newText string
-
-	for i, l := range strings.Split(text, "") {
-		if i == pos {
-			newText += killRing
-		}
-
-		newText += l
-	}
-
-	if pos == len(text) {
-		newText += killRing
-	}
-
-	field.SetText(newText)
-	field.SetCursorPosition(pos + len(killRing))
 }
 
 func killRingInsert(s string) {

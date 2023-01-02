@@ -155,7 +155,7 @@ func createInsertForm() *cview.Form {
 	insertForm.SetFieldBackgroundColor(config.COLOR_FORMFIELD_BG)
 	insertForm.SetFieldBackgroundColorFocused(config.COLOR_FORMFIELD_FOCUSED_BG)
 
-	c := inputBindings.Configuration(handleInputFormCustomBindings)
+	c := inputBindings.Configuration(HandleInputFormCustomBindings)
 	c.SetKey(0, tcell.KeyEnter, handleInsertTransaction)
 
 	insertInputFieldDate.SetInputCapture(c.Capture)

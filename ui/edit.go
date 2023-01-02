@@ -150,7 +150,7 @@ func createEditForm() *cview.Form {
 	editForm.SetFieldBackgroundColor(config.COLOR_FORMFIELD_BG)
 	editForm.SetFieldBackgroundColorFocused(config.COLOR_FORMFIELD_FOCUSED_BG)
 
-	c := inputBindings.Configuration(handleInputFormCustomBindings)
+	c := inputBindings.Configuration(HandleInputFormCustomBindings)
 	c.SetKey(tcell.ModNone, tcell.KeyEnter, handleEditTransaction)
 
 	editInputFieldDate.SetInputCapture(c.Capture)
