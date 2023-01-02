@@ -9,7 +9,7 @@ import (
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
-	acceptanceFunction "jcb/ui/acceptance-functions"
+	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
 	"log"
 	"regexp"
@@ -231,7 +231,7 @@ func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 
 		handleSelectMatchNext(ev)
 		return nil
-	}, acceptanceFunction.Any)
+	})
 
 	return nil
 }
@@ -248,7 +248,7 @@ func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 
 		handleSelectMatchPrev(ev)
 		return nil
-	}, acceptanceFunction.Any)
+	})
 
 	return nil
 }
@@ -362,7 +362,7 @@ func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateCents(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	}, acceptanceFunction.Cents)
+	})
 
 	return nil
 }
@@ -379,7 +379,7 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateCategory(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	}, acceptanceFunction.Category)
+	})
 
 	return nil
 }
@@ -396,7 +396,7 @@ func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
 		r, _ := transactionsTable.GetSelection()
 		updateDescription(promptInputField.GetText(), []int64{transactionIds[r]})
 		return nil
-	}, acceptanceFunction.Description)
+	})
 
 	return nil
 }
@@ -420,7 +420,7 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 
 		updateDate(dateString, []int64{transactionIds[r]})
 		return nil
-	}, acceptanceFunction.Date)
+	})
 
 	return nil
 }
@@ -457,7 +457,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		startingRow, _ := transactionsTable.GetSelection()
 		tagMatches(transactionIds[startingRow])
 		return nil
-	}, acceptanceFunction.Any)
+	})
 
 	return nil
 }
@@ -475,7 +475,7 @@ func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		startingRow, _ := transactionsTable.GetSelection()
 		untagMatches(transactionIds[startingRow])
 		return nil
-	}, acceptanceFunction.Any)
+	})
 
 	return nil
 }
@@ -505,27 +505,27 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				category := dataf.Category(promptInputField.GetText())
 				updateCategory(category, taggedTransactionIds)
 				return nil
-			}, acceptanceFunction.Category)
+			})
 		case 'd':
 			openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				updateDescription(promptInputField.GetText(), taggedTransactionIds)
 				return nil
-			}, acceptanceFunction.Description)
+			})
 		case '=':
 			openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				cents := promptInputField.GetText()
 				updateCents(cents, taggedTransactionIds)
 				return nil
-			}, acceptanceFunction.Description)
+			})
 		case '@':
 			openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				date := promptInputField.GetText()
 				updateDate(date, taggedTransactionIds)
 				return nil
-			}, acceptanceFunction.Cents)
+			})
 		}
 
 		switch e.Key() {
@@ -560,7 +560,7 @@ func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		runCommand(promptInputField.GetText())
 		return nil
-	}, acceptanceFunction.Any)
+	})
 
 	return nil
 }
@@ -595,10 +595,10 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 
 			updateTransactionsTable()
 			return nil
-		}, acceptanceFunction.Date)
+		})
 
 		return nil
-	}, acceptanceFunction.Any)
+	})
 	return nil
 }
 
@@ -653,6 +653,9 @@ func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
+	acceptanceFunc := acceptanceFunction.FieldFunc(field)
+	originalText := field.GetText()
+
 	switch ev.Key() {
 	case tcell.KeyCtrlD:
 		inputBindings.DeleteChar(field)
@@ -705,6 +708,10 @@ func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 		if pos < len(text) {
 			field.SetCursorPosition(pos + 1)
 		}
+	}
+
+	if !acceptanceFunc(field) {
+		field.SetText(originalText)
 	}
 
 	return nil
