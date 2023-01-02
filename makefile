@@ -5,7 +5,7 @@ test:
 	#go test ./lib/transaction
 	go test ./lib/formatter/data
 	go test ./lib/formatter/string
-	#go test ./lib/repeater
+	go test ./lib/repeater
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
