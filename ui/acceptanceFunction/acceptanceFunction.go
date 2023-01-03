@@ -4,6 +4,7 @@ import (
 	"jcb/config"
 	"log"
 	"regexp"
+	"strings"
 
 	"code.rocketnine.space/tslocum/cview"
 )
@@ -43,6 +44,11 @@ func Category(field *cview.InputField) bool {
 	if len(field.GetText()) > config.CATEGORY_MAX_LENGTH {
 		return false
 	}
+
+	if len(strings.Fields(field.GetText())) > 1 {
+		return false
+	}
+
 	return true
 }
 

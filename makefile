@@ -6,6 +6,7 @@ test:
 	go test ./lib/formatter/string
 	go test ./lib/repeater
 	go test ./ui/input-bindings/input-bindings_test.go
+	go test ./ui/acceptanceFunction/acceptanceFunction_test.go
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
