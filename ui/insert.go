@@ -6,7 +6,6 @@ import (
 	"jcb/domain"
 	"jcb/lib/dates"
 	"jcb/lib/validator"
-	acceptanceFunction "jcb/ui/acceptance-functions"
 	inputBindings "jcb/ui/input-bindings"
 
 	dataf "jcb/lib/formatter/data"
@@ -72,10 +71,6 @@ func checkInsertForm() bool {
 	return true
 }
 
-func dateInputFieldChanged(s string) {
-	return
-}
-
 func readInsertForm() domain.Transaction {
 	date := dataf.Date(insertInputFieldDate.GetText())
 	description := dataf.Description(insertInputFieldDescription.GetText())
@@ -115,28 +110,22 @@ func createInsertForm() *cview.Form {
 	insertInputFieldDate.SetLabel("Date:")
 	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
 	insertInputFieldDate.SetFieldWidth(11)
-	insertInputFieldDate.SetAcceptanceFunc(acceptanceFunction.Date)
-	insertInputFieldDate.SetChangedFunc(dateInputFieldChanged)
 
 	insertInputFieldCategory = cview.NewInputField()
 	insertInputFieldCategory.SetLabel("Category:")
 	insertInputFieldCategory.SetFieldWidth(0)
-	insertInputFieldCategory.SetAcceptanceFunc(acceptanceFunction.Category)
 
 	insertInputFieldDescription = cview.NewInputField()
 	insertInputFieldDescription.SetLabel("Description:")
 	insertInputFieldDescription.SetFieldWidth(0)
-	insertInputFieldDescription.SetAcceptanceFunc(acceptanceFunction.Description)
 
 	insertInputFieldCents = cview.NewInputField()
 	insertInputFieldCents.SetLabel("Amount:")
 	insertInputFieldCents.SetFieldWidth(10)
-	insertInputFieldCents.SetAcceptanceFunc(acceptanceFunction.Cents)
 
 	insertInputFieldNotes = cview.NewInputField()
 	insertInputFieldNotes.SetLabel("Notes:")
 	insertInputFieldNotes.SetFieldWidth(0)
-	insertInputFieldNotes.SetAcceptanceFunc(acceptanceFunction.Notes)
 
 	insertForm.AddFormItem(insertInputFieldDate)
 	insertForm.AddFormItem(insertInputFieldCategory)

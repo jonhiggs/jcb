@@ -9,7 +9,6 @@ import (
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
-	acceptanceFunction "jcb/ui/acceptance-functions"
 	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -111,27 +110,22 @@ func createEditForm() *cview.Form {
 	editInputFieldDate = cview.NewInputField()
 	editInputFieldDate.SetLabel("Date:")
 	editInputFieldDate.SetFieldWidth(11)
-	editInputFieldDate.SetAcceptanceFunc(acceptanceFunction.Date)
 
 	editInputFieldCategory = cview.NewInputField()
 	editInputFieldCategory.SetLabel("Category:")
 	editInputFieldCategory.SetFieldWidth(0)
-	editInputFieldCategory.SetAcceptanceFunc(acceptanceFunction.Category)
 
 	editInputFieldDescription = cview.NewInputField()
 	editInputFieldDescription.SetLabel("Description:")
 	editInputFieldDescription.SetFieldWidth(0)
-	editInputFieldDescription.SetAcceptanceFunc(acceptanceFunction.Description)
 
 	editInputFieldCents = cview.NewInputField()
 	editInputFieldCents.SetLabel("Amount:")
 	editInputFieldCents.SetFieldWidth(10)
-	editInputFieldCents.SetAcceptanceFunc(acceptanceFunction.Cents)
 
 	editInputFieldNotes = cview.NewInputField()
 	editInputFieldNotes.SetLabel("Notes:")
 	editInputFieldNotes.SetFieldWidth(0)
-	editInputFieldNotes.SetAcceptanceFunc(acceptanceFunction.Notes)
 
 	editForm.AddFormItem(editInputFieldDate)
 	editForm.AddFormItem(editInputFieldCategory)
