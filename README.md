@@ -22,6 +22,7 @@ And this video shows you how to reconcile your budget with your bank statement.
 - Create repeating transactions.
 - Fast navigation with vimlike key bindings.
 - Import from TSV.
+- Reports and forecasts
 - Local data. Private. Nothing is sent to the cloud.
 
 
