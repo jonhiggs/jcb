@@ -21,7 +21,8 @@ And this video shows you how to reconcile your budget with your bank statement.
 - Tag and simultaneously operate on many transactions.
 - Create repeating transactions.
 - Fast navigation with vimlike key bindings.
-- Import from TSV
+- Import from TSV.
+- Local data. Private. Nothing is sent to the cloud.
 
 
 ## The UI
