@@ -1,8 +1,6 @@
 # jcb
 
-A TUI personal budgeting program.
-
-It's fast, familiar (heavily inspired by Vim and Mutt) and powerful TUI peronsal budgeting program.
+A TUI personal budgeting program that is fast, familiar (heavily inspired by Vim and Mutt) and powerful.
 
 (Still under heavy development but usable)
 
