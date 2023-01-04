@@ -2,27 +2,20 @@
 
 A TUI personal budgeting program.
 
-(Still under heavy development, but should be usable)
+It's fast, familiar (heavily inspired by Vim and Mutt) and powerful TUI peronsal budgeting program.
 
-The goal is not to completely automate away the process of data-entry, but to eliminate the tedium of repetitive tasks. I think it is important to consider each transaction (or class of transaction). You can easily select all transactions that match a pattern perform operations across the group.
-
-
-## Workflow
-
-Create the transactions, either by importing them from your bank, or creating them in the application.
-
-Categorise your transactions and reconcile against your bank statement.
-
-Commit the record of the transaction. This marks the transaction as read-only and also prevents any other records from being inserted before it.
-
-Use the report to help you make financial decisions.
-
-Repeat.
+(Still under heavy development but usable)
 
 
 ## Getting Started
 
+Watch this video to get started with a new budget.
 
+[![Getting Started](https://user-images.githubusercontent.com/131466/210484368-1f06f2b2-20b9-49f9-8283-87846da8fbed.png)](https://u.pcloud.link/publink/show?code=XZAWeeVZItk1CMJmI1fBHOlwonuAJmkWr22k)
+
+And this video shows you how to reconcile your budget with your bank statement.
+
+[![Reconciliation](https://user-images.githubusercontent.com/131466/210484542-844bb59d-e49e-4103-bc50-04963660a06e.png)](https://u.pcloud.link/publink/show?code=XZc9eeVZE6jAm2PQMvbxiOQDeGcwmfnRyTzy)
 
 
 ## Features
@@ -62,3 +55,4 @@ That tells you that:
 - There are a total of twenty-seven transactions.
 - That one transaction has been modified but not saved.
 - That zero transactions are tagged.
+
