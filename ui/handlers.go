@@ -411,8 +411,14 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-
 		dateString := promptInputField.GetText()
+
+		err := validator.Date(dateString)
+		if err != nil {
+			printStatus(fmt.Sprintf("%s", err))
+			return nil
+		}
+
 		if db.DateLastCommitted().Unix() > dataf.Date(dateString).Unix() {
 			printStatus("Date must not be before the last committed transaction")
 			return nil
