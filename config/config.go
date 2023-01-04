@@ -8,7 +8,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-const VERSION = "0.1.0"
+const VERSION = "0.2.0"
 
 const MAX_WIDTH = 80
 const INFO_WIDTH = 20
