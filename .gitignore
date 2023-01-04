@@ -1,4 +1,5 @@
 jcb
 test.db
+.test.db.tmp
 demo/
 release/
