@@ -36,11 +36,11 @@ Transactions can be imported from or exported to [tab separated values](https://
 Date	Category	Description	Amount	Notes
 ```
 
-- The format of `Date` is YYYY-MM-DD.
-- Category is a single word that is less than or equal to 10 characters.
-- Description is a string that is less than or equal to 32 characters.
-- Amount is number in the form of `<dollars>.<cents>`.
-- Notes is a string that is less than or equal to 200 characters.
+- The format of `Date` is `YYYY-MM-DD`.
+- Category is a single word that is less than 11 characters.
+- Description is a string that is less than 33 characters.
+- Amount is number that takes the form `<dollars>.<cents>`.
+- Notes is a string that is less than 201 characters.
 
 ### Savefile
 
