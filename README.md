@@ -26,6 +26,29 @@ And this video shows you how to reconcile your budget with your bank statement.
 - Local data. Private. Nothing is sent to the cloud.
 
 
+## Data Formats
+
+### Import/Export
+
+Transactions can be imported from or exported to [tab separated values](https://en.wikipedia.org/wiki/Tab-separated_values) (TSV). The format is:
+
+```
+Date	Category	Description	Amount	Notes
+```
+
+- The format of `Date` is YYYY-MM-DD.
+- Category is a single word that is less than or equal to 10 characters.
+- Description is a string that is less than or equal to 32 characters.
+- Amount is number in the form of `<dollars>.<cents>`.
+- Notes is a string that is less than or equal to 200 characters.
+
+### Savefile
+
+The savefile is a regular [SQLite](https://en.wikipedia.org/wiki/SQLite) database file. You can query or modify it with the `sqlite3` command or anything else that understands SQLite databases.
+
+When the application starts, it copies the database to `.<savefile>.tmp`. Saving will write the data back to `<savefile>`.
+
+
 ## The UI
 
 The user interface has been inspired quite a bit by the Mutt email editor and the Vim text editor.
