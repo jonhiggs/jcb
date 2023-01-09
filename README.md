@@ -48,6 +48,8 @@ The savefile is a regular [SQLite](https://en.wikipedia.org/wiki/SQLite) databas
 
 When the application starts, it copies the database to `.<savefile>.tmp`. Saving will write the data back to `<savefile>`.
 
+The default location of the savefile is `${HOME}/.local/share/jcb/data.db`.
+
 
 ## The UI
 
