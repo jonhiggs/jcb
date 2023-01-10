@@ -561,6 +561,15 @@ func handleOpenReport(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleOpenBudget(ev *tcell.EventKey) *tcell.EventKey {
+	updateReportTable()
+	panels.HidePanel("info")
+	panels.HidePanel("status")
+	panels.ShowPanel("budget")
+	panels.SendToFront("budget")
+	return nil
+}
+
 func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt(":", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
