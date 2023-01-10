@@ -562,7 +562,7 @@ func handleOpenReport(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleOpenBudget(ev *tcell.EventKey) *tcell.EventKey {
-	updateReportTable()
+	updateBudgetTable()
 	panels.HidePanel("info")
 	panels.HidePanel("status")
 	panels.ShowPanel("budget")
@@ -650,6 +650,21 @@ func handleReportSelectNext(ev *tcell.EventKey) *tcell.EventKey {
 func handleReportSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := reportTable.GetSelection()
 	reportTable.Select(r-1, 0)
+	return nil
+}
+
+func handleBudgetSelectNext(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := budgetTable.GetSelection()
+	if r < budgetTable.GetRowCount()-1 {
+		budgetTable.Select(r+1, 0)
+	}
+
+	return nil
+}
+
+func handleBudgetSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := budgetTable.GetSelection()
+	budgetTable.Select(r-1, 0)
 	return nil
 }
 
