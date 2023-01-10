@@ -25,6 +25,12 @@ And this video shows you how to reconcile your budget with your bank statement.
 - Reports and forecasts
 - Local data. Private. Nothing is sent to the cloud.
 
+## Building
+
+jcb is written in Go. To build, you need to first install [Go](https://go.dev/doc/install) v1.18+.
+
+Running `go build -o jcb cmd/main.go` will produce a binary for your system at `./jcb`. To install it, run `sudo mv ./jcb /usr/local/bin`.
+
 
 ## Data Formats
 

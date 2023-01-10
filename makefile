@@ -1,5 +1,5 @@
-run: build
-	./jcb -f ./test.db
+run: test
+	go run ./cmd/main.go -f ./test.db
 
 test:
 	go test ./lib/formatter/data
@@ -22,6 +22,3 @@ release/%:
 tag_release: version = $(shell cat ./config/config.go | grep VERSION | cut -d\  -f4 | tr -d '"')
 tag_release:
 	gh release create v$(version) ./release/*
-
-build: test
-	go build -o jcb ./cmd/main.go
