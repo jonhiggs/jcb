@@ -49,6 +49,19 @@ func Init(file string) error {
 	`
 	_, err = db.Exec(sts)
 
+	sts = `
+	    CREATE TABLE IF NOT EXISTS budgets(
+	        id INTEGER PRIMARY KEY AUTOINCREMENT,
+	        date TEXT,
+			category TEXT NOT NULL,
+			notes TEXT DEFAULT '',
+			cents INTEGER,
+			updatedAt TEXT,
+			UNIQUE(id)
+	    );
+	`
+	_, err = db.Exec(sts)
+
 	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
