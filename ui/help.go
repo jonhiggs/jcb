@@ -68,9 +68,10 @@ func createHelp() *cview.TextView {
 	?            Enter find previous query
 	n            Next matching transaction
 	N            Previous matching transaction
-	<F1>         Show the help page
-	<F2>         Show the transactions page
-	<F3>         Show the report page
+	1            Show the help page
+	2            Show the transactions page
+	3            Show the budget page
+	4            Show the report page
 	;x           Delete tagged transactions
 	;t, ;<C-t>   Untag tagged transactions
 	;D           Edit category of tagged transactions
@@ -96,9 +97,10 @@ func createHelp() *cview.TextView {
 	c.Set(" ", handleHelpScroll)
 	c.Set("u", handleHelpScroll)
 	c.Set("d", handleHelpScroll)
-	c.Set("F1", handleOpenHelp)
-	c.Set("F2", handleOpenTransactions)
-	c.Set("F3", handleOpenReport)
+	c.Set("1", handleOpenHelp)
+	c.Set("2", handleOpenTransactions)
+	c.Set("3", handleOpenBudget)
+	c.Set("4", handleOpenReport)
 	c.Set("q", func(ev *tcell.EventKey) *tcell.EventKey { closeHelp(); return nil })
 	helpTextView.SetInputCapture(c.Capture)
 
