@@ -26,7 +26,6 @@ func createReportTable() *cview.Table {
 	reportTable.SetSelectionChangedFunc(func(r int, c int) { closeStatus() })
 
 	c := cbind.NewConfiguration()
-	c.Set("q", handleCloseReport)
 	c.Set("j", handleReportSelectNext)
 	c.Set("k", handleReportSelectPrev)
 	c.Set("1", handleOpenHelp)
