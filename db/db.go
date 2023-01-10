@@ -54,6 +54,7 @@ func Init(file string) error {
 	        id INTEGER PRIMARY KEY AUTOINCREMENT,
 	        date TEXT,
 			category TEXT NOT NULL,
+			cumulative INTEGER DEFAULT 0,
 			notes TEXT DEFAULT '',
 			cents INTEGER,
 			updatedAt TEXT,
