@@ -29,6 +29,7 @@ func createBudgetTable() *cview.Table {
 	c.Set("3", handleOpenBudget)
 	c.Set("4", handleOpenReport)
 	c.Set(":", handleCommand)
+	c.Set("i", handleOpenInsertBudget)
 	budgetTable.SetInputCapture(c.Capture)
 
 	budgetTable.SetDoneFunc(func(key tcell.Key) {

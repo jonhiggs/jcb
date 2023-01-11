@@ -40,6 +40,7 @@ func Start() {
 	panels.AddPanel("status", createStatusTextView(), false, false)
 	panels.AddPanel("info", createInfoTextView(), false, false)
 	panels.AddPanel("help", createHelp(), false, false)
+	panels.AddPanel("insertBudget", createInsertBudgetForm(), false, false)
 
 	panels.ShowPanel("info")
 	panels.SendToBack("info")
