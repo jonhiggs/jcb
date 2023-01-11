@@ -56,15 +56,25 @@ The default location of the savefile is `${HOME}/.local/share/jcb/data.db`.
 The user interface has been inspired quite a bit by the Mutt email editor and the Vim text editor.
 
 
-### Transaction Attributes
+### Attributes
 
-Every transaction has a set of three attributes which are displayed in the first column of the transactions table.
+Every transaction and budget has a set of attributes which are displayed in the first column of the table.
+
+#### Transaction
 
 Attributes are:
 
 - `C`: Transaction is committed.
 - `n`: Transaction has a note.
+- `s`: Don't deduct from the budget.
 - `+`: Transaction is modified, but not saved.
+
+#### Budget
+
+- `C`: All in this time frame have been committed.
+- `n`: The budget has a note.
+- `c`: The budget is cumulative. It will retain the remaining credit (or debt) from the prior months budget.
+- `+`: Budget is modified, but not saved.
 
 
 ### Info Panel
