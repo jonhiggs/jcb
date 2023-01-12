@@ -681,6 +681,9 @@ func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case "prompt":
 		fieldId, _ := promptForm.GetFocusedItemIndex()
 		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
+	case "insertBudget":
+		fieldId, _ := insertBudgetForm.GetFocusedItemIndex()
+		field = insertBudgetForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
 	acceptanceFunc := acceptanceFunction.FieldFunc(field)

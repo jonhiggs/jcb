@@ -14,6 +14,11 @@ import (
 
 var reportTable *cview.Table
 
+func closeReport() {
+	panels.HidePanel("report")
+	closeStatus()
+}
+
 func createReportTable() *cview.Table {
 	reportTable = cview.NewTable()
 	reportTable.Select(0, 0)

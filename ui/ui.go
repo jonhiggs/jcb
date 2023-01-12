@@ -56,6 +56,9 @@ func Start() {
 			closeEdit()
 			closePrompt()
 			closeHelp()
+			closeReport()
+			closeBudget()
+			closeInsertBudget()
 		}
 		return nil
 	}

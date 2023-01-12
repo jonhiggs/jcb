@@ -39,6 +39,7 @@ func openInsertBudget() {
 	insertBudgetInputFieldCents.SetText("")
 	insertBudgetInputFieldNotes.SetText("")
 	insertBudgetInputFieldCategory.SetText("")
+	insertBudgetCheckBoxCumulative.SetChecked(false)
 }
 
 func closeInsertBudget() {

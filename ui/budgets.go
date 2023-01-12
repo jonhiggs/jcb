@@ -10,6 +10,11 @@ import (
 
 var budgetTable *cview.Table
 
+func closeBudget() {
+	panels.HidePanel("budget")
+	closeStatus()
+}
+
 func createBudgetTable() *cview.Table {
 	budgetTable = cview.NewTable()
 	budgetTable.Select(0, 0)
