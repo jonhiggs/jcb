@@ -7,7 +7,7 @@ import (
 	"jcb/lib/find"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"jcb/lib/validator"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
@@ -75,19 +75,13 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	uncommitted := transaction.Uncommitted()
-	if len(uncommitted) > 0 {
-		firstUncommitted := uncommitted[0]
-
-		for i, v := range transactionIds {
-			if firstUncommitted.Id == v {
-				transactionsTable.Select(i, 0)
-				return nil
-			}
+	for _, id := range transactionIds {
+		t, _ := transaction2.Find(id)
+		if !t.IsCommitted() {
+			selectTransaction(id)
+			return nil
 		}
 	}
-
-	transactionsTable.Select(len(transactionIds)-1, 0)
 	return nil
 }
 
@@ -193,7 +187,8 @@ func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
 			continue
 		}
 
-		if !transactionAttributes[i].Saved {
+		t, _ := transaction2.Find(selectionId())
+		if !t.IsSaved() {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -206,7 +201,8 @@ func handleSelectModifiedNext(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 
 	for i := r + 1; i != r; i++ {
-		if !transactionAttributes[i].Saved {
+		t, _ := transaction2.Find(selectionId())
+		if !t.IsSaved() {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -303,7 +299,8 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		r = curRow
 	}
 
-	err := transaction.Delete(id)
+	t, _ := transaction2.Find(id)
+	err := t.Delete()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return nil
@@ -318,14 +315,14 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
+	t, _ := transaction2.Find(selectionId())
 
-	if transaction.Attributes(id).Committed {
-		transaction.Uncommit(id)
+	if t.IsCommitted() {
+		t.Uncommit()
 	} else {
-		transaction.Commit(id, initialBalance)
+		t.Commit()
 	}
+
 	updateTransactionsTable()
 	return nil
 }
@@ -334,19 +331,9 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 	id := transactionIds[r]
 
-	var err error
-	if transaction.Attributes(id).Committed {
-		err = transaction.UncommitSingle(id)
-	} else {
-		err = transaction.CommitSingle(id)
-	}
+	t, _ := transaction2.Find(id)
+	t.Commit()
 
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return nil
-	}
-
-	updateTransactionsTable()
 	return nil
 }
 

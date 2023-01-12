@@ -2,19 +2,18 @@ package exporter
 
 import (
 	"fmt"
-	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 )
 
 func Tsv() {
-	for _, t := range transaction.All() {
-		st := stringf.Transaction(t)
+	start, end := transaction2.DateRange()
+	for _, t := range transaction2.All(start, end) {
 		fmt.Printf("%s\t%s\t%s\t%s\t%s\n",
-			st.Date,
-			st.Category,
-			st.Description,
-			st.Cents,
-			st.Notes,
+			t.GetDateString(),
+			t.GetCategory(false),
+			t.GetDescription(false),
+			t.GetAmount(false),
+			t.GetNotes(),
 		)
 	}
 }

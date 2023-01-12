@@ -3,11 +3,9 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
 
 	dataf "jcb/lib/formatter/data"
-	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
@@ -23,7 +21,8 @@ var editInputFieldNotes *cview.InputField
 var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
-	if transaction.Attributes(selectionId()).Committed {
+	t, _ := transaction2.Find(selectionId())
+	if t.IsCommitted() {
 		printStatus("Cannot edit a committed transaction")
 		return
 	}
@@ -31,14 +30,12 @@ func handleOpenEdit() {
 	panels.ShowPanel("edit")
 	panels.SendToFront("edit")
 
-	t, _ := transaction.Find(selectionId())
-	ts := stringf.Transaction(t)
-
-	editInputFieldDate.SetText(ts.Date)
-	editInputFieldDescription.SetText(ts.Description)
-	editInputFieldCents.SetText(ts.Cents)
-	editInputFieldNotes.SetText(transaction.Notes(selectionId()))
-	editInputFieldCategory.SetText(ts.Category)
+	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.GetID()))
+	editInputFieldDate.SetText(t.GetDateString())
+	editInputFieldDescription.SetText(t.GetDescription(false))
+	editInputFieldCents.SetText(t.GetAmount(false))
+	editInputFieldNotes.SetText(t.GetNotes())
+	editInputFieldCategory.SetText(t.GetCategory(false))
 }
 
 func closeEdit() {
@@ -46,21 +43,15 @@ func closeEdit() {
 	editForm.SetFocus(0)
 }
 
-func readEditForm() domain.Transaction {
-	date := dataf.Date(editInputFieldDate.GetText())
-	description := dataf.Description(editInputFieldDescription.GetText())
-	cents := dataf.Cents(editInputFieldCents.GetText())
-	notes := dataf.Notes(editInputFieldNotes.GetText())
-	category := dataf.Category(editInputFieldCategory.GetText())
+func readEditForm() *transaction2.Transaction {
+	t := new(transaction2.Transaction)
+	t.SetDate(dataf.Date(editInputFieldDate.GetText()))
+	t.SetDescription(dataf.Description(editInputFieldDescription.GetText()))
+	t.SetCents(dataf.Cents(editInputFieldCents.GetText()))
+	t.SetNotes(dataf.Notes(editInputFieldNotes.GetText()))
+	t.SetCategory(dataf.Category(editInputFieldCategory.GetText()))
 
-	return domain.Transaction{
-		selectionId(),
-		date,
-		description,
-		cents,
-		notes,
-		category,
-	}
+	return t
 }
 
 func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
@@ -69,10 +60,10 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	t := readEditForm()
-	err := transaction.Edit(t)
+	err := t.Save()
 	if err == nil {
 		updateTransactionsTable()
-		selectTransaction(t.Id)
+		selectTransaction(t.GetID())
 		closeEdit()
 	} else {
 		printStatus(fmt.Sprint(err))

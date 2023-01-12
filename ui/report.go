@@ -5,6 +5,7 @@ import (
 	"jcb/lib/category"
 	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -47,8 +48,8 @@ func createReportTable() *cview.Table {
 func updateReportTable() {
 	var cell *cview.TableCell
 
-	st, _ := transaction.Find(selectionId())
-	year := st.Date.Year()
+	st, _ := transaction2.Find(selectionId())
+	year := st.GetDate().Year()
 
 	columns := []string{
 		"CATEGORY",

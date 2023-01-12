@@ -3,10 +3,9 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -16,7 +15,6 @@ import (
 
 var transactionsTable *cview.Table
 var transactionIds []int64
-var transactionAttributes []domain.Attributes
 var initialBalance int64
 
 func createTransactionsTable() *cview.Table {
@@ -86,8 +84,8 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	committed := transaction.Committed()
-	all := transaction.All()
+	start, end := transaction2.DateRange()
+	all := transaction2.All(start, end)
 
 	var cell *cview.TableCell
 
@@ -141,29 +139,17 @@ func updateTransactionsTable() {
 
 	b := initialBalance
 	transactionIds = make([]int64, len(all)+1)
-	transactionAttributes = make([]domain.Attributes, len(all)+1)
 	for i, t := range all {
-		b += t.Cents
-		date := stringf.Date(t.Date)
-		description := stringf.Description(t.Description)
-		cents := stringf.Cents(t.Cents)
+		b += t.GetCents()
 		balance := stringf.Cents(b)
-		isCommitted := false
-
-		for _, ct := range committed {
-			if ct.Id == t.Id {
-				isCommitted = true
-			}
-		}
 
 		var colorFg tcell.Color
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
-		transactionIds[i+1] = t.Id
-		transactionAttributes[i+1] = transaction.Attributes(t.Id)
+		transactionIds[i+1] = t.GetID()
 
-		if isCommitted {
+		if t.IsCommitted() {
 			colorFg = config.COLOR_COMMITTED_FG
 			colorBg = config.COLOR_COMMITTED_BG
 			attributes = 0
@@ -172,47 +158,44 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_UNCOMMITTED_BG
 		}
 
-		if !transactionAttributes[i+1].Saved {
+		if !t.IsSaved() {
 			colorFg = config.COLOR_MODIFIED_FG
 			colorBg = config.COLOR_MODIFIED_BG
 		}
 
-		if isTagged(t.Id) {
+		if isTagged(t.GetID()) {
 			colorFg = config.COLOR_TAGGED_FG
 			colorBg = config.COLOR_TAGGED_BG
 		}
 
-		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
+		cell = cview.NewTableCell(t.GetAttributeString())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.ATTR_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%-10s", stringf.Category(t.Category)))
+		cell = cview.NewTableCell(t.GetCategory(true))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.CATEGORY_COLUMN, cell)
 
-		cell = cview.NewTableCell(date)
+		cell = cview.NewTableCell(t.GetDateString())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
 
-		if len(description) > config.DESCRIPTION_MAX_LENGTH {
-			description = description[0:config.DESCRIPTION_MAX_LENGTH]
-		}
-		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, description))
+		cell = cview.NewTableCell(t.GetDescription(true))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DESCRIPTION_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
-		if dataf.Cents(cents) < 0 {
+		cell = cview.NewTableCell(t.GetAmount(true))
+		if t.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)

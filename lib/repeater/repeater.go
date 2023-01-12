@@ -1,32 +1,30 @@
 package repeater
 
 import (
-	"jcb/domain"
 	"jcb/lib/dates"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"strconv"
 	"strings"
 	"time"
 )
 
 func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
-	t, _ := transaction.Find(id)
+	tOG, _ := transaction2.Find(id)
 
-	timestamps, err := expand(t.Date, repeatUntil, repeatRule)
+	timestamps, err := expand(tOG.GetDate(), repeatUntil, repeatRule)
 	if err != nil {
 		return err
 	}
 
 	for _, ts := range timestamps {
-		id, err = transaction.Insert(
-			domain.Transaction{
-				-1,
-				ts,
-				t.Description,
-				t.Cents,
-				t.Notes,
-				t.Category,
-			})
+		t := new(transaction2.Transaction)
+		t.SetDate(ts)
+		t.SetDescription(tOG.GetDescription(false))
+		t.SetCents(tOG.GetCents())
+		t.SetNotes(tOG.GetNotes())
+		t.SetCategory(tOG.GetCategory(false))
+
+		t.Save()
 		if err != nil {
 			return err
 		}

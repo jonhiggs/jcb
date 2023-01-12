@@ -3,14 +3,13 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
 	"jcb/lib/dates"
+	"jcb/lib/transaction2"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction"
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -71,14 +70,16 @@ func checkInsertForm() bool {
 	return true
 }
 
-func readInsertForm() domain.Transaction {
-	date := dataf.Date(insertInputFieldDate.GetText())
-	description := dataf.Description(insertInputFieldDescription.GetText())
-	cents := dataf.Cents(insertInputFieldCents.GetText())
-	notes := dataf.Notes(insertInputFieldNotes.GetText())
-	category := dataf.Category(insertInputFieldCategory.GetText())
+func readInsertForm() *transaction2.Transaction {
+	t := new(transaction2.Transaction)
 
-	return domain.Transaction{-1, date, description, cents, notes, category}
+	t.SetDate(dataf.Date(insertInputFieldDate.GetText()))
+	t.SetDescription(dataf.Description(insertInputFieldDescription.GetText()))
+	t.SetCents(dataf.Cents(insertInputFieldCents.GetText()))
+	t.SetNotes(dataf.Notes(insertInputFieldNotes.GetText()))
+	t.SetCategory(dataf.Category(insertInputFieldCategory.GetText()))
+
+	return t
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
@@ -86,17 +87,11 @@ func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	var id int64
-	var err error
-
-	id, err = transaction.Insert(readInsertForm())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return nil
-	}
+	t := readInsertForm()
+	t.Save()
 
 	updateTransactionsTable()
-	selectTransaction(id)
+	selectTransaction(t.GetID())
 
 	closeInsert()
 	return nil

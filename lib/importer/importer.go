@@ -3,9 +3,7 @@ package importer
 import (
 	"bufio"
 	"fmt"
-	"jcb/domain"
-	dataf "jcb/lib/formatter/data"
-	"jcb/lib/transaction"
+	"jcb/lib/transaction2"
 	"jcb/lib/validator"
 	"log"
 	"os"
@@ -67,26 +65,20 @@ func Tsv(f string) bool {
 			d = append(d, "")
 		}
 
-		t := domain.Transaction{
-			-1,
-			dataf.Date(d[0]),
-			dataf.Description(d[2]),
-			dataf.Cents(d[3]),
-			dataf.Notes(d[4]),
-			dataf.Category(d[1]),
-		}
+		t := new(transaction2.Transaction)
+		t.SetDateString(d[0])
+		t.SetDescription(d[2])
+		t.SetAmount(d[3])
+		t.SetNotes(d[4])
+		t.SetCategory(d[1])
 
-		if !transaction.Uniq(t) {
+		if !t.IsUniq() {
 			fmt.Printf("Skipping line %d: Transaction is not unique\n", i)
 			skipped += 1
 			continue
 		}
 
-		_, err := transaction.Insert(t)
-		if err != nil {
-			fmt.Printf("Failed to import line %d: %s\n", i, err)
-			continue
-		}
+		t.Save()
 
 		imported += 1
 	}

@@ -14,10 +14,11 @@ import (
 )
 
 var db *sql.DB
+var Conn *sql.DB
 var workingFile string
 var saveFile string
 var SaveTime time.Time
-var dirty bool
+var Dirty bool
 
 func Init(file string) error {
 	var err error
@@ -28,6 +29,12 @@ func Init(file string) error {
 
 	fmt.Fprintf(os.Stderr, "Loading file %s\n", file)
 	db, err = sql.Open("sqlite3", workingFile)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	Conn, err = sql.Open("sqlite3", workingFile)
 
 	if err != nil {
 		log.Fatal(err)
@@ -123,7 +130,7 @@ func Save() {
 	err := os.Rename(workingFile, saveFile)
 	check(err)
 	makeWorkingFile()
-	dirty = false
+	Dirty = false
 	SaveTime = time.Now()
 
 	db, err = sql.Open("sqlite3", workingFile)
@@ -133,11 +140,11 @@ func RemoveWorkingFile() {
 	os.Remove(workingFile)
 }
 
-func Dirty() bool {
+func IsDirty() bool {
 	var count int
 
 	// this is to handle deletes
-	if dirty {
+	if Dirty {
 		return true
 	}
 

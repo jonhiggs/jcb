@@ -24,7 +24,7 @@ func runCommand(command string) {
 		updateTransactionsTable()
 		printStatus("Refreshed the transactions")
 	case "quit", "q":
-		if db.Dirty() {
+		if db.IsDirty() {
 			printStatus("You have unsaved changes. Use ':q!' to quit without saving.")
 		} else {
 			app.Stop()
