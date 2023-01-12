@@ -80,7 +80,7 @@ func updateBudgetTable() {
 	for row, b := range budget.All() {
 		attributes := cview.NewTableCell("Ccn+")
 		date := cview.NewTableCell(stringf.Date(b.Date))
-		category := cview.NewTableCell(stringf.Category(b.Category))
+		category := cview.NewTableCell(b.CategoryString())
 		budget := cview.NewTableCell(stringf.Cents(b.Cents))
 		remaining := cview.NewTableCell(stringf.Cents(0))
 

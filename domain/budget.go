@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type Budget struct {
 	Id         int64
@@ -9,4 +12,8 @@ type Budget struct {
 	Cents      int64
 	Notes      string
 	Cumulative bool
+}
+
+func (b Budget) CategoryString() string {
+	return strings.Trim(b.Category, " ")
 }
