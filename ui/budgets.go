@@ -2,6 +2,8 @@ package ui
 
 import (
 	"jcb/config"
+	"jcb/lib/budget"
+	stringf "jcb/lib/formatter/string"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -75,67 +77,19 @@ func updateBudgetTable() {
 		budgetTable.SetCell(0, i, cell)
 	}
 
-	cell = cview.NewTableCell("Ccn+")
-	budgetTable.SetCell(1, 0, cell)
+	for row, b := range budget.All() {
+		attributes := cview.NewTableCell("Ccn+")
+		date := cview.NewTableCell(stringf.Date(b.Date))
+		category := cview.NewTableCell(stringf.Category(b.Category))
+		budget := cview.NewTableCell(stringf.Cents(b.Cents))
+		remaining := cview.NewTableCell(stringf.Cents(0))
 
-	cell = cview.NewTableCell("2023-01-02")
-	budgetTable.SetCell(1, 1, cell)
-
-	cell = cview.NewTableCell("shopping")
-	budgetTable.SetCell(1, 2, cell)
-
-	cell = cview.NewTableCell("20.33")
-	budgetTable.SetCell(1, 3, cell)
-
-	cell = cview.NewTableCell("20.33")
-	budgetTable.SetCell(1, 4, cell)
-
-	cell = cview.NewTableCell("Ccn+")
-	budgetTable.SetCell(2, 0, cell)
-
-	cell = cview.NewTableCell("2023-01-02")
-	budgetTable.SetCell(2, 1, cell)
-
-	cell = cview.NewTableCell("health")
-	budgetTable.SetCell(2, 2, cell)
-
-	cell = cview.NewTableCell("340.00")
-	budgetTable.SetCell(2, 3, cell)
-
-	cell = cview.NewTableCell("340.00")
-	budgetTable.SetCell(2, 4, cell)
-
-	//for row, catName := range category.All() {
-	//	for col, _ := range columns {
-	//		if col == 0 {
-	//			cell = cview.NewTableCell(catName)
-	//			cell.SetTextColor(config.COLOR_TITLE_FG)
-	//		} else {
-	//			var startTime time.Time
-	//			var endTime time.Time
-
-	//			switch col {
-	//			case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
-	//				startTime = time.Date(year, time.Month(col), 1, 0, 0, 0, 0, time.UTC)
-	//				endTime = startTime.AddDate(0, 1, 0)
-	//			case 13:
-	//				startTime = time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
-	//				endTime = startTime.AddDate(1, 0, 0)
-	//			}
-
-	//			cents := category.Sum(catName, startTime, endTime)
-	//			cell = cview.NewTableCell(" " + stringf.Cents(cents))
-
-	//			if col == 13 {
-	//				cell.SetAttributes(tcell.AttrBold)
-	//				cell.SetBackgroundColor(config.COLOR_LIGHT_BG)
-	//			}
-
-	//			cell.SetAlign(cview.AlignRight)
-	//		}
-	//		budgetTable.SetCell(row+1, col, cell)
-	//	}
-	//}
+		budgetTable.SetCell(row+1, 0, attributes)
+		budgetTable.SetCell(row+1, 1, date)
+		budgetTable.SetCell(row+1, 2, category)
+		budgetTable.SetCell(row+1, 3, budget)
+		budgetTable.SetCell(row+1, 4, remaining)
+	}
 
 	//row := budgetTable.GetRowCount()
 
