@@ -4,7 +4,7 @@ import (
 	"jcb/config"
 	"jcb/lib/category"
 	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"time"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -47,7 +47,7 @@ func createReportTable() *cview.Table {
 func updateReportTable() {
 	var cell *cview.TableCell
 
-	st, _ := transaction2.Find(selectionId())
+	st, _ := transaction.Find(selectionId())
 	year := st.GetDate().Year()
 
 	columns := []string{
@@ -140,8 +140,8 @@ func updateReportTable() {
 			endTime = startTime.AddDate(1, 0, 0)
 		}
 
-		monthlyTransactions := transaction2.All(startTime, endTime)
-		cents := transaction2.SumCents(monthlyTransactions)
+		monthlyTransactions := transaction.All(startTime, endTime)
+		cents := transaction.SumCents(monthlyTransactions)
 
 		cell = cview.NewTableCell(" " + stringf.Cents(cents))
 		cell.SetSelectable(false)

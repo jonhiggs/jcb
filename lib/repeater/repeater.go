@@ -2,14 +2,14 @@ package repeater
 
 import (
 	"jcb/lib/dates"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"strconv"
 	"strings"
 	"time"
 )
 
 func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
-	tOG, _ := transaction2.Find(id)
+	tOG, _ := transaction.Find(id)
 
 	timestamps, err := expand(tOG.GetDate(), repeatUntil, repeatRule)
 	if err != nil {
@@ -17,7 +17,7 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 	}
 
 	for _, ts := range timestamps {
-		t := new(transaction2.Transaction)
+		t := new(transaction.Transaction)
 		t.SetDate(ts)
 		t.SetDescription(tOG.GetDescription(false))
 		t.SetCents(tOG.GetCents())

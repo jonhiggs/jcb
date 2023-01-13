@@ -1,7 +1,7 @@
 // Package transactions2 is a refactor of transactions which will soon be
 // discarded. It's purpose is for fetching and manipulating transactions which
 // are stored in the transactionbase.
-package transaction2
+package transaction
 
 import (
 	"database/sql"

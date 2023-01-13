@@ -7,7 +7,7 @@ import (
 	"jcb/lib/find"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
@@ -76,7 +76,7 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	for _, id := range transactionIds {
-		t, _ := transaction2.Find(id)
+		t, _ := transaction.Find(id)
 		if !t.IsCommitted() {
 			selectTransaction(id)
 			return nil
@@ -187,7 +187,7 @@ func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
 			continue
 		}
 
-		t, _ := transaction2.Find(selectionId())
+		t, _ := transaction.Find(selectionId())
 		if !t.IsSaved() {
 			transactionsTable.Select(i, 0)
 			return nil
@@ -201,7 +201,7 @@ func handleSelectModifiedNext(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 
 	for i := r + 1; i != r; i++ {
-		t, _ := transaction2.Find(selectionId())
+		t, _ := transaction.Find(selectionId())
 		if !t.IsSaved() {
 			transactionsTable.Select(i, 0)
 			return nil
@@ -299,7 +299,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		r = curRow
 	}
 
-	t, _ := transaction2.Find(id)
+	t, _ := transaction.Find(id)
 	err := t.Delete()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
@@ -316,7 +316,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	var err error
-	t, _ := transaction2.Find(selectionId())
+	t, _ := transaction.Find(selectionId())
 
 	if t.IsCommitted() {
 		err = t.Uncommit()
@@ -337,7 +337,7 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 	id := transactionIds[r]
 
-	t, _ := transaction2.Find(id)
+	t, _ := transaction.Find(id)
 	t.Commit()
 
 	return nil

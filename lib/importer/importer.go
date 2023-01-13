@@ -3,7 +3,7 @@ package importer
 import (
 	"bufio"
 	"fmt"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	"log"
 	"os"
@@ -65,7 +65,7 @@ func Tsv(f string) bool {
 			d = append(d, "")
 		}
 
-		t := new(transaction2.Transaction)
+		t := new(transaction.Transaction)
 		t.SetDateString(d[0])
 		t.SetDescription(d[2])
 		t.SetAmount(d[3])

@@ -5,7 +5,7 @@ import (
 	"jcb/config"
 
 	dataf "jcb/lib/formatter/data"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
@@ -21,7 +21,7 @@ var editInputFieldNotes *cview.InputField
 var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
-	t, _ := transaction2.Find(selectionId())
+	t, _ := transaction.Find(selectionId())
 	if t.IsCommitted() {
 		printStatus("Cannot edit a committed transaction")
 		return
@@ -43,8 +43,8 @@ func closeEdit() {
 	editForm.SetFocus(0)
 }
 
-func readEditForm() *transaction2.Transaction {
-	t := new(transaction2.Transaction)
+func readEditForm() *transaction.Transaction {
+	t := new(transaction.Transaction)
 	t.SetDate(dataf.Date(editInputFieldDate.GetText()))
 	t.SetDescription(dataf.Description(editInputFieldDescription.GetText()))
 	t.SetCents(dataf.Cents(editInputFieldCents.GetText()))

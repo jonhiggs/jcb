@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"jcb/db"
 	dataf "jcb/lib/formatter/data"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 )
 
@@ -19,7 +19,7 @@ func updateCategory(category string, ids []int64) {
 	skipped := 0
 
 	for _, id := range ids {
-		t, _ := transaction2.Find(id)
+		t, _ := transaction.Find(id)
 
 		if t.SetCategory(value) {
 			t.Save()
@@ -44,7 +44,7 @@ func updateDescription(description string, ids []int64) {
 	skipped := 0
 
 	for _, id := range ids {
-		t, _ := transaction2.Find(id)
+		t, _ := transaction.Find(id)
 
 		if t.SetDescription(value) {
 			t.Save()
@@ -69,7 +69,7 @@ func updateCents(cents string, ids []int64) {
 	skipped := 0
 
 	for _, id := range ids {
-		t, _ := transaction2.Find(id)
+		t, _ := transaction.Find(id)
 
 		if t.SetCents(value) {
 			t.Save()
@@ -96,7 +96,7 @@ func updateDate(date string, ids []int64) {
 	lastCommittedDate := db.DateLastCommitted()
 
 	for _, id := range ids {
-		t, _ := transaction2.Find(id)
+		t, _ := transaction.Find(id)
 
 		if lastCommittedDate.Unix() > value.Unix() {
 			skipped++

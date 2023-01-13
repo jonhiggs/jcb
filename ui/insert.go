@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/dates"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
@@ -70,8 +70,8 @@ func checkInsertForm() bool {
 	return true
 }
 
-func readInsertForm() *transaction2.Transaction {
-	t := new(transaction2.Transaction)
+func readInsertForm() *transaction.Transaction {
+	t := new(transaction.Transaction)
 
 	t.SetDate(dataf.Date(insertInputFieldDate.GetText()))
 	t.SetDescription(dataf.Description(insertInputFieldDescription.GetText()))

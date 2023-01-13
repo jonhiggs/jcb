@@ -5,7 +5,7 @@ import (
 	"jcb/config"
 	dataf "jcb/lib/formatter/data"
 	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
@@ -84,8 +84,8 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	start, end := transaction2.DateRange()
-	all := transaction2.All(start, end)
+	start, end := transaction.DateRange()
+	all := transaction.All(start, end)
 
 	var cell *cview.TableCell
 

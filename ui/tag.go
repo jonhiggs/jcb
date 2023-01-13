@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"jcb/lib/find"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 )
 
 var taggedTransactionIds []int64
@@ -46,7 +46,7 @@ func tagMatches(id int64) {
 	matchCount := 0
 
 	for r, i := range transactionIds {
-		t, _ := transaction2.Find(i)
+		t, _ := transaction.Find(i)
 		if t.IsCommitted() || isTagged(i) {
 			continue
 		}

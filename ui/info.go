@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/transaction2"
+	"jcb/lib/transaction"
 
 	"code.rocketnine.space/tslocum/cview"
 )
@@ -18,9 +18,9 @@ func updateInfo() {
 
 	modifedCount := 0
 
-	start, end := transaction2.DateRange()
+	start, end := transaction.DateRange()
 
-	for i, t := range transaction2.All(start, end) {
+	for i, t := range transaction.All(start, end) {
 		if i == 0 {
 			continue
 		}
