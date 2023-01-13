@@ -13,7 +13,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *sql.DB
 var Conn *sql.DB
 var workingFile string
 var saveFile string
@@ -28,11 +27,6 @@ func Init(file string) error {
 	workingFile = makeWorkingFile()
 
 	fmt.Fprintf(os.Stderr, "Loading file %s\n", file)
-	db, err = sql.Open("sqlite3", workingFile)
-
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	Conn, err = sql.Open("sqlite3", workingFile)
 
@@ -54,9 +48,9 @@ func Init(file string) error {
 			UNIQUE(id)
 	    );
 	`
-	_, err = db.Exec(sts)
+	_, err = Conn.Exec(sts)
 
-	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
+	statement, err := Conn.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -125,7 +119,7 @@ func check(err error) {
 }
 
 func Save() {
-	db.Close()
+	Conn.Close()
 
 	err := os.Rename(workingFile, saveFile)
 	check(err)
@@ -133,7 +127,7 @@ func Save() {
 	Dirty = false
 	SaveTime = time.Now()
 
-	db, err = sql.Open("sqlite3", workingFile)
+	Conn, err = sql.Open("sqlite3", workingFile)
 }
 
 func RemoveWorkingFile() {
@@ -148,7 +142,7 @@ func IsDirty() bool {
 		return true
 	}
 
-	statement, err := db.Prepare("SELECT COUNT(*) FROM transactions WHERE updatedAt > ?")
+	statement, err := Conn.Prepare("SELECT COUNT(*) FROM transactions WHERE updatedAt > ?")
 	if err != nil {
 		log.Fatal(err)
 	}
