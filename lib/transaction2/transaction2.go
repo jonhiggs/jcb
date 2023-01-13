@@ -323,6 +323,10 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 
 // Update or Create a transaction in the Database.
 func (t *Transaction) Save() error {
+	if t.IsCommitted() {
+		return errors.New("Cannot modify committed transactions")
+	}
+
 	if t.id == -1 {
 		statement, err := db.Conn.Prepare(`
 			INSERT INTO transactions (

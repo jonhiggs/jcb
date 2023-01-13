@@ -4,7 +4,6 @@ import (
 	"jcb/config"
 	"jcb/lib/category"
 	stringf "jcb/lib/formatter/string"
-	"jcb/lib/transaction"
 	"jcb/lib/transaction2"
 	"time"
 
@@ -141,7 +140,9 @@ func updateReportTable() {
 			endTime = startTime.AddDate(1, 0, 0)
 		}
 
-		cents := transaction.Sum(startTime, endTime)
+		monthlyTransactions := transaction2.All(startTime, endTime)
+		cents := transaction2.SumCents(monthlyTransactions)
+
 		cell = cview.NewTableCell(" " + stringf.Cents(cents))
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
