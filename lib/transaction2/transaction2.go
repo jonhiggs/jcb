@@ -247,7 +247,7 @@ func (t *Transaction) GetID() int64 {
 }
 
 // Returns every transaction.
-func All(startDate time.Time, endDate time.Time) []*Transaction {
+func All(startTime time.Time, endTime time.Time) []*Transaction {
 	var rows *sql.Rows
 	var err error
 
@@ -266,7 +266,7 @@ func All(startDate time.Time, endDate time.Time) []*Transaction {
 		log.Fatal(fmt.Sprintf("All(): %s", err))
 	}
 
-	rows, err = statement.Query(startDate, endDate)
+	rows, err = statement.Query(startTime, endTime)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("All(): %s", err))
 	}

@@ -83,7 +83,9 @@ func updateReportTable() {
 		reportTable.SetCell(0, i, cell)
 	}
 
-	for row, cat := range category.All() {
+	reportStart := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+	reportEnd := time.Date(year, 12, 31, 23, 59, 59, 99999, time.UTC)
+	for row, cat := range category.All(reportStart, reportEnd) {
 		for col, _ := range columns {
 			if col == 0 {
 				cell = cview.NewTableCell(cat.Name)

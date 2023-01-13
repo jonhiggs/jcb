@@ -1,27 +1,35 @@
 package category
 
 import (
+	"fmt"
 	"jcb/db"
 	"log"
 	"time"
 )
 
 type Category struct {
-	Name string `default:uncategorised`
+	Name      string `default:uncategorised`
+	StartTime time.Time
+	EndTime   time.Time
 }
 
 // Returns all the categories
-func All() []*Category {
+func All(startTime time.Time, endTime time.Time) []*Category {
 	var categories []*Category
 
-	rows, err := db.Conn.Query(`
+	statement, err := db.Conn.Prepare(`
 		SELECT DISTINCT IFNULL(category, "uncategorised")
 		FROM transactions
+		WHERE date >= ? AND date <= ?
 		ORDER BY category
-		`, "",
-	)
+	`)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	rows, err := statement.Query(startTime, endTime)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("All(): %s", err))
 	}
 
 	defer rows.Close()
@@ -34,7 +42,13 @@ func All() []*Category {
 			log.Fatal(err)
 		}
 
-		categories = append(categories, &Category{category})
+		categories = append(
+			categories,
+			&Category{
+				Name:      category,
+				StartTime: startTime,
+				EndTime:   endTime,
+			})
 	}
 
 	return categories
