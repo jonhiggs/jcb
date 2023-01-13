@@ -338,7 +338,10 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	id := transactionIds[r]
 
 	t, _ := transaction.Find(id)
-	t.Commit()
+	err := t.Commit()
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+	}
 
 	return nil
 }

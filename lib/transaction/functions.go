@@ -78,10 +78,11 @@ func (t *Transaction) Delete() error {
 
 // Commit a transaction
 func (t *Transaction) Commit() error {
-	return errors.New("Not implemented")
 	if !t.IsCommittable() {
 		return errors.New("Commit older transactions first")
 	}
+
+	return errors.New("Not implemented")
 
 	//balance := CommittedBalance() + cents
 	//statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
