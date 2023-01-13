@@ -83,10 +83,10 @@ func updateReportTable() {
 		reportTable.SetCell(0, i, cell)
 	}
 
-	for row, catName := range category.All() {
+	for row, cat := range category.All() {
 		for col, _ := range columns {
 			if col == 0 {
-				cell = cview.NewTableCell(catName)
+				cell = cview.NewTableCell(cat.Name)
 				cell.SetTextColor(config.COLOR_TITLE_FG)
 			} else {
 				var startTime time.Time
@@ -101,7 +101,7 @@ func updateReportTable() {
 					endTime = startTime.AddDate(1, 0, 0)
 				}
 
-				cents := category.Sum(catName, startTime, endTime)
+				cents := cat.SumCents(startTime, endTime)
 				cell = cview.NewTableCell(" " + stringf.Cents(cents))
 
 				if col == 13 {
