@@ -371,6 +371,9 @@ func (t *Transaction) Save() error {
 
 // Delete a transaction
 func (t *Transaction) Delete() error {
+	if t.IsCommitted() {
+		return errors.New("Cannot delete committed transactions")
+	}
 	statement, err := db.Conn.Prepare(`
 		DELETE FROM transactions WHERE id = ? AND committedAt IS NULL
 	`)
