@@ -315,12 +315,18 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	var err error
 	t, _ := transaction2.Find(selectionId())
 
 	if t.IsCommitted() {
-		t.Uncommit()
+		err = t.Uncommit()
 	} else {
-		t.Commit()
+		err = t.Commit()
+	}
+
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+		return nil
 	}
 
 	updateTransactionsTable()
