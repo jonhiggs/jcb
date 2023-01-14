@@ -49,7 +49,7 @@ func updateDescription(description string, ids []int64) {
 		if t.Description.String() == value {
 			skipped++
 		} else {
-			t.Description = value
+			t.Description.Set(value)
 			t.Save()
 		}
 	}

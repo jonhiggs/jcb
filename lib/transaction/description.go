@@ -9,7 +9,7 @@ import (
 
 type Description string
 
-func (d *Description) Get() string { return string(d) }
+func (d *Description) Get() string { return string(*d) }
 
 func (d *Description) Set(v string) (bool, error) {
 	err := validator.Description(v)
@@ -21,11 +21,11 @@ func (d *Description) Set(v string) (bool, error) {
 		return false, nil
 	}
 
-	d = Description(v)
+	*d = Description(v)
 	return true, nil
 }
 
-func (d *Description) String() string { return string(d) }
+func (d *Description) String() string { return string(*d) }
 
 func (d *Description) PaddedString() string {
 	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.Get())
