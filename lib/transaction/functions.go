@@ -27,7 +27,7 @@ func (t *Transaction) Save() error {
 			return err
 		}
 
-		res, err := statement.Exec(t.date, t.description, t.cents, t.notes, db.TimeNow(), t.category)
+		res, err := statement.Exec(t.date, t.Description, t.cents, t.notes, db.TimeNow(), t.category)
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ func (t *Transaction) Save() error {
 		if err != nil {
 			return err
 		}
-		_, err = statement.Exec(t.date, t.description, t.cents, t.notes, t.category, db.TimeNow(), t.id)
+		_, err = statement.Exec(t.date, t.Description, t.cents, t.notes, t.category, db.TimeNow(), t.id)
 
 		if err != nil {
 			return err

@@ -46,10 +46,11 @@ func updateDescription(description string, ids []int64) {
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
 
-		if t.SetDescription(value) {
-			t.Save()
-		} else {
+		if t.Description.String() == value {
 			skipped++
+		} else {
+			t.Description = value
+			t.Save()
 		}
 	}
 

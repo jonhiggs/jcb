@@ -60,7 +60,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t := new(Transaction)
 		t.id = id
 		t.SetDate(db.ParseDate(dateString))
-		t.SetDescription(description)
+		t.SetDescription(Description(description))
 		t.SetCents(cents)
 		t.SetNotes(notes)
 		t.SetCategory(category)
@@ -105,7 +105,7 @@ func Find(id int64) (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(description)
+	t.SetDescription(Description(description))
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
@@ -134,7 +134,7 @@ func FindFirst() (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(description)
+	t.SetDescription(Description(description))
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
@@ -152,7 +152,9 @@ func FindLast() (*Transaction, error) {
 
 	statement, _ := db.Conn.Prepare(`
 		SELECT id, date, description, cents, notes, category 
-		FROM transactions ORDER BY date DESC LIMIT 1
+		FROM transactions
+		ORDER BY date
+		DESC LIMIT 1
 	`)
 
 	err := statement.QueryRow().Scan(&id, &dateString, &description, &cents, &notes, &category)
@@ -163,7 +165,39 @@ func FindLast() (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(description)
+	t.SetDescription(Description(description))
+	t.SetCents(cents)
+	t.SetNotes(notes)
+	t.SetCategory(category)
+
+	return t, nil
+}
+
+func FindLastCommitted() (*Transaction, error) {
+	var id int64
+	var dateString string
+	var description string
+	var cents int64
+	var notes string
+	var category string
+
+	statement, _ := db.Conn.Prepare(`
+		SELECT id, date, description, cents, notes, category 
+		FROM transactions
+		WHERE committedAt IS NOT NULL
+		ORDER BY committedAt
+		DESC LIMIT 1
+	`)
+
+	err := statement.QueryRow().Scan(&id, &dateString, &description, &cents, &notes, &category)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("FindLastCommitted(): %s", err))
+	}
+
+	t := new(Transaction)
+	t.id = id
+	t.SetDate(db.ParseDate(dateString))
+	t.SetDescription(Description(description))
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)

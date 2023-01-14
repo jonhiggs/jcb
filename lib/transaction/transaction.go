@@ -19,7 +19,7 @@ import (
 type Transaction struct {
 	id          int64 `default:-1`
 	date        time.Time
-	description string
+	Description Description
 	cents       int64
 	notes       string
 	category    string
@@ -53,12 +53,12 @@ func (t *Transaction) SetDateString(s string) bool {
 }
 
 // Set the description. Returns true if value was changed.
-func (t *Transaction) SetDescription(s string) bool {
-	if t.description == s {
+func (t *Transaction) SetDescription(s Description) bool {
+	if t.Description == s {
 		return false
 	}
 
-	t.description = s
+	t.Description = s
 	return true
 }
 
@@ -105,17 +105,17 @@ func (t *Transaction) SetCategory(s string) bool {
 
 // Returns the transaction description. Expects a bool argument that when true
 // will pad the string for presentation in a table.
-func (t *Transaction) GetDescription(pad bool) string {
-	s := strings.Trim(t.description, " ")
+func (t *Transaction) GetDescription(pad bool) Description {
+	s := strings.Trim(string(t.Description), " ")
 
 	if len(s) > config.DESCRIPTION_MAX_LENGTH {
 		s = s[0:config.DESCRIPTION_MAX_LENGTH]
 	}
 
 	if pad {
-		return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, s)
+		return Description(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, s))
 	} else {
-		return s
+		return Description(s)
 	}
 }
 
@@ -276,9 +276,16 @@ func (t *Transaction) IsCredit() bool {
 	return t.cents >= 0
 }
 
-// Returns false when other transactions are blocking this from being committed.
+// Returns true if transaction is immediately ready to be committed.
 func (t *Transaction) IsCommittable() bool {
-	return false
+	lc, _ := FindLastCommitted()
+	for _, tt := range All(lc.GetDate(), t.GetDate()) {
+		if tt.GetDate().Unix() > t.GetDate().Unix() {
+			return false
+		}
+	}
+
+	return true
 }
 
 // Return false if a similar transaction already exists.
