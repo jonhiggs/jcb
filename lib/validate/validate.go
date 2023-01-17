@@ -59,7 +59,7 @@ func RepeatRule(rule string) error {
 	re := regexp.MustCompile(`^[0-9]+[dwmy]$`)
 
 	if !re.MatchString(rule) {
-		return errors.New("Invalid repeat rule")
+		return errors.New("invalid repeat rule")
 	}
 
 	return nil
