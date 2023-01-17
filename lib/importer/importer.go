@@ -59,7 +59,7 @@ func Tsv(f string) bool {
 		}
 
 		if len(d) < 4 {
-			if validator.Notes(d[4]) != nil {
+			if validate.Note(d[4]) != nil {
 				fmt.Printf("Skipping line %d: Invalid notes\n", i)
 				skipped += 1
 				continue

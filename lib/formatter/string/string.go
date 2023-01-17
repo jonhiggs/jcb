@@ -13,10 +13,6 @@ func Category(d string) string {
 	return strings.Trim(d, " ")
 }
 
-func Notes(d string) string {
-	return strings.Trim(d, " ")
-}
-
 func Id(d int64) string {
 	s := fmt.Sprintf("%d", d)
 

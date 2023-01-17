@@ -101,11 +101,6 @@ func (t *Transaction) HasNotes() bool {
 	return field != ""
 }
 
-// Returns the notes as a well-formed string.
-//func (t *Transaction) GetNotes() string {
-//	return t.notes
-//}
-
 // Returns the attributes string
 func (t *Transaction) GetAttributeString() string {
 	s := ""

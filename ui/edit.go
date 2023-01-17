@@ -48,7 +48,7 @@ func readEditForm() *transaction.Transaction {
 	t.Date.SetText(editInputFieldDate.GetText())
 	t.Description.SetText(editInputFieldDescription.GetText())
 	t.Cents.SetText(editInputFieldCents.GetText())
-	t.Note.SetText(dataf.Notes(editInputFieldNotes.GetText()))
+	t.Note.SetText(editInputFieldNotes.GetText())
 	t.SetCategory(dataf.Category(editInputFieldCategory.GetText()))
 
 	return t

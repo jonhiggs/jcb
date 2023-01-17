@@ -58,13 +58,13 @@ func TestCategory(t *testing.T) {
 	}
 }
 
-func TestNotes(t *testing.T) {
-	testA := Notes("   testing    ")
-
-	if testA != "testing" {
-		t.Error("testA")
-	}
-}
+//func TestNotes(t *testing.T) {
+//	testA := Notes("   testing    ")
+//
+//	if testA != "testing" {
+//		t.Error("testA")
+//	}
+//}
 
 func TestId(t *testing.T) {
 	var got int64
