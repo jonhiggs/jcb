@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/db"
 	"jcb/lib/find"
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
@@ -418,7 +417,8 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if db.DateLastCommitted().Unix() > date.Unix() {
+		lastCommitted, _ := transaction.FindLastCommitted()
+		if lastCommitted.Date.Unix() > date.Unix() {
 			printStatus("Date must not be before the last committed transaction")
 			return nil
 		}
@@ -579,7 +579,12 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		text := fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year())
+		lastUncommitted, err := transaction.FindLastUncommitted()
+		if err != nil {
+			panic("You should not make it here. You cannot repeat a committed transaction so there must be uncommitted transactions!")
+		}
+
+		text := fmt.Sprintf("%d-12-31", lastUncommitted.Date.Year())
 		openPrompt("Repeat until:", text, func(ev *tcell.EventKey) *tcell.EventKey {
 			panels.HidePanel("prompt")
 			repeatUntilString := promptInputField.GetText()

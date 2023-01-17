@@ -204,3 +204,35 @@ func FindLastCommitted() (*Transaction, error) {
 
 	return t, nil
 }
+
+func FindLastUncommitted() (*Transaction, error) {
+	var id int64
+	var date string
+	var description string
+	var cents int
+	var notes string
+	var category string
+
+	statement, _ := db.Conn.Prepare(`
+		SELECT id, date, description, cents, notes, category 
+		FROM transactions
+		WHERE committedAt IS NULL
+		ORDER BY date ASC, cents DESC
+		DESC LIMIT 1
+	`)
+
+	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("FindLastUncommitted(): %s", err))
+	}
+
+	t := new(Transaction)
+	t.Id = id
+	t.Date.SetText(date)
+	t.Description.SetText(description)
+	t.Cents.SetValue(cents)
+	t.Note.SetValue(notes)
+	t.Category.SetValue(category)
+
+	return t, nil
+}

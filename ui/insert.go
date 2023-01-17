@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	inputBindings "jcb/ui/input-bindings"
@@ -99,9 +98,14 @@ func createInsertForm() *cview.Form {
 	insertForm = cview.NewForm()
 	insertForm.SetCancelFunc(closeInsert)
 
+	lastCommitted, err := transaction.FindLastCommitted()
+	if err != nil {
+		panic("FIXME: handle when there are no committed transactions")
+	}
+
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
-	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
+	insertInputFieldDate.SetText(lastCommitted.Date.GetText())
 	insertInputFieldDate.SetFieldWidth(11)
 
 	insertInputFieldCategory = cview.NewInputField()

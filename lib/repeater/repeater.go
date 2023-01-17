@@ -1,7 +1,6 @@
 package repeater
 
 import (
-	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	"strconv"
 	"strings"
@@ -33,8 +32,14 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 }
 
 func expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error) {
+	lastCommitted, err := transaction.FindLastCommitted()
+
 	if strings.HasPrefix(rule, "0") {
-		if date.Unix() < dates.LastCommitted().Unix() {
+		if err != nil {
+			panic("FIXME: handle when all transactions are uncommitted")
+		}
+
+		if date.Unix() < lastCommitted.Date.Unix() {
 			return []time.Time{}, nil
 		}
 
@@ -50,7 +55,7 @@ func expand(date time.Time, endDate time.Time, rule string) ([]time.Time, error)
 			continue
 		}
 
-		if nextDate.Unix() < dates.LastCommitted().Unix() {
+		if nextDate.Unix() < lastCommitted.Date.Unix() {
 			continue
 		}
 

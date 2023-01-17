@@ -2,7 +2,6 @@ package ui
 
 import (
 	"fmt"
-	"jcb/db"
 	"jcb/lib/transaction"
 )
 
@@ -96,7 +95,12 @@ func updateDate(s string, ids []int64) {
 		return
 	}
 
-	if db.DateLastCommitted().Unix() > orig.Unix() {
+	lastCommitted, err := transaction.FindLastCommitted()
+	if err != nil {
+		panic("You should not make it here. You cannot modify a committed transaction so there must be uncommitted transactions!")
+	}
+
+	if lastCommitted.Date.Unix() > orig.Unix() {
 		return
 	}
 
