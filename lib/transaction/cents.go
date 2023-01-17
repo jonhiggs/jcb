@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"fmt"
-	"jcb/lib/format"
 	"jcb/lib/validate"
 	"strconv"
 	"strings"
@@ -23,7 +22,30 @@ func (c *Cents) SetValue(i int) error {
 
 // Get cents as a string
 func (c *Cents) GetText() string {
-	return format.CentsString((*c).value)
+	i := (*c).value
+	var dollars string
+	var cents string
+
+	negative := ""
+	if i < 0 {
+		negative = "-"
+		i = i * -1
+	}
+
+	s := fmt.Sprintf("%d", i)
+
+	if len(s) == 2 {
+		dollars = "0"
+		cents = s
+	} else if len(s) == 1 {
+		dollars = "0"
+		cents = fmt.Sprintf("0%s", s)
+	} else {
+		dollars = s[0 : len(s)-2]
+		cents = s[len(s)-2 : len(s)]
+	}
+
+	return fmt.Sprintf("%s%s.%s", negative, dollars, cents)
 }
 
 // Set the cents from a string.
@@ -49,4 +71,17 @@ func (c *Cents) SetText(s string) error {
 
 func (c *Cents) String() string {
 	return fmt.Sprintf("%10s", c.GetText())
+}
+
+func (c *Cents) IsDebit() bool {
+	return (*c).value < 0
+}
+
+func (c *Cents) IsCredit() bool {
+	return !(*c).IsDebit()
+}
+
+func (c *Cents) Add(i int) int {
+	(*c).value += i
+	return (*c).value
 }

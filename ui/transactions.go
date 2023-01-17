@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/format"
 	"jcb/lib/transaction"
 	"strings"
 
@@ -14,10 +13,10 @@ import (
 
 var transactionsTable *cview.Table
 var transactionIds []int64
-var initialBalance int
+var balance transaction.Cents
 
 func createTransactionsTable() *cview.Table {
-	initialBalance = 0
+	balance.SetValue(0)
 	transactionsTable = cview.NewTable()
 	transactionsTable.Select(0, 0)
 	transactionsTable.SetBorders(false)
@@ -136,11 +135,9 @@ func updateTransactionsTable() {
 	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
-	b := initialBalance
 	transactionIds = make([]int64, len(all)+1)
 	for i, t := range all {
-		b += t.Cents.GetValue()
-		balance := format.CentsString(b)
+		balance.Add(t.Cents.GetValue())
 
 		var colorFg tcell.Color
 		var colorBg tcell.Color
@@ -204,10 +201,8 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%10s", balance))
-		b := new(transaction.Cents)
-		b.SetText(balance)
-		if b.GetValue() < 0 {
+		cell = cview.NewTableCell(fmt.Sprint(&balance))
+		if balance.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)

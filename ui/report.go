@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/category"
-	"jcb/lib/format"
 	"jcb/lib/transaction"
 	"time"
 
@@ -144,15 +143,16 @@ func updateReportTable() {
 		}
 
 		monthlyTransactions := transaction.All(startTime, endTime)
-		cents := transaction.SumCents(monthlyTransactions)
+		cents := new(transaction.Cents)
+		cents.SetValue(transaction.SumCents(monthlyTransactions))
 
-		cell = cview.NewTableCell(" " + format.CentsString(cents))
+		cell = cview.NewTableCell(fmt.Sprint(cents))
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
 		cell.SetAttributes(tcell.AttrBold)
 		cell.SetBackgroundColor(config.COLOR_LIGHT_BG)
 
-		if cents < 0 {
+		if cents.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)
