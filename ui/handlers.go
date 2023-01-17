@@ -8,7 +8,6 @@ import (
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
-	"jcb/lib/validator"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
 	"log"
@@ -574,7 +573,7 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Repeat pattern:", "1m", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		repeatRuleValue = promptInputField.GetText()
-		err := validator.RepeatRule(repeatRuleValue)
+		err := validate.RepeatRule(repeatRuleValue)
 		if err != nil {
 			printStatus(fmt.Sprint(err))
 			return nil

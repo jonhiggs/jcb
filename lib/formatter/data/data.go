@@ -4,14 +4,14 @@ package dataFormatter
 
 import (
 	"fmt"
-	"jcb/lib/validator"
+	"jcb/lib/validate"
 	"log"
 	"strconv"
 	"strings"
 )
 
 func RepeatRule(rule string) string {
-	if validator.RepeatRule(rule) != nil {
+	if validate.RepeatRule(rule) != nil {
 		log.Fatal(fmt.Sprintf("cannot convert invalid repeat rule '%s' to data", rule))
 	}
 
@@ -19,7 +19,7 @@ func RepeatRule(rule string) string {
 }
 
 func RepeatRuleUnit(rule string) string {
-	if validator.RepeatRule(rule) != nil {
+	if validate.RepeatRule(rule) != nil {
 		log.Fatal("cannot convert invalid repeat rule unit to data")
 	}
 
@@ -27,7 +27,7 @@ func RepeatRuleUnit(rule string) string {
 }
 
 func RepeatRuleFrequency(rule string) int {
-	if validator.RepeatRule(rule) != nil {
+	if validate.RepeatRule(rule) != nil {
 		log.Fatal("cannot convert invalid frequency to data")
 	}
 
