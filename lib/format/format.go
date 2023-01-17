@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// convert a description string into data
 func Description(s string) (string, error) {
 	s = strings.Trim(s, " ")
 	err := validate.Description(s)
@@ -19,6 +20,7 @@ func Description(s string) (string, error) {
 	return s, nil
 }
 
+// convert a date string into data
 func Date(s string) (time.Time, error) {
 	splitDate := strings.Split(strings.Trim(s, " "), "-")
 	year, _ := strconv.Atoi(splitDate[0])
@@ -34,4 +36,9 @@ func Date(s string) (time.Time, error) {
 
 	r, _ := time.Parse("2006-01-02", s)
 	return r, nil
+}
+
+// convert a date into a string
+func DateString(d time.Time) string {
+	return d.Format("2006-01-02")
 }

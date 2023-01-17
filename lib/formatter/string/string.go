@@ -7,7 +7,6 @@ import (
 	"jcb/domain"
 	"log"
 	"strings"
-	"time"
 )
 
 func Cents(i int64) string {
@@ -36,10 +35,6 @@ func Cents(i int64) string {
 	return s
 }
 
-func Date(d time.Time) string {
-	return d.Format("2006-01-02")
-}
-
 func Description(d string) string {
 	return strings.Trim(d, " ")
 }
@@ -60,17 +55,6 @@ func Id(d int64) string {
 		log.Fatal("Id cannot be less than 0")
 	}
 	return s
-}
-
-func Transaction(d domain.Transaction) domain.StringTransaction {
-	id := Id(d.Id)
-	date := Date(d.Date)
-	description := Description(d.Description)
-	cents := Cents(d.Cents)
-	notes := Notes(d.Notes)
-	category := Category(d.Category)
-
-	return domain.StringTransaction{id, date, description, cents, notes, category}
 }
 
 func Attributes(a domain.Attributes) string {

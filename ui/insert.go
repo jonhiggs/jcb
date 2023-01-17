@@ -11,7 +11,6 @@ import (
 	inputBindings "jcb/ui/input-bindings"
 
 	dataf "jcb/lib/formatter/data"
-	stringf "jcb/lib/formatter/string"
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -36,7 +35,7 @@ func openInsert() {
 	curRow, _ := transactionsTable.GetSelection()
 	curDate, _ := format.Date(transactionsTable.GetCell(curRow, 1).GetText())
 
-	insertInputFieldDate.SetText(stringf.Date(curDate))
+	insertInputFieldDate.SetText(format.DateString(curDate))
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldNotes.SetText("")
