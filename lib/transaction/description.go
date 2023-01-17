@@ -21,7 +21,7 @@ func (d *Description) GetValue() string {
 	return (*d).GetText()
 }
 
-// Set the text of Description and return ok, error.
+// Set the text of Description
 func (d *Description) SetText(s string) error {
 	s = strings.Trim(s, " ")
 	err := validate.Description(s)

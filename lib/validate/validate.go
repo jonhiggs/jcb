@@ -40,3 +40,7 @@ func Cents(s string) error {
 
 	return nil
 }
+
+func Note(s string) error {
+	return nil
+}
