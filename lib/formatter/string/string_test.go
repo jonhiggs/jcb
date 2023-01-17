@@ -99,16 +99,16 @@ import (
 //	}
 //}
 
-func TestId(t *testing.T) {
-	var got string
-	var expect string
-
-	got = Id(42)
-	expect = "42"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-}
+//func TestId(t *testing.T) {
+//	var got string
+//	var expect string
+//
+//	got = Id(42)
+//	expect = "42"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//}
 
 func TestAttributes(t *testing.T) {
 	var got string

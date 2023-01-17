@@ -3,20 +3,8 @@
 package stringFormatter
 
 import (
-	"fmt"
 	"jcb/domain"
-	"log"
 )
-
-func Id(d int64) string {
-	s := fmt.Sprintf("%d", d)
-
-	if d < 0 {
-		s = "0"
-		log.Fatal("Id cannot be less than 0")
-	}
-	return s
-}
 
 func Attributes(a domain.Attributes) string {
 	s := ""
