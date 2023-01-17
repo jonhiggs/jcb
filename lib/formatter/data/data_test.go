@@ -42,13 +42,13 @@ func TestDate(t *testing.T) {
 	}
 }
 
-func TestDescription(t *testing.T) {
-	testA := Description("   testing    ")
-
-	if testA != "testing" {
-		t.Error("testA")
-	}
-}
+//func TestDescription(t *testing.T) {
+//	testA := Description("   testing    ")
+//
+//	if testA != "testing" {
+//		t.Error("testA")
+//	}
+//}
 
 func TestCategory(t *testing.T) {
 	testA := Category("   testing    ")

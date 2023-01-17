@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"jcb/db"
+	"jcb/lib/format"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
 	"jcb/lib/validator"
@@ -34,13 +35,12 @@ func updateCategory(category string, ids []int64) {
 }
 
 func updateDescription(description string, ids []int64) {
-	err := validator.Description(description)
+	value, err := format.Description(description)
 	if err != nil {
-		printStatus(fmt.Sprintf("%s", err))
+		printStatus(fmt.Sprint(err))
 		return
 	}
 
-	value := dataf.Description(description)
 	skipped := 0
 
 	for _, id := range ids {

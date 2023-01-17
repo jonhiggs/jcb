@@ -4,7 +4,6 @@ package dataFormatter
 
 import (
 	"fmt"
-	"jcb/domain"
 	"jcb/lib/validator"
 	"log"
 	"strconv"
@@ -41,14 +40,6 @@ func Date(s string) time.Time {
 
 	r, _ := time.Parse("2006-01-02", s)
 	return r
-}
-
-func Description(s string) string {
-	if validator.Description(s) != nil {
-		log.Fatal("cannot convert invalid description to data")
-	}
-
-	return strings.Trim(s, " ")
 }
 
 func Category(s string) string {
@@ -99,15 +90,4 @@ func RepeatRuleFrequency(rule string) int {
 
 	i, _ := strconv.Atoi(rule[0 : len(rule)-1])
 	return i
-}
-
-func Transaction(d domain.StringTransaction) domain.Transaction {
-	return domain.Transaction{
-		Id(d.Id),
-		Date(d.Date),
-		Description(d.Description),
-		Cents(d.Cents),
-		Notes(d.Notes),
-		Category(d.Category),
-	}
 }

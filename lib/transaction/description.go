@@ -1,32 +1,34 @@
 package transaction
 
 import (
-	"errors"
 	"fmt"
 	"jcb/config"
-	"jcb/lib/validator"
+	"jcb/lib/validate"
 )
 
 type Description struct {
 	Text string
 }
 
+// Get the string of Description
 func (d *Description) GetText() string { return (*d).Text }
 
+// Set the text of Description and return ok, error.
 func (d *Description) SetText(v string) (bool, error) {
-	err := validator.Description(v)
+	_, err := validate.Description(v)
 	if err != nil {
-		return false, errors.New("Invalid description")
+		return false, fmt.Errorf("setting text to %s: %w")
 	}
 
-	if d.String() == v {
+	if (*d).Text == v {
 		return false, nil
+	} else {
+		(*d).Text = v
+		return true, nil
 	}
-
-	(*d).Text = v
-	return true, nil
 }
 
+// To support the Stringer interface
 func (d *Description) String() string {
 	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.Text)
 }

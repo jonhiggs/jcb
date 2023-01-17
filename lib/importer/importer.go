@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"jcb/lib/transaction"
+	"jcb/lib/validate"
 	"jcb/lib/validator"
 	"log"
 	"os"
@@ -43,8 +44,10 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Description(d[2]) != nil {
-			fmt.Printf("Skipping line %d: Invalid description\n", i)
+		_, err := validate.Description(d[2])
+		if err != nil {
+			err = fmt.Errorf("Skipping line %d: %w", i, err)
+			fmt.Println(err.Error())
 			skipped += 1
 			continue
 		}

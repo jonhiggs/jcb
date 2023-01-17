@@ -35,10 +35,6 @@ func Date(s string) error {
 	return nil
 }
 
-func Description(s string) error {
-	return nil
-}
-
 func Category(s string) error {
 	return nil
 }

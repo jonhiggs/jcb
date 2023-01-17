@@ -5,6 +5,7 @@ import (
 	"jcb/config"
 	"jcb/lib/dates"
 	"jcb/lib/transaction"
+	"jcb/lib/validate"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
@@ -55,7 +56,7 @@ func checkInsertForm() bool {
 		return false
 	}
 
-	err = validator.Description(insertInputFieldDescription.GetText())
+	_, err = validate.Description(editInputFieldDescription.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false

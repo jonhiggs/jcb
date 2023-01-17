@@ -6,6 +6,7 @@ import (
 
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
+	"jcb/lib/validate"
 	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
@@ -79,7 +80,7 @@ func checkEditForm() bool {
 		return false
 	}
 
-	err = validator.Description(editInputFieldDescription.GetText())
+	_, err = validate.Description(editInputFieldDescription.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false
