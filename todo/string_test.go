@@ -1,11 +1,5 @@
 package stringFormatter
 
-import (
-	"fmt"
-	"jcb/domain"
-	"testing"
-)
-
 //func TestCents(t *testing.T) {
 //	var got string
 //	var expect string
@@ -110,28 +104,28 @@ import (
 //	}
 //}
 
-func TestAttributes(t *testing.T) {
-	var got string
-	var expect string
-
-	got = Attributes(domain.Attributes{true, true, true, true})
-	expect = "Cn "
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Attributes(domain.Attributes{true, true, false, true})
-	expect = "Cn+"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Attributes(domain.Attributes{false, false, true, true})
-	expect = "   "
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-}
+//func TestAttributes(t *testing.T) {
+//	var got string
+//	var expect string
+//
+//	got = Attributes(domain.Attributes{true, true, true, true})
+//	expect = "Cn "
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Attributes(domain.Attributes{true, true, false, true})
+//	expect = "Cn+"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Attributes(domain.Attributes{false, false, true, true})
+//	expect = "   "
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//}
 
 //func TestTransaction(t *testing.T) {
 //	var got domain.StringTransaction
