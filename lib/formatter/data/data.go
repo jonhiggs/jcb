@@ -10,15 +10,6 @@ import (
 	"strings"
 )
 
-func Id(d string) int64 {
-	if validator.Id(d) != nil {
-		log.Fatal(fmt.Sprintf("cannot convert invalid id '%s' to data", d))
-	}
-
-	id, _ := strconv.ParseInt(d, 10, 64)
-	return id
-}
-
 func RepeatRule(rule string) string {
 	if validator.RepeatRule(rule) != nil {
 		log.Fatal(fmt.Sprintf("cannot convert invalid repeat rule '%s' to data", rule))

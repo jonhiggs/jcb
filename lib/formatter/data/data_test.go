@@ -66,16 +66,16 @@ import (
 //	}
 //}
 
-func TestId(t *testing.T) {
-	var got int64
-	var expect int64
-
-	got = Id("042")
-	expect = 42
-	if got != expect {
-		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
-	}
-}
+//func TestId(t *testing.T) {
+//	var got int64
+//	var expect int64
+//
+//	got = Id("042")
+//	expect = 42
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+//	}
+//}
 
 func TestRepeatRule(t *testing.T) {
 	var got string
