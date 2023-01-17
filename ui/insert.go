@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/dates"
-	"jcb/lib/format"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	"jcb/lib/validator"
@@ -33,9 +32,10 @@ func openInsert() {
 	panels.SendToFront("insert")
 
 	curRow, _ := transactionsTable.GetSelection()
-	curDate, _ := format.Date(transactionsTable.GetCell(curRow, 1).GetText())
+	curDate := new(transaction.Date)
+	curDate.SetText(transactionsTable.GetCell(curRow, 1).GetText())
 
-	insertInputFieldDate.SetText(format.DateString(curDate))
+	insertInputFieldDate.SetText(curDate.GetText())
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldNotes.SetText("")

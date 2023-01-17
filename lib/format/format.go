@@ -27,11 +27,6 @@ func Date(s string) (time.Time, error) {
 	return r, nil
 }
 
-// convert a date into a string
-func DateString(d time.Time) string {
-	return d.Format("2006-01-02")
-}
-
 // return cents as a string
 func CentsString(i int) string {
 	var d string

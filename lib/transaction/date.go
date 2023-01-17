@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"fmt"
-	"jcb/lib/format"
 	"strings"
 	"time"
 )
@@ -20,7 +19,9 @@ func (d *Date) SetValue(t time.Time) error {
 }
 
 // Get the string of Date
-func (d *Date) GetText() string { return format.DateString((*d).value) }
+func (d *Date) GetText() string {
+	return (*d).value.Format("2006-01-02")
+}
 
 // Set the date from a string.
 func (d *Date) SetText(s string) error {
