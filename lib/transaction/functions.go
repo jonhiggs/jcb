@@ -29,9 +29,9 @@ func (t *Transaction) Save() error {
 
 		res, err := statement.Exec(
 			t.Date.GetValue(),
-			t.Description.GetText(),
+			t.Description.GetValue(),
 			t.Cents.GetValue(),
-			t.notes,
+			t.Note.GetValue(),
 			db.TimeNow(),
 			t.category,
 		)
@@ -58,9 +58,9 @@ func (t *Transaction) Save() error {
 		}
 		_, err = statement.Exec(
 			t.Date.GetValue(),
-			t.Description.GetText(),
+			t.Description.GetValue(),
 			t.Cents.GetValue(),
-			t.notes,
+			t.Note.GetValue(),
 			t.category,
 			db.TimeNow(),
 			t.id,

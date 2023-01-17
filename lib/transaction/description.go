@@ -33,6 +33,11 @@ func (d *Description) SetText(s string) error {
 	return nil
 }
 
+// Set the string of Description
+func (d *Description) SetValue(s string) error {
+	return (*d).SetText(s)
+}
+
 // To support the Stringer interface
 func (d *Description) String() string {
 	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.value)

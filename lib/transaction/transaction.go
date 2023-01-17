@@ -18,39 +18,8 @@ type Transaction struct {
 	Date        Date
 	Description Description
 	Cents       Cents
-	notes       string
+	Note        Note
 	category    string
-}
-
-// Set the cents. Returns true if value was changed.
-//func (t *Transaction) SetCents(i int64) bool {
-//	if t.cents == i {
-//		return false
-//	}
-//
-//	t.cents = i
-//	return true
-//}
-
-// Set the amount. Returns true if value was changed.
-//func (t *Transaction) SetAmount(s string) bool {
-//	if validator.Cents(s) != nil {
-//		log.Fatal(fmt.Sprintf("cannot convert invalid cents '%s' to data", s))
-//	}
-//
-//	s = strings.Trim(s, " ")
-//
-//	if len(strings.Split(s, ".")) == 1 {
-//		s = fmt.Sprintf("%s.00", s)
-//	}
-//
-//	i, _ := strconv.ParseInt(strings.Replace(s, ".", "", 1), 10, 64)
-//
-//	return t.Cents.SetValue(i)
-//}
-
-func (t *Transaction) SetNotes(s string) {
-	t.notes = s
 }
 
 // Set the category. Returns true if value was changed.
@@ -133,9 +102,9 @@ func (t *Transaction) HasNotes() bool {
 }
 
 // Returns the notes as a well-formed string.
-func (t *Transaction) GetNotes() string {
-	return t.notes
-}
+//func (t *Transaction) GetNotes() string {
+//	return t.notes
+//}
 
 // Returns the attributes string
 func (t *Transaction) GetAttributeString() string {

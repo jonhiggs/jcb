@@ -34,7 +34,7 @@ func handleOpenEdit() {
 	editInputFieldDate.SetText(t.Date.GetText())
 	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.Cents.GetText())
-	editInputFieldNotes.SetText(t.GetNotes())
+	editInputFieldNotes.SetText(t.Note.GetText())
 	editInputFieldCategory.SetText(t.GetCategory(false))
 }
 
@@ -48,7 +48,7 @@ func readEditForm() *transaction.Transaction {
 	t.Date.SetText(editInputFieldDate.GetText())
 	t.Description.SetText(editInputFieldDescription.GetText())
 	t.Cents.SetText(editInputFieldCents.GetText())
-	t.SetNotes(dataf.Notes(editInputFieldNotes.GetText()))
+	t.Note.SetText(dataf.Notes(editInputFieldNotes.GetText()))
 	t.SetCategory(dataf.Category(editInputFieldCategory.GetText()))
 
 	return t

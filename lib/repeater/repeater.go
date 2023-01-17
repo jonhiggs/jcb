@@ -21,7 +21,7 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 		t.Date.SetValue(ts)
 		t.Description.SetText(tOG.Description.GetText())
 		t.Cents.SetText(tOG.Cents.GetText())
-		t.SetNotes(tOG.GetNotes())
+		t.Note.SetText(tOG.Note.GetText())
 		t.SetCategory(tOG.GetCategory(false))
 
 		t.Save()

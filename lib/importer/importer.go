@@ -72,7 +72,7 @@ func Tsv(f string) bool {
 		t.Date.SetText(d[0])
 		t.Description.SetText(d[2])
 		t.Cents.SetText(d[3])
-		t.SetNotes(d[4])
+		t.Note.SetText(d[4])
 		t.SetCategory(d[1])
 
 		if !t.IsUniq() {
