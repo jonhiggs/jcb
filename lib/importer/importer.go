@@ -32,7 +32,7 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Date(d[0]) != nil {
+		if validate.Date(d[0]) != nil {
 			fmt.Printf("Skipping line %d: Invalid date\n", i)
 			skipped += 1
 			continue
@@ -44,7 +44,7 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		_, err := validate.Description(d[2])
+		err := validate.Description(d[2])
 		if err != nil {
 			err = fmt.Errorf("Skipping line %d: %w", i, err)
 			fmt.Println(err.Error())
@@ -69,7 +69,7 @@ func Tsv(f string) bool {
 		}
 
 		t := new(transaction.Transaction)
-		t.SetDateString(d[0])
+		t.Date.SetText(d[0])
 		t.Description.SetText(d[2])
 		t.SetAmount(d[3])
 		t.SetNotes(d[4])

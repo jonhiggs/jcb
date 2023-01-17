@@ -11,14 +11,14 @@ import (
 func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 	tOG, _ := transaction.Find(id)
 
-	timestamps, err := expand(tOG.GetDate(), repeatUntil, repeatRule)
+	timestamps, err := expand(tOG.Date.GetValue(), repeatUntil, repeatRule)
 	if err != nil {
 		return err
 	}
 
 	for _, ts := range timestamps {
 		t := new(transaction.Transaction)
-		t.SetDate(ts)
+		t.Date.SetValue(ts)
 		t.Description.SetText(tOG.Description.GetText())
 		t.SetCents(tOG.GetCents())
 		t.SetNotes(tOG.GetNotes())

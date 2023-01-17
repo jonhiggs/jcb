@@ -11,45 +11,17 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"time"
 )
 
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
 	id          int64 `default:-1`
-	date        time.Time
+	Date        Date
 	Description Description
 	cents       int64
 	notes       string
 	category    string
-}
-
-// Set the date. Returns true if value was changed.
-func (t *Transaction) SetDate(d time.Time) bool {
-	if t.date.Unix() == d.Unix() {
-		return false
-	}
-
-	t.date = d
-	return true
-}
-
-// Set the date from a string. Returns true if value was changed.
-func (t *Transaction) SetDateString(s string) bool {
-	splitDate := strings.Split(strings.Trim(s, " "), "-")
-	year, _ := strconv.Atoi(splitDate[0])
-	month, _ := strconv.Atoi(splitDate[1])
-	day, _ := strconv.Atoi(splitDate[2])
-
-	s = fmt.Sprintf("%04d-%02d-%02d", year, month, day)
-
-	if validator.Date(s) != nil {
-		log.Fatal(fmt.Sprintf("cannot convert invalid date '%s' to data", s))
-	}
-
-	d, _ := time.Parse("2006-01-02", s)
-	return t.SetDate(d)
 }
 
 // Set the cents. Returns true if value was changed.
@@ -162,16 +134,6 @@ func (t *Transaction) HasNotes() bool {
 	return field != ""
 }
 
-// Returns the date as a well-formed string.
-func (t *Transaction) GetDateString() string {
-	return t.date.Format("2006-01-02")
-}
-
-// Returns the date as a timestamp.
-func (t *Transaction) GetDate() time.Time {
-	return t.date
-}
-
 // Returns the notes as a well-formed string.
 func (t *Transaction) GetNotes() string {
 	return t.notes
@@ -253,8 +215,8 @@ func (t *Transaction) IsCredit() bool {
 // Returns true if transaction is immediately ready to be committed.
 func (t *Transaction) IsCommittable() bool {
 	lc, _ := FindLastCommitted()
-	for _, tt := range All(lc.GetDate(), t.GetDate()) {
-		if tt.GetDate().Unix() > t.GetDate().Unix() {
+	for _, tt := range All(lc.Date.GetValue(), t.Date.GetValue()) {
+		if tt.Date.GetValue().Unix() > t.Date.GetValue().Unix() {
 			return false
 		}
 	}
@@ -276,7 +238,7 @@ func (t *Transaction) IsUniq() bool {
 		log.Fatal(fmt.Sprintf("IsUniq(): %s", err))
 	}
 
-	err = statement.QueryRow(t.GetDateString(), t.Description.GetText(), t.GetCents()).Scan(&count)
+	err = statement.QueryRow(t.Date.GetValue(), t.Description.GetText(), t.GetCents()).Scan(&count)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("IsUniq(): %s", err))
 	}

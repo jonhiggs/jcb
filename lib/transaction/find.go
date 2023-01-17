@@ -38,7 +38,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 
 	for rows.Next() {
 		var id int64
-		var dateString string
+		var date string
 		var description string
 		var cents int64
 		var notes string
@@ -46,7 +46,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 
 		err = rows.Scan(
 			&id,
-			&dateString,
+			&date,
 			&description,
 			&cents,
 			&notes,
@@ -59,7 +59,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 
 		t := new(Transaction)
 		t.id = id
-		t.SetDate(db.ParseDate(dateString))
+		t.Date.SetText(date)
 		t.Description.SetText(description)
 		t.SetCents(cents)
 		t.SetNotes(notes)
@@ -86,7 +86,7 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 
 // Return a transaction from a transaction ID.
 func Find(id int64) (*Transaction, error) {
-	var dateString string
+	var date string
 	var description string
 	var cents int64
 	var notes string
@@ -97,14 +97,14 @@ func Find(id int64) (*Transaction, error) {
 		FROM transactions WHERE id = ?
 	`)
 
-	err := statement.QueryRow(id).Scan(&id, &dateString, &description, &cents, &notes, &category)
+	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Find(): %s", err))
 	}
 
 	t := new(Transaction)
 	t.id = id
-	t.SetDate(db.ParseDate(dateString))
+	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
@@ -115,7 +115,7 @@ func Find(id int64) (*Transaction, error) {
 
 func FindFirst() (*Transaction, error) {
 	var id int64
-	var dateString string
+	var date string
 	var description string
 	var cents int64
 	var notes string
@@ -126,14 +126,14 @@ func FindFirst() (*Transaction, error) {
 		FROM transactions ORDER BY date LIMIT 1
 	`)
 
-	err := statement.QueryRow().Scan(&id, &dateString, &description, &cents, &notes, &category)
+	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("FindFirst(): %s", err))
 	}
 
 	t := new(Transaction)
 	t.id = id
-	t.SetDate(db.ParseDate(dateString))
+	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
@@ -144,7 +144,7 @@ func FindFirst() (*Transaction, error) {
 
 func FindLast() (*Transaction, error) {
 	var id int64
-	var dateString string
+	var date string
 	var description string
 	var cents int64
 	var notes string
@@ -157,14 +157,14 @@ func FindLast() (*Transaction, error) {
 		DESC LIMIT 1
 	`)
 
-	err := statement.QueryRow().Scan(&id, &dateString, &description, &cents, &notes, &category)
+	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("FindLast(): %s", err))
 	}
 
 	t := new(Transaction)
 	t.id = id
-	t.SetDate(db.ParseDate(dateString))
+	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
@@ -175,7 +175,7 @@ func FindLast() (*Transaction, error) {
 
 func FindLastCommitted() (*Transaction, error) {
 	var id int64
-	var dateString string
+	var date string
 	var description string
 	var cents int64
 	var notes string
@@ -189,14 +189,14 @@ func FindLastCommitted() (*Transaction, error) {
 		DESC LIMIT 1
 	`)
 
-	err := statement.QueryRow().Scan(&id, &dateString, &description, &cents, &notes, &category)
+	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("FindLastCommitted(): %s", err))
 	}
 
 	t := new(Transaction)
 	t.id = id
-	t.SetDate(db.ParseDate(dateString))
+	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)

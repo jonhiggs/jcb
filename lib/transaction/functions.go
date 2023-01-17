@@ -27,7 +27,14 @@ func (t *Transaction) Save() error {
 			return err
 		}
 
-		res, err := statement.Exec(t.date, t.Description.GetText(), t.cents, t.notes, db.TimeNow(), t.category)
+		res, err := statement.Exec(
+			t.Date.GetValue(),
+			t.Description.GetText(),
+			t.cents,
+			t.notes,
+			db.TimeNow(),
+			t.category,
+		)
 		if err != nil {
 			return err
 		}
@@ -49,7 +56,15 @@ func (t *Transaction) Save() error {
 		if err != nil {
 			return err
 		}
-		_, err = statement.Exec(t.date, t.Description.GetText(), t.cents, t.notes, t.category, db.TimeNow(), t.id)
+		_, err = statement.Exec(
+			t.Date.GetValue(),
+			t.Description.GetText(),
+			t.cents,
+			t.notes,
+			t.category,
+			db.TimeNow(),
+			t.id,
+		)
 
 		if err != nil {
 			return err
@@ -112,7 +127,7 @@ func (t *Transaction) Uncommit() error {
 func DateRange() (time.Time, time.Time) {
 	first, _ := FindFirst()
 	last, _ := FindLast()
-	return first.GetDate(), last.GetDate()
+	return first.Date.GetValue(), last.Date.GetValue()
 }
 
 func SumCents(ts []*Transaction) int64 {

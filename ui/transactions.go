@@ -180,7 +180,7 @@ func updateTransactionsTable() {
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.CATEGORY_COLUMN, cell)
 
-		cell = cview.NewTableCell(t.GetDateString())
+		cell = cview.NewTableCell(t.Date.GetText())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)

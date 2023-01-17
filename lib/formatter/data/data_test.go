@@ -34,13 +34,13 @@ func TestCents(t *testing.T) {
 	}
 }
 
-func TestDate(t *testing.T) {
-	testA := Date("2022-04-30")
-
-	if testA.Format("2006-01-02") != "2022-04-30" {
-		t.Error("testA")
-	}
-}
+//func TestDate(t *testing.T) {
+//	testA := Date("2022-04-30")
+//
+//	if testA.Format("2006-01-02") != "2022-04-30" {
+//		t.Error("testA")
+//	}
+//}
 
 //func TestDescription(t *testing.T) {
 //	testA := Description("   testing    ")

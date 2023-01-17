@@ -32,7 +32,7 @@ func handleOpenEdit() {
 	panels.SendToFront("edit")
 
 	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.GetID()))
-	editInputFieldDate.SetText(t.GetDateString())
+	editInputFieldDate.SetText(t.Date.GetText())
 	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.GetAmount(false))
 	editInputFieldNotes.SetText(t.GetNotes())
@@ -46,7 +46,7 @@ func closeEdit() {
 
 func readEditForm() *transaction.Transaction {
 	t := new(transaction.Transaction)
-	t.SetDate(dataf.Date(editInputFieldDate.GetText()))
+	t.Date.SetText(editInputFieldDate.GetText())
 	t.Description.SetText(editInputFieldDescription.GetText())
 	t.SetCents(dataf.Cents(editInputFieldCents.GetText()))
 	t.SetNotes(dataf.Notes(editInputFieldNotes.GetText()))
@@ -74,13 +74,13 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func checkEditForm() bool {
 	var err error
-	err = validator.Date(editInputFieldDate.GetText())
+	err = validate.Date(editInputFieldDate.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false
 	}
 
-	_, err = validate.Description(editInputFieldDescription.GetText())
+	err = validate.Description(editInputFieldDescription.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false

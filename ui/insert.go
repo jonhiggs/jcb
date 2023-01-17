@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/dates"
+	"jcb/lib/format"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	"jcb/lib/validator"
@@ -33,7 +34,7 @@ func openInsert() {
 	panels.SendToFront("insert")
 
 	curRow, _ := transactionsTable.GetSelection()
-	curDate := dataf.Date(transactionsTable.GetCell(curRow, 1).GetText())
+	curDate, _ := format.Date(transactionsTable.GetCell(curRow, 1).GetText())
 
 	insertInputFieldDate.SetText(stringf.Date(curDate))
 	insertInputFieldDescription.SetText("")
@@ -50,13 +51,13 @@ func closeInsert() {
 func checkInsertForm() bool {
 	var err error
 
-	err = validator.Date(insertInputFieldDate.GetText())
+	err = validate.Date(insertInputFieldDate.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false
 	}
 
-	_, err = validate.Description(editInputFieldDescription.GetText())
+	err = validate.Description(editInputFieldDescription.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false
@@ -74,7 +75,7 @@ func checkInsertForm() bool {
 func readInsertForm() *transaction.Transaction {
 	t := new(transaction.Transaction)
 
-	t.SetDate(dataf.Date(insertInputFieldDate.GetText()))
+	t.Date.SetText(insertInputFieldDate.GetText())
 	t.Description.SetText(insertInputFieldDescription.GetText())
 	t.SetCents(dataf.Cents(insertInputFieldCents.GetText()))
 	t.SetNotes(dataf.Notes(insertInputFieldNotes.GetText()))

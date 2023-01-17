@@ -5,9 +5,11 @@ import (
 	"jcb/config"
 	"jcb/db"
 	"jcb/lib/find"
+	"jcb/lib/format"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
+	"jcb/lib/validate"
 	"jcb/lib/validator"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
@@ -148,11 +150,11 @@ func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectYearPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
-	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
+	selectedDate, _ := format.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
 
 	for i := curRow; i > 0; i-- {
-		year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-		if int(year) != int(curYear) {
+		curDate, _ := format.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText())
+		if int(curDate.Year()) != int(selectedDate.Year()) {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -165,11 +167,11 @@ func handleSelectYearPrev(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
-	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
+	selectedDate, _ := format.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
 
 	for i := curRow; i < len(transactionIds)-1; i++ {
-		year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-		if int(year) != int(curYear) {
+		curDate, _ := format.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText())
+		if int(curDate.Year()) != int(selectedDate.Year()) {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -407,20 +409,19 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		r, _ := transactionsTable.GetSelection()
-		dateString := promptInputField.GetText()
 
-		err := validator.Date(dateString)
+		date, err := format.Date(promptInputField.GetText())
 		if err != nil {
 			printStatus(fmt.Sprintf("%s", err))
 			return nil
 		}
 
-		if db.DateLastCommitted().Unix() > dataf.Date(dateString).Unix() {
+		if db.DateLastCommitted().Unix() > date.Unix() {
 			printStatus("Date must not be before the last committed transaction")
 			return nil
 		}
 
-		updateDate(dateString, []int64{transactionIds[r]})
+		updateDate(date.Format("2006-01-02"), []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -582,13 +583,13 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 			panels.HidePanel("prompt")
 			repeatUntilString := promptInputField.GetText()
 
-			err := validator.Date(repeatUntilString)
+			err := validate.Date(repeatUntilString)
 			if err != nil {
 				printStatus(fmt.Sprint(err))
 				return nil
 			}
 
-			repeatUntilValue = dataf.Date(repeatUntilString)
+			repeatUntilValue, _ = format.Date(repeatUntilString)
 
 			err = repeater.Insert(selectionId(), repeatRuleValue, repeatUntilValue)
 			if err != nil {

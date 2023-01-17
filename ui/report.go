@@ -48,7 +48,7 @@ func updateReportTable() {
 	var cell *cview.TableCell
 
 	st, _ := transaction.Find(selectionId())
-	year := st.GetDate().Year()
+	year := st.Date.GetValue().Year()
 
 	columns := []string{
 		"CATEGORY",
