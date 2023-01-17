@@ -41,3 +41,11 @@ func (d *Date) SetText(s string) error {
 	(*d).value = ts
 	return nil
 }
+
+func (d *Date) Year() int {
+	return int((*d).value.Year())
+}
+
+func (d *Date) Unix() int64 {
+	return (*d).value.Unix()
+}

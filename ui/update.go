@@ -3,10 +3,8 @@ package ui
 import (
 	"fmt"
 	"jcb/db"
-	"jcb/lib/format"
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
-	"jcb/lib/validate"
 	"jcb/lib/validator"
 )
 
@@ -90,33 +88,25 @@ func updateCents(cents string, ids []int64) {
 	updateTransactionsTable()
 }
 
-func updateDate(date string, ids []int64) {
-	err := validate.Date(date)
-	if err != nil {
-		printStatus(fmt.Sprintf("%s", err))
-		return
-	}
-
-	startingId := selectionId()
-	value, _ := format.Date(date)
-	skipped := 0
-	lastCommittedDate := db.DateLastCommitted()
-
-	value, err = format.Date(date)
+func updateDate(s string, ids []int64) {
+	orig := new(transaction.Date)
+	err := orig.SetText(s)
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return
 	}
 
+	if db.DateLastCommitted().Unix() > orig.Unix() {
+		return
+	}
+
+	startingId := selectionId()
+	skipped := 0
+
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
 
-		if lastCommittedDate.Unix() > value.Unix() {
-			skipped++
-			continue
-		}
-
-		t.Date.SetValue(value)
+		t.Date.SetValue(orig.GetValue())
 
 		// TODO: create a function to detect whether the data has changed
 		if true {
@@ -124,7 +114,6 @@ func updateDate(date string, ids []int64) {
 		} else {
 			skipped++
 		}
-
 	}
 
 	updateTransactionsTable()
