@@ -7,17 +7,6 @@ import (
 	"strings"
 )
 
-func Cents(s string) error {
-	s = strings.Trim(s, " ")
-
-	re := regexp.MustCompile(`^-?[0-9]+(\.[0-9]{1,2})?$`)
-	if !re.MatchString(s) {
-		return errors.New("Invalid amount")
-	}
-
-	return nil
-}
-
 func Category(s string) error {
 	return nil
 }

@@ -6,7 +6,6 @@ import (
 	"jcb/lib/dates"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
-	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
 	dataf "jcb/lib/formatter/data"
@@ -62,7 +61,7 @@ func checkInsertForm() bool {
 		return false
 	}
 
-	err = validator.Cents(insertInputFieldCents.GetText())
+	err = validate.Cents(insertInputFieldCents.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false

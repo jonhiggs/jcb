@@ -52,7 +52,7 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Cents(d[3]) != nil {
+		if validate.Cents(d[3]) != nil {
 			fmt.Printf("Skipping line %d: Invalid amount\n", i)
 			skipped += 1
 			continue

@@ -7,7 +7,6 @@ import (
 	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
-	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -86,7 +85,7 @@ func checkEditForm() bool {
 		return false
 	}
 
-	err = validator.Cents(editInputFieldCents.GetText())
+	err = validate.Cents(editInputFieldCents.GetText())
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return false
