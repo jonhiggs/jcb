@@ -10,14 +10,6 @@ import (
 	"strings"
 )
 
-func Category(s string) string {
-	if validator.Category(s) != nil {
-		log.Fatal("cannot convert invalid cateogry to data")
-	}
-
-	return strings.Trim(s, " ")
-}
-
 func Id(d string) int64 {
 	if validator.Id(d) != nil {
 		log.Fatal(fmt.Sprintf("cannot convert invalid id '%s' to data", d))

@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-func Category(s string) error {
-	return nil
-}
-
 func Id(d string) error {
 	id, _ := strconv.ParseInt(d, 10, 64)
 	if id < 0 {

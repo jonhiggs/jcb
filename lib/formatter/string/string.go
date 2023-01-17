@@ -6,12 +6,7 @@ import (
 	"fmt"
 	"jcb/domain"
 	"log"
-	"strings"
 )
-
-func Category(d string) string {
-	return strings.Trim(d, " ")
-}
 
 func Id(d int64) string {
 	s := fmt.Sprintf("%d", d)

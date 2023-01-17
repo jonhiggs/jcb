@@ -69,35 +69,35 @@ import (
 //	}
 //}
 
-func TestNotes(t *testing.T) {
-	var got string
-	var expect string
-	var err error
-
-	got = Category("   notes    ")
-	expect = "notes"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-	if err != nil {
-		t.Error(fmt.Sprintf("no error expected for %s", expect))
-	}
-}
-
-func TestCategory(t *testing.T) {
-	var got string
-	var expect string
-	var err error
-
-	got = Category("   category    ")
-	expect = "category"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-	if err != nil {
-		t.Error(fmt.Sprintf("no error expected for %s", expect))
-	}
-}
+//func TestNotes(t *testing.T) {
+//	var got string
+//	var expect string
+//	var err error
+//
+//	got = Category("   notes    ")
+//	expect = "notes"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//	if err != nil {
+//		t.Error(fmt.Sprintf("no error expected for %s", expect))
+//	}
+//}
+//
+//func TestCategory(t *testing.T) {
+//	var got string
+//	var expect string
+//	var err error
+//
+//	got = Category("   category    ")
+//	expect = "category"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//	if err != nil {
+//		t.Error(fmt.Sprintf("no error expected for %s", expect))
+//	}
+//}
 
 func TestId(t *testing.T) {
 	var got string

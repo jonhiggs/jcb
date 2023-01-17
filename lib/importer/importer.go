@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
-	"jcb/lib/validator"
 	"log"
 	"os"
 	"strings"
@@ -38,7 +37,7 @@ func Tsv(f string) bool {
 			continue
 		}
 
-		if validator.Category(d[1]) != nil {
+		if validate.Category(d[1]) != nil {
 			fmt.Printf("Skipping line %d: Invalid category\n", i)
 			skipped += 1
 			continue

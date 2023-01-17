@@ -5,7 +5,6 @@ import (
 	"jcb/config"
 	"jcb/db"
 	"jcb/lib/find"
-	dataf "jcb/lib/formatter/data"
 	"jcb/lib/repeater"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
@@ -509,8 +508,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 		case 'D':
 			openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				category := dataf.Category(promptInputField.GetText())
-				updateCategory(category, taggedTransactionIds)
+				updateCategory(promptInputField.GetText(), taggedTransactionIds)
 				return nil
 			})
 		case 'd':

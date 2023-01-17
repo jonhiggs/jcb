@@ -50,13 +50,13 @@ import (
 //	}
 //}
 
-func TestCategory(t *testing.T) {
-	testA := Category("   testing    ")
-
-	if testA != "testing" {
-		t.Error("testA")
-	}
-}
+//func TestCategory(t *testing.T) {
+//	testA := Category("   testing    ")
+//
+//	if testA != "testing" {
+//		t.Error("testA")
+//	}
+//}
 
 //func TestNotes(t *testing.T) {
 //	testA := Notes("   testing    ")
