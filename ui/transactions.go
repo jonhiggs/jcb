@@ -143,7 +143,7 @@ func updateTransactionsTable() {
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
-		transactionIds[i+1] = t.GetID()
+		transactionIds[i+1] = t.Id
 
 		if t.IsCommitted() {
 			colorFg = config.COLOR_COMMITTED_FG
@@ -159,7 +159,7 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_MODIFIED_BG
 		}
 
-		if isTagged(t.GetID()) {
+		if isTagged(t.Id) {
 			colorFg = config.COLOR_TAGGED_FG
 			colorBg = config.COLOR_TAGGED_BG
 		}

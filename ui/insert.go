@@ -89,7 +89,7 @@ func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	t.Save()
 
 	updateTransactionsTable()
-	selectTransaction(t.GetID())
+	selectTransaction(t.Id)
 
 	closeInsert()
 	return nil

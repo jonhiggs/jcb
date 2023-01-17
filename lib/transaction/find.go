@@ -58,7 +58,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		}
 
 		t := new(Transaction)
-		t.id = id
+		t.Id = id
 		t.Date.SetText(date)
 		t.Description.SetValue(description)
 		t.Cents.SetValue(cents)
@@ -103,7 +103,7 @@ func Find(id int64) (*Transaction, error) {
 	}
 
 	t := new(Transaction)
-	t.id = id
+	t.Id = id
 	t.Date.SetText(date)
 	t.Description.SetValue(description)
 	t.Cents.SetValue(cents)
@@ -132,7 +132,7 @@ func FindFirst() (*Transaction, error) {
 	}
 
 	t := new(Transaction)
-	t.id = id
+	t.Id = id
 	t.Date.SetText(date)
 	t.Description.SetValue(description)
 	t.Cents.SetValue(cents)
@@ -163,7 +163,7 @@ func FindLast() (*Transaction, error) {
 	}
 
 	t := new(Transaction)
-	t.id = id
+	t.Id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.Cents.SetValue(cents)
@@ -195,7 +195,7 @@ func FindLastCommitted() (*Transaction, error) {
 	}
 
 	t := new(Transaction)
-	t.id = id
+	t.Id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
 	t.Cents.SetValue(cents)

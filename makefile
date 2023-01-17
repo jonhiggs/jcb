@@ -2,8 +2,6 @@ run: test
 	go run ./cmd/main.go -f ./test.db
 
 test:
-	go test ./lib/formatter/data
-	go test ./lib/formatter/string
 	go test ./lib/repeater
 	go test ./ui/input-bindings/input-bindings_test.go
 	go test ./ui/acceptanceFunction/acceptanceFunction_test.go

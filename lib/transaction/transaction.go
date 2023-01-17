@@ -12,16 +12,12 @@ import (
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
-	id          int64 `default:-1`
+	Id          int64 `default:-1`
 	Date        Date
 	Description Description
 	Cents       Cents
 	Note        Note
 	Category    Category
-}
-
-func (t *Transaction) GetID() int64 {
-	return t.id
 }
 
 func (t *Transaction) Balance() int64 {
@@ -32,14 +28,14 @@ func (t *Transaction) Balance() int64 {
 // is one that has been reconciled against the bank statement.
 func (t *Transaction) IsCommitted() bool {
 	var field string
-	if t.id == -1 {
+	if t.Id == -1 {
 		return false
 	}
 	statement, _ := db.Conn.Prepare(`
 		SELECT IFNULL(committedAt,"") FROM transactions
 		WHERE id = ?
 	`)
-	err := statement.QueryRow(t.id).Scan(&field)
+	err := statement.QueryRow(t.Id).Scan(&field)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("IsCommitted(): %s", err))
 	}
@@ -53,7 +49,7 @@ func (t *Transaction) IsCommitted() bool {
 func (t *Transaction) IsSaved() bool {
 	var field string
 	statement, _ := db.Conn.Prepare("SELECT updatedAt FROM transactions WHERE id = ?")
-	err := statement.QueryRow(t.id).Scan(&field)
+	err := statement.QueryRow(t.Id).Scan(&field)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("IsSaved(): %s", err))
 	}

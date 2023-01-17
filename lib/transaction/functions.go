@@ -12,7 +12,7 @@ func (t *Transaction) Save() error {
 		return errors.New("Cannot modify committed transactions")
 	}
 
-	if t.id == -1 {
+	if t.Id == -1 {
 		statement, err := db.Conn.Prepare(`
 			INSERT INTO transactions (
 				date,
@@ -39,7 +39,7 @@ func (t *Transaction) Save() error {
 			return err
 		}
 
-		t.id, _ = res.LastInsertId()
+		t.Id, _ = res.LastInsertId()
 	} else {
 		statement, err := db.Conn.Prepare(`
 			UPDATE transactions
@@ -63,7 +63,7 @@ func (t *Transaction) Save() error {
 			t.Note.GetValue(),
 			t.Category.GetValue(),
 			db.TimeNow(),
-			t.id,
+			t.Id,
 		)
 
 		if err != nil {
@@ -84,7 +84,7 @@ func (t *Transaction) Delete() error {
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(t.GetID())
+	_, err = statement.Exec(t.Id)
 
 	db.Dirty = true
 

@@ -29,7 +29,7 @@ func handleOpenEdit() {
 	panels.ShowPanel("edit")
 	panels.SendToFront("edit")
 
-	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.GetID()))
+	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.Id))
 	editInputFieldDate.SetText(t.Date.GetText())
 	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.Cents.GetText())
@@ -62,7 +62,7 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	err := t.Save()
 	if err == nil {
 		updateTransactionsTable()
-		selectTransaction(t.GetID())
+		selectTransaction(t.Id)
 		closeEdit()
 	} else {
 		printStatus(fmt.Sprint(err))
