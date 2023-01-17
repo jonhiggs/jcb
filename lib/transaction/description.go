@@ -7,11 +7,13 @@ import (
 	"jcb/lib/validator"
 )
 
-type Description string
+type Description struct {
+	Text string
+}
 
-func (d *Description) Get() string { return string(*d) }
+func (d *Description) GetText() string { return (*d).Text }
 
-func (d *Description) Set(v string) (bool, error) {
+func (d *Description) SetText(v string) (bool, error) {
 	err := validator.Description(v)
 	if err != nil {
 		return false, errors.New("Invalid description")
@@ -21,12 +23,10 @@ func (d *Description) Set(v string) (bool, error) {
 		return false, nil
 	}
 
-	*d = Description(v)
+	(*d).Text = v
 	return true, nil
 }
 
-func (d *Description) String() string { return string(*d) }
-
-func (d *Description) PaddedString() string {
-	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.Get())
+func (d *Description) String() string {
+	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.Text)
 }

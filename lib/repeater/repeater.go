@@ -19,7 +19,7 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 	for _, ts := range timestamps {
 		t := new(transaction.Transaction)
 		t.SetDate(ts)
-		t.SetDescription(tOG.GetDescription(false))
+		t.Description.SetText(tOG.Description.GetText())
 		t.SetCents(tOG.GetCents())
 		t.SetNotes(tOG.GetNotes())
 		t.SetCategory(tOG.GetCategory(false))

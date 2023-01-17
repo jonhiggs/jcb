@@ -187,7 +187,7 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
 
-		cell = cview.NewTableCell(string(t.GetDescription(true)))
+		cell = cview.NewTableCell(fmt.Sprint(&t.Description))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)

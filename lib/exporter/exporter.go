@@ -11,7 +11,7 @@ func Tsv() {
 		fmt.Printf("%s\t%s\t%s\t%s\t%s\n",
 			t.GetDateString(),
 			t.GetCategory(false),
-			t.GetDescription(false),
+			t.Description.GetText(),
 			t.GetAmount(false),
 			t.GetNotes(),
 		)

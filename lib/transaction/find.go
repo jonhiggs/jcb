@@ -60,7 +60,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t := new(Transaction)
 		t.id = id
 		t.SetDate(db.ParseDate(dateString))
-		t.SetDescription(Description(description))
+		t.Description.SetText(description)
 		t.SetCents(cents)
 		t.SetNotes(notes)
 		t.SetCategory(category)
@@ -105,7 +105,7 @@ func Find(id int64) (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(Description(description))
+	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
@@ -134,7 +134,7 @@ func FindFirst() (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(Description(description))
+	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
@@ -165,7 +165,7 @@ func FindLast() (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(Description(description))
+	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
@@ -197,7 +197,7 @@ func FindLastCommitted() (*Transaction, error) {
 	t := new(Transaction)
 	t.id = id
 	t.SetDate(db.ParseDate(dateString))
-	t.SetDescription(Description(description))
+	t.Description.SetText(description)
 	t.SetCents(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)

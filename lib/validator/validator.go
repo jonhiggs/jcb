@@ -3,7 +3,6 @@ package validator
 import (
 	"errors"
 	"fmt"
-	"jcb/domain"
 	"regexp"
 	"strconv"
 	"strings"
@@ -67,26 +66,26 @@ func RepeatRule(rule string) error {
 	return nil
 }
 
-func Transaction(d domain.StringTransaction) error {
-	e := Id(d.Id)
-	if e != nil {
-		return e
-	}
-
-	e = Date(d.Date)
-	if e != nil {
-		return e
-	}
-
-	e = Description(d.Description)
-	if e != nil {
-		return e
-	}
-
-	e = Cents(d.Cents)
-	if e != nil {
-		return e
-	}
-
-	return nil
-}
+//func Transaction(d domain.StringTransaction) error {
+//	e := Id(d.Id)
+//	if e != nil {
+//		return e
+//	}
+//
+//	e = Date(d.Date)
+//	if e != nil {
+//		return e
+//	}
+//
+//	e = Description(d.Description)
+//	if e != nil {
+//		return e
+//	}
+//
+//	e = Cents(d.Cents)
+//	if e != nil {
+//		return e
+//	}
+//
+//	return nil
+//}

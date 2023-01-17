@@ -32,7 +32,7 @@ func handleOpenEdit() {
 
 	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.GetID()))
 	editInputFieldDate.SetText(t.GetDateString())
-	editInputFieldDescription.SetText(string(t.GetDescription(false)))
+	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.GetAmount(false))
 	editInputFieldNotes.SetText(t.GetNotes())
 	editInputFieldCategory.SetText(t.GetCategory(false))
@@ -46,7 +46,7 @@ func closeEdit() {
 func readEditForm() *transaction.Transaction {
 	t := new(transaction.Transaction)
 	t.SetDate(dataf.Date(editInputFieldDate.GetText()))
-	t.SetDescription(transaction.Description(dataf.Description(string(editInputFieldDescription.GetText()))))
+	t.Description.SetText(editInputFieldDescription.GetText())
 	t.SetCents(dataf.Cents(editInputFieldCents.GetText()))
 	t.SetNotes(dataf.Notes(editInputFieldNotes.GetText()))
 	t.SetCategory(dataf.Category(editInputFieldCategory.GetText()))

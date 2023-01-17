@@ -52,16 +52,6 @@ func (t *Transaction) SetDateString(s string) bool {
 	return t.SetDate(d)
 }
 
-// Set the description. Returns true if value was changed.
-func (t *Transaction) SetDescription(s Description) bool {
-	if t.Description == s {
-		return false
-	}
-
-	t.Description = s
-	return true
-}
-
 // Set the cents. Returns true if value was changed.
 func (t *Transaction) SetCents(i int64) bool {
 	if t.cents == i {
@@ -101,22 +91,6 @@ func (t *Transaction) SetCategory(s string) bool {
 
 	t.category = s
 	return true
-}
-
-// Returns the transaction description. Expects a bool argument that when true
-// will pad the string for presentation in a table.
-func (t *Transaction) GetDescription(pad bool) Description {
-	s := strings.Trim(string(t.Description), " ")
-
-	if len(s) > config.DESCRIPTION_MAX_LENGTH {
-		s = s[0:config.DESCRIPTION_MAX_LENGTH]
-	}
-
-	if pad {
-		return Description(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, s))
-	} else {
-		return Description(s)
-	}
 }
 
 func (t *Transaction) GetID() int64 {
@@ -302,7 +276,7 @@ func (t *Transaction) IsUniq() bool {
 		log.Fatal(fmt.Sprintf("IsUniq(): %s", err))
 	}
 
-	err = statement.QueryRow(t.GetDateString(), t.GetDescription(false), t.GetCents()).Scan(&count)
+	err = statement.QueryRow(t.GetDateString(), t.Description.GetText(), t.GetCents()).Scan(&count)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("IsUniq(): %s", err))
 	}
