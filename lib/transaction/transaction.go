@@ -20,35 +20,9 @@ type Transaction struct {
 	Category    Category
 }
 
-// Set the category. Returns true if value was changed.
-//func (t *Transaction) SetCategory(s string) bool {
-//	if t.category == s {
-//		return false
-//	}
-//
-//	t.category = s
-//	return true
-//}
-
 func (t *Transaction) GetID() int64 {
 	return t.id
 }
-
-// Returns the transaction description. Expects a bool argument that when true
-// will pad the string for presentation in a table.
-//func (t *Transaction) GetCategory(pad bool) string {
-//	s := strings.Trim(t.category, " ")
-//
-//	if len(s) > config.CATEGORY_MAX_LENGTH {
-//		s = s[0:config.CATEGORY_MAX_LENGTH]
-//	}
-//
-//	if pad {
-//		return fmt.Sprintf("%-*s", config.CATEGORY_MAX_LENGTH, s)
-//	} else {
-//		return s
-//	}
-//}
 
 func (t *Transaction) Balance() int64 {
 	return 0
@@ -87,18 +61,6 @@ func (t *Transaction) IsSaved() bool {
 	return db.ParseDate(field).UnixMicro() < db.SaveTime.UnixMicro()
 }
 
-// Returns true if the transaction has notes associated with it.
-func (t *Transaction) HasNotes() bool {
-	var field string
-	statement, _ := db.Conn.Prepare("SELECT notes FROM transactions WHERE id = ?")
-	err := statement.QueryRow(t.id).Scan(&field)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("HasNotes(): %s", err))
-	}
-
-	return field != ""
-}
-
 // Returns the attributes string
 func (t *Transaction) GetAttributeString() string {
 	s := ""
@@ -108,7 +70,7 @@ func (t *Transaction) GetAttributeString() string {
 		s += " "
 	}
 
-	if t.HasNotes() {
+	if t.Note.Exists() {
 		s += "n"
 	} else {
 		s += " "
@@ -121,16 +83,6 @@ func (t *Transaction) GetAttributeString() string {
 	}
 
 	return s
-}
-
-// Returns true if the transaction is a negative amount.
-func (t *Transaction) IsDebit() bool {
-	return t.Cents.GetValue() < 0
-}
-
-// Returns true if the transaction is a positive amount.
-func (t *Transaction) IsCredit() bool {
-	return t.Cents.GetValue() >= 0
 }
 
 // Returns true if transaction is immediately ready to be committed.

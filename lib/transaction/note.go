@@ -8,7 +8,7 @@ import (
 )
 
 type Note struct {
-	value string
+	value string `default:`
 }
 
 // Get the string of Note
@@ -41,4 +41,9 @@ func (n *Note) SetValue(s string) error {
 // To support the Stringer interface
 func (n *Note) String() string {
 	return fmt.Sprintf("%-*s", config.NOTE_MAX_LENGTH, n.value)
+}
+
+// Returns true if a note exists
+func (n *Note) Exists() bool {
+	return len((*n).value) != 0
 }

@@ -191,7 +191,7 @@ func updateTransactionsTable() {
 		transactionsTable.SetCell(i+1, config.DESCRIPTION_COLUMN, cell)
 
 		cell = cview.NewTableCell(fmt.Sprint(&t.Cents))
-		if t.IsDebit() {
+		if t.Cents.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)
