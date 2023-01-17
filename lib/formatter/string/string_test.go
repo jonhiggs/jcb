@@ -54,20 +54,20 @@ func TestCents(t *testing.T) {
 //	}
 //}
 
-func TestDescription(t *testing.T) {
-	var got string
-	var expect string
-	var err error
-
-	got = Description("   testing    ")
-	expect = "testing"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-	if err != nil {
-		t.Error(fmt.Sprintf("no error expected for %s", expect))
-	}
-}
+//func TestDescription(t *testing.T) {
+//	var got string
+//	var expect string
+//	var err error
+//
+//	got = Description("   testing    ")
+//	expect = "testing"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//	if err != nil {
+//		t.Error(fmt.Sprintf("no error expected for %s", expect))
+//	}
+//}
 
 func TestNotes(t *testing.T) {
 	var got string

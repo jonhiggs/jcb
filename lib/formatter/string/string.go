@@ -35,10 +35,6 @@ func Cents(i int64) string {
 	return s
 }
 
-func Description(d string) string {
-	return strings.Trim(d, " ")
-}
-
 func Category(d string) string {
 	return strings.Trim(d, " ")
 }

@@ -20,6 +20,11 @@ func Description(s string) (string, error) {
 	return s, nil
 }
 
+// convert a description into a string
+func DescriptionString(d string) string {
+	return strings.Trim(d, " ")
+}
+
 // convert a date string into data
 func Date(s string) (time.Time, error) {
 	splitDate := strings.Split(strings.Trim(s, " "), "-")

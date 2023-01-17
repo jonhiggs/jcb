@@ -3,6 +3,7 @@ package transaction
 import (
 	"fmt"
 	"jcb/config"
+	"jcb/lib/format"
 	"jcb/lib/validate"
 )
 
@@ -11,7 +12,9 @@ type Description struct {
 }
 
 // Get the string of Description
-func (d *Description) GetText() string { return (*d).value }
+func (d *Description) GetText() string {
+	return format.DescriptionString((*d).value)
+}
 
 // Set the text of Description and return ok, error.
 func (d *Description) SetText(v string) error {
