@@ -6,40 +6,40 @@ import (
 	"testing"
 )
 
-func TestCents(t *testing.T) {
-	var got string
-	var expect string
-
-	got = Cents(0)
-	expect = "0.00"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Cents(10)
-	expect = "0.10"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Cents(100)
-	expect = "1.00"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Cents(-1)
-	expect = "-0.01"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-
-	got = Cents(-1)
-	expect = "-0.01"
-	if got != expect {
-		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
-	}
-}
+//func TestCents(t *testing.T) {
+//	var got string
+//	var expect string
+//
+//	got = Cents(0)
+//	expect = "0.00"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Cents(10)
+//	expect = "0.10"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Cents(100)
+//	expect = "1.00"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Cents(-1)
+//	expect = "-0.01"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//
+//	got = Cents(-1)
+//	expect = "-0.01"
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %s, expected %s", got, expect))
+//	}
+//}
 
 //func TestDate(t *testing.T) {
 //	var ts time.Time

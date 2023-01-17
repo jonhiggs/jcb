@@ -76,7 +76,7 @@ func readInsertForm() *transaction.Transaction {
 
 	t.Date.SetText(insertInputFieldDate.GetText())
 	t.Description.SetText(insertInputFieldDescription.GetText())
-	t.SetCents(dataf.Cents(insertInputFieldCents.GetText()))
+	t.Cents.SetText(insertInputFieldCents.GetText())
 	t.SetNotes(dataf.Notes(insertInputFieldNotes.GetText()))
 	t.SetCategory(dataf.Category(insertInputFieldCategory.GetText()))
 

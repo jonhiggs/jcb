@@ -1,9 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/config"
 	"jcb/lib/category"
-	stringf "jcb/lib/formatter/string"
+	"jcb/lib/format"
 	"jcb/lib/transaction"
 	"time"
 
@@ -90,20 +91,22 @@ func updateReportTable() {
 				cell = cview.NewTableCell(cat.Name)
 				cell.SetTextColor(config.COLOR_TITLE_FG)
 			} else {
-				var startTime time.Time
-				var endTime time.Time
+				// TODO: FIX THIS
+				//var startTime time.Time
+				//var endTime time.Time
 
-				switch col {
-				case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
-					startTime = time.Date(year, time.Month(col), 1, 0, 0, 0, 0, time.UTC)
-					endTime = startTime.AddDate(0, 1, 0)
-				case 13:
-					startTime = time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
-					endTime = startTime.AddDate(1, 0, 0)
-				}
+				//switch col {
+				//case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
+				//	startTime = time.Date(year, time.Month(col), 1, 0, 0, 0, 0, time.UTC)
+				//	endTime = startTime.AddDate(0, 1, 0)
+				//case 13:
+				//	startTime = time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+				//	endTime = startTime.AddDate(1, 0, 0)
+				//}
 
-				cents := cat.SumCents(startTime, endTime)
-				cell = cview.NewTableCell(" " + stringf.Cents(cents))
+				//cents, _ := cat.SumCents(startTime, endTime)
+				cents := 12345
+				cell = cview.NewTableCell(fmt.Sprint(cents))
 
 				if col == 13 {
 					cell.SetAttributes(tcell.AttrBold)
@@ -143,7 +146,7 @@ func updateReportTable() {
 		monthlyTransactions := transaction.All(startTime, endTime)
 		cents := transaction.SumCents(monthlyTransactions)
 
-		cell = cview.NewTableCell(" " + stringf.Cents(cents))
+		cell = cview.NewTableCell(" " + format.CentsString(cents))
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
 		cell.SetAttributes(tcell.AttrBold)

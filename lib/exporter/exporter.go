@@ -12,7 +12,7 @@ func Tsv() {
 			t.Date.GetText(),
 			t.GetCategory(false),
 			t.Description.GetText(),
-			t.GetAmount(false),
+			t.Cents.GetText(),
 			t.GetNotes(),
 		)
 	}

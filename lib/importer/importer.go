@@ -71,7 +71,7 @@ func Tsv(f string) bool {
 		t := new(transaction.Transaction)
 		t.Date.SetText(d[0])
 		t.Description.SetText(d[2])
-		t.SetAmount(d[3])
+		t.Cents.SetText(d[3])
 		t.SetNotes(d[4])
 		t.SetCategory(d[1])
 

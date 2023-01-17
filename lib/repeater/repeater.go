@@ -20,7 +20,7 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 		t := new(transaction.Transaction)
 		t.Date.SetValue(ts)
 		t.Description.SetText(tOG.Description.GetText())
-		t.SetCents(tOG.GetCents())
+		t.Cents.SetText(tOG.Cents.GetText())
 		t.SetNotes(tOG.GetNotes())
 		t.SetCategory(tOG.GetCategory(false))
 

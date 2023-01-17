@@ -10,21 +10,6 @@ import (
 	"strings"
 )
 
-func Cents(s string) int64 {
-	if validator.Cents(s) != nil {
-		log.Fatal(fmt.Sprintf("cannot convert invalid cents '%s' to data", s))
-	}
-
-	s = strings.Trim(s, " ")
-
-	if len(strings.Split(s, ".")) == 1 {
-		s = fmt.Sprintf("%s.00", s)
-	}
-
-	i, _ := strconv.ParseInt(strings.Replace(s, ".", "", 1), 10, 64)
-	return i
-}
-
 func Category(s string) string {
 	if validator.Category(s) != nil {
 		log.Fatal("cannot convert invalid cateogry to data")

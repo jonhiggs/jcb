@@ -40,7 +40,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		var id int64
 		var date string
 		var description string
-		var cents int64
+		var cents int
 		var notes string
 		var category string
 
@@ -61,7 +61,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t.id = id
 		t.Date.SetText(date)
 		t.Description.SetText(description)
-		t.SetCents(cents)
+		t.Cents.SetValue(cents)
 		t.SetNotes(notes)
 		t.SetCategory(category)
 
@@ -88,7 +88,7 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 func Find(id int64) (*Transaction, error) {
 	var date string
 	var description string
-	var cents int64
+	var cents int
 	var notes string
 	var category string
 
@@ -106,7 +106,7 @@ func Find(id int64) (*Transaction, error) {
 	t.id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
-	t.SetCents(cents)
+	t.Cents.SetValue(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
 
@@ -117,7 +117,7 @@ func FindFirst() (*Transaction, error) {
 	var id int64
 	var date string
 	var description string
-	var cents int64
+	var cents int
 	var notes string
 	var category string
 
@@ -135,7 +135,7 @@ func FindFirst() (*Transaction, error) {
 	t.id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
-	t.SetCents(cents)
+	t.Cents.SetValue(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
 
@@ -146,7 +146,7 @@ func FindLast() (*Transaction, error) {
 	var id int64
 	var date string
 	var description string
-	var cents int64
+	var cents int
 	var notes string
 	var category string
 
@@ -166,7 +166,7 @@ func FindLast() (*Transaction, error) {
 	t.id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
-	t.SetCents(cents)
+	t.Cents.SetValue(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
 
@@ -177,7 +177,7 @@ func FindLastCommitted() (*Transaction, error) {
 	var id int64
 	var date string
 	var description string
-	var cents int64
+	var cents int
 	var notes string
 	var category string
 
@@ -198,7 +198,7 @@ func FindLastCommitted() (*Transaction, error) {
 	t.id = id
 	t.Date.SetText(date)
 	t.Description.SetText(description)
-	t.SetCents(cents)
+	t.Cents.SetValue(cents)
 	t.SetNotes(notes)
 	t.SetCategory(category)
 

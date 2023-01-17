@@ -64,19 +64,22 @@ func updateDescription(description string, ids []int64) {
 }
 
 func updateCents(cents string, ids []int64) {
-	err := validator.Cents(cents)
+	orig := new(transaction.Cents)
+	err := orig.SetText(cents)
 	if err != nil {
-		printStatus(fmt.Sprintf("%s", err))
+		printStatus(fmt.Sprint(err))
 		return
 	}
 
-	value := dataf.Cents(cents)
 	skipped := 0
 
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
 
-		if t.SetCents(value) {
+		t.Cents.SetValue(orig.GetValue())
+
+		// TODO: create a function to detect whether the data has changed
+		if true {
 			t.Save()
 		} else {
 			skipped++

@@ -30,7 +30,7 @@ func (t *Transaction) Save() error {
 		res, err := statement.Exec(
 			t.Date.GetValue(),
 			t.Description.GetText(),
-			t.cents,
+			t.Cents.GetValue(),
 			t.notes,
 			db.TimeNow(),
 			t.category,
@@ -59,7 +59,7 @@ func (t *Transaction) Save() error {
 		_, err = statement.Exec(
 			t.Date.GetValue(),
 			t.Description.GetText(),
-			t.cents,
+			t.Cents.GetValue(),
 			t.notes,
 			t.category,
 			db.TimeNow(),
@@ -130,10 +130,10 @@ func DateRange() (time.Time, time.Time) {
 	return first.Date.GetValue(), last.Date.GetValue()
 }
 
-func SumCents(ts []*Transaction) int64 {
-	var sum int64
+func SumCents(ts []*Transaction) int {
+	var sum int
 	for _, t := range ts {
-		sum += t.GetCents()
+		sum += t.Cents.GetValue()
 	}
 	return sum
 }

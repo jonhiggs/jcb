@@ -5,34 +5,34 @@ import (
 	"testing"
 )
 
-func TestCents(t *testing.T) {
-	var got int64
-	var expect int64
-
-	got = Cents("0")
-	expect = 0
-	if got != expect {
-		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
-	}
-
-	got = Cents("30")
-	expect = 3000
-	if got != expect {
-		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
-	}
-
-	got = Cents("-10")
-	expect = -1000
-	if got != expect {
-		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
-	}
-
-	got = Cents("30.40")
-	expect = 3040
-	if got != expect {
-		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
-	}
-}
+//func TestCents(t *testing.T) {
+//	var got int64
+//	var expect int64
+//
+//	got = Cents("0")
+//	expect = 0
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+//	}
+//
+//	got = Cents("30")
+//	expect = 3000
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+//	}
+//
+//	got = Cents("-10")
+//	expect = -1000
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+//	}
+//
+//	got = Cents("30.40")
+//	expect = 3040
+//	if got != expect {
+//		t.Error(fmt.Sprintf("got %d, expected %d", got, expect))
+//	}
+//}
 
 //func TestDate(t *testing.T) {
 //	testA := Date("2022-04-30")

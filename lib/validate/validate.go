@@ -2,7 +2,9 @@
 package validate
 
 import (
+	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +25,17 @@ func Date(s string) error {
 	_, err := time.Parse("2006-01-02", s)
 	if err != nil {
 		return fmt.Errorf("validating date: %w", err)
+	}
+
+	return nil
+}
+
+func Cents(s string) error {
+	s = strings.Trim(s, " ")
+
+	re := regexp.MustCompile(`^-?[0-9]+(\.[0-9]{1,2})?$`)
+	if !re.MatchString(s) {
+		return errors.New("invalid amount")
 	}
 
 	return nil
