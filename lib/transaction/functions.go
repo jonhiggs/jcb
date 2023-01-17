@@ -33,7 +33,7 @@ func (t *Transaction) Save() error {
 			t.Cents.GetValue(),
 			t.Note.GetValue(),
 			db.TimeNow(),
-			t.category,
+			t.Category.GetValue(),
 		)
 		if err != nil {
 			return err
@@ -61,7 +61,7 @@ func (t *Transaction) Save() error {
 			t.Description.GetValue(),
 			t.Cents.GetValue(),
 			t.Note.GetValue(),
-			t.category,
+			t.Category.GetValue(),
 			db.TimeNow(),
 			t.id,
 		)

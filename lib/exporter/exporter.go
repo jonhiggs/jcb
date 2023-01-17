@@ -10,7 +10,7 @@ func Tsv() {
 	for _, t := range transaction.All(start, end) {
 		fmt.Printf("%s\t%s\t%s\t%s\t%s\n",
 			t.Date.GetText(),
-			t.GetCategory(false),
+			t.Category.GetText(),
 			t.Description.GetText(),
 			t.Cents.GetText(),
 			t.Note.GetText(),

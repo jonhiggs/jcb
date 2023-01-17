@@ -4,6 +4,7 @@ package validate
 import (
 	"errors"
 	"fmt"
+	"jcb/config"
 	"regexp"
 	"strconv"
 	"strings"
@@ -42,5 +43,13 @@ func Cents(s string) error {
 }
 
 func Note(s string) error {
+	return nil
+}
+
+func Category(s string) error {
+	if len(s) > config.CATEGORY_MAX_LENGTH {
+		return errors.New("category too long")
+	}
+
 	return nil
 }

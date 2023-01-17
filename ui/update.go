@@ -3,25 +3,25 @@ package ui
 import (
 	"fmt"
 	"jcb/db"
-	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
-	"jcb/lib/validator"
 )
 
-func updateCategory(category string, ids []int64) {
-	err := validator.Category(category)
+func updateCategory(s string, ids []int64) {
+	orig := new(transaction.Category)
+	err := orig.SetText(s)
 	if err != nil {
-		printStatus(fmt.Sprintf("%s", err))
+		printStatus(fmt.Sprint(err))
 		return
 	}
 
-	value := dataf.Category(category)
 	skipped := 0
 
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
 
-		if t.SetCategory(value) {
+		// TODO: create a function to detect whether the data has changed
+		t.Category.SetText(orig.GetValue())
+		if true {
 			t.Save()
 		} else {
 			skipped++

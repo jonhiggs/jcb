@@ -63,7 +63,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t.Description.SetValue(description)
 		t.Cents.SetValue(cents)
 		t.Note.SetValue(notes)
-		t.SetCategory(category)
+		t.Category.SetValue(category)
 
 		records = append(records, t)
 	}
@@ -76,7 +76,7 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 	var records []*Transaction
 
 	for _, t := range All(start, end) {
-		if t.GetCategory(false) == category {
+		if t.Category.GetText() == category {
 			records = append(records, t)
 		}
 	}
@@ -108,7 +108,7 @@ func Find(id int64) (*Transaction, error) {
 	t.Description.SetValue(description)
 	t.Cents.SetValue(cents)
 	t.Note.SetValue(notes)
-	t.SetCategory(category)
+	t.Category.SetValue(category)
 
 	return t, nil
 }
@@ -137,7 +137,7 @@ func FindFirst() (*Transaction, error) {
 	t.Description.SetValue(description)
 	t.Cents.SetValue(cents)
 	t.Note.SetValue(notes)
-	t.SetCategory(category)
+	t.Category.SetValue(category)
 
 	return t, nil
 }
@@ -168,7 +168,7 @@ func FindLast() (*Transaction, error) {
 	t.Description.SetText(description)
 	t.Cents.SetValue(cents)
 	t.Note.SetValue(notes)
-	t.SetCategory(category)
+	t.Category.SetValue(category)
 
 	return t, nil
 }
@@ -200,7 +200,7 @@ func FindLastCommitted() (*Transaction, error) {
 	t.Description.SetText(description)
 	t.Cents.SetValue(cents)
 	t.Note.SetValue(notes)
-	t.SetCategory(category)
+	t.Category.SetValue(category)
 
 	return t, nil
 }

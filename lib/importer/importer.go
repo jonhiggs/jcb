@@ -73,7 +73,7 @@ func Tsv(f string) bool {
 		t.Description.SetText(d[2])
 		t.Cents.SetText(d[3])
 		t.Note.SetText(d[4])
-		t.SetCategory(d[1])
+		t.Category.SetText(d[1])
 
 		if !t.IsUniq() {
 			fmt.Printf("Skipping line %d: Transaction is not unique\n", i)

@@ -5,10 +5,8 @@ package transaction
 
 import (
 	"fmt"
-	"jcb/config"
 	"jcb/db"
 	"log"
-	"strings"
 )
 
 // A transaction is an event that either has happened or you predict will
@@ -19,18 +17,18 @@ type Transaction struct {
 	Description Description
 	Cents       Cents
 	Note        Note
-	category    string
+	Category    Category
 }
 
 // Set the category. Returns true if value was changed.
-func (t *Transaction) SetCategory(s string) bool {
-	if t.category == s {
-		return false
-	}
-
-	t.category = s
-	return true
-}
+//func (t *Transaction) SetCategory(s string) bool {
+//	if t.category == s {
+//		return false
+//	}
+//
+//	t.category = s
+//	return true
+//}
 
 func (t *Transaction) GetID() int64 {
 	return t.id
@@ -38,19 +36,19 @@ func (t *Transaction) GetID() int64 {
 
 // Returns the transaction description. Expects a bool argument that when true
 // will pad the string for presentation in a table.
-func (t *Transaction) GetCategory(pad bool) string {
-	s := strings.Trim(t.category, " ")
-
-	if len(s) > config.CATEGORY_MAX_LENGTH {
-		s = s[0:config.CATEGORY_MAX_LENGTH]
-	}
-
-	if pad {
-		return fmt.Sprintf("%-*s", config.CATEGORY_MAX_LENGTH, s)
-	} else {
-		return s
-	}
-}
+//func (t *Transaction) GetCategory(pad bool) string {
+//	s := strings.Trim(t.category, " ")
+//
+//	if len(s) > config.CATEGORY_MAX_LENGTH {
+//		s = s[0:config.CATEGORY_MAX_LENGTH]
+//	}
+//
+//	if pad {
+//		return fmt.Sprintf("%-*s", config.CATEGORY_MAX_LENGTH, s)
+//	} else {
+//		return s
+//	}
+//}
 
 func (t *Transaction) Balance() int64 {
 	return 0

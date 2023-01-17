@@ -8,8 +8,6 @@ import (
 	"jcb/lib/validate"
 	inputBindings "jcb/ui/input-bindings"
 
-	dataf "jcb/lib/formatter/data"
-
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
 )
@@ -77,7 +75,7 @@ func readInsertForm() *transaction.Transaction {
 	t.Description.SetText(insertInputFieldDescription.GetText())
 	t.Cents.SetText(insertInputFieldCents.GetText())
 	t.Note.SetText(insertInputFieldNotes.GetText())
-	t.SetCategory(dataf.Category(insertInputFieldCategory.GetText()))
+	t.Category.SetText(insertInputFieldCategory.GetText())
 
 	return t
 }

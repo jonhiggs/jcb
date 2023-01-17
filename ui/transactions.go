@@ -170,7 +170,7 @@ func updateTransactionsTable() {
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.ATTR_COLUMN, cell)
 
-		cell = cview.NewTableCell(t.GetCategory(true))
+		cell = cview.NewTableCell(fmt.Sprint(&t.Category))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)

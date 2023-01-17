@@ -22,7 +22,7 @@ func Insert(id int64, repeatRule string, repeatUntil time.Time) error {
 		t.Description.SetText(tOG.Description.GetText())
 		t.Cents.SetText(tOG.Cents.GetText())
 		t.Note.SetText(tOG.Note.GetText())
-		t.SetCategory(tOG.GetCategory(false))
+		t.Category.SetText(tOG.Category.GetText())
 
 		t.Save()
 		if err != nil {

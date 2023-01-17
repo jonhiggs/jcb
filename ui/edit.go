@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 
-	dataf "jcb/lib/formatter/data"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	inputBindings "jcb/ui/input-bindings"
@@ -35,7 +34,7 @@ func handleOpenEdit() {
 	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.Cents.GetText())
 	editInputFieldNotes.SetText(t.Note.GetText())
-	editInputFieldCategory.SetText(t.GetCategory(false))
+	editInputFieldCategory.SetText(t.Category.GetText())
 }
 
 func closeEdit() {
@@ -49,7 +48,7 @@ func readEditForm() *transaction.Transaction {
 	t.Description.SetText(editInputFieldDescription.GetText())
 	t.Cents.SetText(editInputFieldCents.GetText())
 	t.Note.SetText(editInputFieldNotes.GetText())
-	t.SetCategory(dataf.Category(editInputFieldCategory.GetText()))
+	t.Category.SetText(editInputFieldCategory.GetText())
 
 	return t
 }
