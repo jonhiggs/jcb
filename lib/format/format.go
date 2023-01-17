@@ -9,22 +9,6 @@ import (
 	"time"
 )
 
-// convert a description string into data
-func Description(s string) (string, error) {
-	s = strings.Trim(s, " ")
-	err := validate.Description(s)
-	if err != nil {
-		return s, fmt.Errorf("formatting description: %w", err)
-	}
-
-	return s, nil
-}
-
-// convert a description into a string
-func DescriptionString(d string) string {
-	return strings.Trim(d, " ")
-}
-
 // convert a date string into data
 func Date(s string) (time.Time, error) {
 	splitDate := strings.Split(strings.Trim(s, " "), "-")

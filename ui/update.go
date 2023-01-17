@@ -35,8 +35,9 @@ func updateCategory(category string, ids []int64) {
 	updateTransactionsTable()
 }
 
-func updateDescription(description string, ids []int64) {
-	value, err := format.Description(description)
+func updateDescription(s string, ids []int64) {
+	orig := new(transaction.Description)
+	err := orig.SetText(s)
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return
@@ -47,14 +48,12 @@ func updateDescription(description string, ids []int64) {
 	for _, id := range ids {
 		t, _ := transaction.Find(id)
 
-		if t.Description.String() == value {
-			skipped++
+		// TODO: create a function to detect whether the data has changed
+		t.Description.SetText(orig.GetValue())
+		if true {
+			t.Save()
 		} else {
-			t.Description.SetText(value)
-			err = t.Save()
-			if err != nil {
-				panic(err)
-			}
+			skipped++
 		}
 	}
 

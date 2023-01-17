@@ -3,8 +3,8 @@ package transaction
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/format"
 	"jcb/lib/validate"
+	"strings"
 )
 
 type Description struct {
@@ -13,17 +13,23 @@ type Description struct {
 
 // Get the string of Description
 func (d *Description) GetText() string {
-	return format.DescriptionString((*d).value)
+	return (*d).value
+}
+
+// Get the string of Description
+func (d *Description) GetValue() string {
+	return (*d).GetText()
 }
 
 // Set the text of Description and return ok, error.
-func (d *Description) SetText(v string) error {
-	err := validate.Description(v)
+func (d *Description) SetText(s string) error {
+	s = strings.Trim(s, " ")
+	err := validate.Description(s)
 	if err != nil {
-		return fmt.Errorf("setting text to %s: %w", v, err)
+		return fmt.Errorf("setting description from string: %w", err)
 	}
 
-	(*d).value = v
+	(*d).value = s
 	return nil
 }
 

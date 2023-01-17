@@ -30,7 +30,7 @@ func (c *Cents) GetText() string {
 func (c *Cents) SetText(s string) error {
 	err := validate.Cents(s)
 	if err != nil {
-		return fmt.Errorf("formatting cents: %w", err)
+		return fmt.Errorf("setting cents from string: %w", err)
 	}
 
 	s = strings.Trim(s, " ")
