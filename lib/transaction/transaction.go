@@ -20,10 +20,6 @@ type Transaction struct {
 	Category    Category
 }
 
-func (t *Transaction) Balance() int64 {
-	return 0
-}
-
 // Returns true if the transaction has been committed. A committed transaction
 // is one that has been reconciled against the bank statement.
 func (t *Transaction) IsCommitted() bool {
