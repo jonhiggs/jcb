@@ -2,7 +2,7 @@ package transaction
 
 import (
 	"fmt"
-	"jcb/lib/validate"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -50,9 +50,8 @@ func (c *Cents) GetText() string {
 
 // Set the cents from a string.
 func (c *Cents) SetText(s string) error {
-	err := validate.Cents(s)
-	if err != nil {
-		return fmt.Errorf("setting cents from string: %w", err)
+	if !ValidCentString(s) {
+		return fmt.Errorf("invalid cents")
 	}
 
 	s = strings.Trim(s, " ")
@@ -84,4 +83,15 @@ func (c *Cents) IsCredit() bool {
 func (c *Cents) Add(i int) int {
 	(*c).value += i
 	return (*c).value
+}
+
+func ValidCentString(s string) bool {
+	s = strings.Trim(s, " ")
+
+	re := regexp.MustCompile(`^-?[0-9]+(\.[0-9]{1,2})?$`)
+	if !re.MatchString(s) {
+		return false
+	}
+
+	return true
 }

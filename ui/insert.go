@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/transaction"
-	"jcb/lib/validate"
 	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -43,54 +42,52 @@ func closeInsert() {
 	insertForm.SetFocus(0)
 }
 
-func checkInsertForm() bool {
+func readInsertForm() (*transaction.Transaction, error) {
 	var err error
-
-	err = validate.Date(insertInputFieldDate.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validate.Description(editInputFieldDescription.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validate.Cents(insertInputFieldCents.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	return true
-}
-
-func readInsertForm() *transaction.Transaction {
 	t := new(transaction.Transaction)
 
-	t.Date.SetText(insertInputFieldDate.GetText())
-	t.Description.SetText(insertInputFieldDescription.GetText())
-	t.Cents.SetText(insertInputFieldCents.GetText())
-	t.Note.SetText(insertInputFieldNotes.GetText())
-	t.Category.SetText(insertInputFieldCategory.GetText())
+	err = t.Date.SetText(insertInputFieldDate.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid date")
+	}
 
-	return t
+	err = t.Description.SetText(insertInputFieldDescription.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid description")
+	}
+
+	err = t.Cents.SetText(insertInputFieldCents.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid cents")
+	}
+
+	err = t.Note.SetText(insertInputFieldNotes.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid note")
+	}
+
+	err = t.Category.SetText(insertInputFieldCategory.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid category")
+	}
+
+	return t, nil
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	if !checkInsertForm() {
-		return nil
+	t, err := readInsertForm()
+
+	if err != nil {
+		printStatus(fmt.Sprint(err))
+	} else {
+		err := t.Save()
+		if err == nil {
+			updateTransactionsTable()
+			selectTransaction(t.Id)
+			closeInsert()
+		}
 	}
 
-	t := readInsertForm()
-	t.Save()
-
-	updateTransactionsTable()
-	selectTransaction(t.Id)
-
-	closeInsert()
 	return nil
 }
 

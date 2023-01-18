@@ -3,7 +3,6 @@ package transaction
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/validate"
 	"strings"
 )
 
@@ -24,9 +23,8 @@ func (n *Note) GetValue() string {
 // Set the text of Note
 func (n *Note) SetText(s string) error {
 	s = strings.Trim(s, " ")
-	err := validate.Note(s)
-	if err != nil {
-		return fmt.Errorf("setting note from string: %w", err)
+	if !ValidNote(s) {
+		return fmt.Errorf("invalid note")
 	}
 
 	(*n).value = s
@@ -46,4 +44,8 @@ func (n *Note) String() string {
 // Returns true if a note exists
 func (n *Note) Exists() bool {
 	return len((*n).value) != 0
+}
+
+func ValidNote(s string) bool {
+	return true
 }

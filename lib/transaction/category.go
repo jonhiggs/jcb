@@ -3,7 +3,6 @@ package transaction
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/validate"
 	"strings"
 )
 
@@ -24,9 +23,8 @@ func (c *Category) GetValue() string {
 // Set the text of Category
 func (c *Category) SetText(s string) error {
 	s = strings.Trim(s, " ")
-	err := validate.Category(s)
-	if err != nil {
-		return fmt.Errorf("setting category from string: %w", err)
+	if !ValidCategory(s) {
+		return fmt.Errorf("setting category from string")
 	}
 
 	(*c).value = s
@@ -41,4 +39,12 @@ func (c *Category) SetValue(s string) error {
 // To support the Stringer interface
 func (c *Category) String() string {
 	return fmt.Sprintf("%-*s", config.CATEGORY_MAX_LENGTH, c.value)
+}
+
+func ValidCategory(s string) bool {
+	if len(s) > config.CATEGORY_MAX_LENGTH {
+		return false
+	}
+
+	return true
 }

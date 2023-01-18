@@ -589,8 +589,7 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 			panels.HidePanel("prompt")
 			repeatUntilString := promptInputField.GetText()
 
-			err := validate.Date(repeatUntilString)
-			if err != nil {
+			if !transaction.ValidDateString(repeatUntilString) {
 				printStatus(fmt.Sprint(err))
 				return nil
 			}

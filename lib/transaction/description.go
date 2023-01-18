@@ -1,9 +1,9 @@
 package transaction
 
 import (
+	"errors"
 	"fmt"
 	"jcb/config"
-	"jcb/lib/validate"
 	"strings"
 )
 
@@ -24,9 +24,8 @@ func (d *Description) GetValue() string {
 // Set the text of Description
 func (d *Description) SetText(s string) error {
 	s = strings.Trim(s, " ")
-	err := validate.Description(s)
-	if err != nil {
-		return fmt.Errorf("setting description from string: %w", err)
+	if !ValidDescription(s) {
+		return errors.New("setting description from string")
 	}
 
 	(*d).value = s
@@ -41,4 +40,9 @@ func (d *Description) SetValue(s string) error {
 // To support the Stringer interface
 func (d *Description) String() string {
 	return fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, d.value)
+}
+
+// return ok if input is valid
+func ValidDescription(string) bool {
+	return true
 }

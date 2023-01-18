@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"errors"
 	"fmt"
 	"jcb/db"
 	"strings"
@@ -15,6 +16,10 @@ func (d *Date) GetValue() time.Time { return (*d).value }
 
 // Set the date.
 func (d *Date) SetValue(t time.Time) error {
+	if !ValidDate(t) {
+		return errors.New("invalid date")
+	}
+
 	(*d).value = t
 	return nil
 }
@@ -30,8 +35,14 @@ func (d *Date) SetText(s string) error {
 	var err error
 
 	if len(strings.Fields(s)) == 1 {
+		if !ValidDBDateString(s) {
+			fmt.Errorf("invalid date")
+		}
 		ts, err = time.Parse("2006-01-02", s)
 	} else {
+		if !ValidDateString(s) {
+			fmt.Errorf("invalid date")
+		}
 		ts, err = time.Parse(db.TimeLayout, s)
 	}
 
@@ -39,8 +50,7 @@ func (d *Date) SetText(s string) error {
 		return fmt.Errorf("setting date from string: %w", err)
 	}
 
-	(*d).value = ts
-	return nil
+	return (*d).SetValue(ts)
 }
 
 func (d *Date) Year() int {
@@ -49,4 +59,20 @@ func (d *Date) Year() int {
 
 func (d *Date) Unix() int64 {
 	return (*d).value.Unix()
+}
+
+// return ok if input is valid
+func ValidDateString(string) bool {
+	// TODO
+	return true
+}
+
+func ValidDBDateString(string) bool {
+	// TODO
+	return true
+}
+
+func ValidDate(time.Time) bool {
+	// TODO
+	return true
 }

@@ -5,7 +5,6 @@ import (
 	"jcb/config"
 
 	"jcb/lib/transaction"
-	"jcb/lib/validate"
 	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -42,55 +41,52 @@ func closeEdit() {
 	editForm.SetFocus(0)
 }
 
-func readEditForm() *transaction.Transaction {
+func readEditForm() (*transaction.Transaction, error) {
+	var err error
 	t := new(transaction.Transaction)
-	t.Date.SetText(editInputFieldDate.GetText())
-	t.Description.SetText(editInputFieldDescription.GetText())
-	t.Cents.SetText(editInputFieldCents.GetText())
-	t.Note.SetText(editInputFieldNotes.GetText())
-	t.Category.SetText(editInputFieldCategory.GetText())
 
-	return t
+	err = t.Date.SetText(editInputFieldDate.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid date")
+	}
+
+	err = t.Description.SetText(editInputFieldDescription.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid description")
+	}
+
+	err = t.Cents.SetText(editInputFieldCents.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid cents")
+	}
+
+	err = t.Note.SetText(editInputFieldNotes.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid note")
+	}
+
+	err = t.Category.SetText(editInputFieldCategory.GetText())
+	if err != nil {
+		return t, fmt.Errorf("invalid category")
+	}
+
+	return t, nil
 }
 
 func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	if !checkEditForm() {
-		return nil
-	}
-
-	t := readEditForm()
-	err := t.Save()
-	if err == nil {
-		updateTransactionsTable()
-		selectTransaction(t.Id)
-		closeEdit()
+	t, err := readEditForm()
+	if err != nil {
+		printStatus(fmt.Sprint(err))
 	} else {
-		printStatus(fmt.Sprint(err))
+		err := t.Save()
+		if err == nil {
+			updateTransactionsTable()
+			selectTransaction(t.Id)
+			closeEdit()
+		}
 	}
+
 	return nil
-}
-
-func checkEditForm() bool {
-	var err error
-	err = validate.Date(editInputFieldDate.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validate.Description(editInputFieldDescription.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validate.Cents(editInputFieldCents.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	return true
 }
 
 func createEditForm() *cview.Form {

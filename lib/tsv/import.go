@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"jcb/lib/transaction"
-	"jcb/lib/validate"
 	"log"
 	"os"
 	"strings"
@@ -31,19 +30,22 @@ func Import(f string) bool {
 			continue
 		}
 
-		if validate.Date(d[0]) != nil {
+		t := new(transaction.Transaction)
+		err = t.Date.SetText(d[0])
+		if err != nil {
 			fmt.Printf("Skipping line %d: Invalid date\n", i)
 			skipped += 1
 			continue
 		}
 
-		if validate.Category(d[1]) != nil {
+		err = t.Category.SetText(d[1])
+		if err != nil {
 			fmt.Printf("Skipping line %d: Invalid category\n", i)
 			skipped += 1
 			continue
 		}
 
-		err := validate.Description(d[2])
+		err = t.Description.SetText(d[2])
 		if err != nil {
 			err = fmt.Errorf("Skipping line %d: %w", i, err)
 			fmt.Println(err.Error())
@@ -51,14 +53,16 @@ func Import(f string) bool {
 			continue
 		}
 
-		if validate.Cents(d[3]) != nil {
+		err = t.Cents.SetText(d[3])
+		if err != nil {
 			fmt.Printf("Skipping line %d: Invalid amount\n", i)
 			skipped += 1
 			continue
 		}
 
 		if len(d) < 4 {
-			if validate.Note(d[4]) != nil {
+			err = t.Note.SetText(d[4])
+			if err != nil {
 				fmt.Printf("Skipping line %d: Invalid notes\n", i)
 				skipped += 1
 				continue
@@ -67,13 +71,6 @@ func Import(f string) bool {
 			d = append(d, "")
 		}
 
-		t := new(transaction.Transaction)
-		t.Date.SetText(d[0])
-		t.Description.SetText(d[2])
-		t.Cents.SetText(d[3])
-		t.Note.SetText(d[4])
-		t.Category.SetText(d[1])
-
 		if !t.IsUniq() {
 			fmt.Printf("Skipping line %d: Transaction is not unique\n", i)
 			skipped += 1
@@ -81,7 +78,6 @@ func Import(f string) bool {
 		}
 
 		t.Save()
-
 		imported += 1
 	}
 	if err := scanner.Err(); err != nil {
