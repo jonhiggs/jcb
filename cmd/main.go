@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/db"
-	"jcb/lib/exporter"
-	"jcb/lib/importer"
+	"jcb/lib/tsv"
 	"jcb/ui"
 	"log"
 	"os"
@@ -66,12 +65,12 @@ func main() {
 	}
 
 	if exportTsv {
-		exporter.Tsv()
+		tsv.Export()
 		return
 	}
 
 	if tsvFile != "" {
-		importer.Tsv(tsvFile)
+		tsv.Import(tsvFile)
 		db.Save()
 		db.RemoveWorkingFile()
 		return

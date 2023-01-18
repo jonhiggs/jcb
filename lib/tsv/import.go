@@ -1,4 +1,4 @@
-package importer
+package tsv
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func Tsv(f string) bool {
+func Import(f string) bool {
 	file, err := os.Open(f)
 	if err != nil {
 		log.Fatal(err)
