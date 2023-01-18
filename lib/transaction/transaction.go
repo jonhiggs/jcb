@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"jcb/db"
 	"log"
+	"time"
 )
 
 // A transaction is an event that either has happened or you predict will
@@ -50,7 +51,8 @@ func (t *Transaction) IsSaved() bool {
 		log.Fatal(fmt.Sprintf("IsSaved(): %s", err))
 	}
 
-	return db.ParseDate(field).UnixMicro() < db.SaveTime.UnixMicro()
+	saveTime, _ := time.Parse(db.TimeLayout, field)
+	return saveTime.UnixMicro() < db.SaveTime.UnixMicro()
 }
 
 // Returns the attributes string

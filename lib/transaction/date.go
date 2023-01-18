@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"fmt"
+	"jcb/db"
 	"strings"
 	"time"
 )
@@ -31,7 +32,7 @@ func (d *Date) SetText(s string) error {
 	if len(strings.Fields(s)) == 1 {
 		ts, err = time.Parse("2006-01-02", s)
 	} else {
-		ts, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", s)
+		ts, err = time.Parse(db.TimeLayout, s)
 	}
 
 	if err != nil {

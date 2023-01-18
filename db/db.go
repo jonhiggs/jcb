@@ -13,6 +13,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const TimeLayout = "2006-01-02 15:04:05.999999999-07:00"
+
 var Conn *sql.DB
 var workingFile string
 var saveFile string
@@ -153,4 +155,8 @@ func IsDirty() bool {
 	}
 
 	return count > 0
+}
+
+func TimeNow() string {
+	return time.Now().Format(TimeLayout)
 }
