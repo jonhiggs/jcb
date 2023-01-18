@@ -82,6 +82,7 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
+	balance.SetValue(0)
 	start, end := transaction.DateRange()
 	all := transaction.All(start, end)
 
