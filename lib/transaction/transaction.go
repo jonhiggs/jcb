@@ -15,10 +15,10 @@ import (
 type Transaction struct {
 	Id          int64 `default:-1`
 	Date        Date
-	Description Description
-	Cents       Cents
-	Note        Note
-	Category    Category
+	Description Description `default:""`
+	Cents       Cents       `default:0`
+	Note        Note        `default:""`
+	Category    Category    `default:""`
 }
 
 // Returns true if the transaction has been committed. A committed transaction

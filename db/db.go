@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
-	"jcb/domain"
 	"log"
 	"os"
 	"path/filepath"
@@ -57,10 +56,14 @@ func Init(file string) error {
 		return err
 	}
 
-	year := time.Now().Year()
-
-	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, "", ""}
-	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now(), time.Now())
+	_, err = statement.Exec(
+		0,
+		time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC),
+		"Opening Balance",
+		0,
+		time.Now(),
+		time.Now(),
+	)
 	if err != nil {
 		return err
 	}
