@@ -13,12 +13,12 @@ import (
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
-	Id          int64       `default:"-1"`
-	Date        Date        ``
-	Description Description `default:""`
-	Cents       Cents       `default:"0"`
-	Note        Note        `default:""`
-	Category    Category    `default:""`
+	Id          int64 `default:"-1"`
+	Date        Date
+	Description Description
+	Cents       Cents
+	Note        Note
+	Category    Category
 }
 
 type TextSetter interface {
