@@ -13,12 +13,36 @@ import (
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
-	Id          int64 `default:-1`
-	Date        Date
+	Id          int64       `default:"-1"`
+	Date        Date        ``
 	Description Description `default:""`
-	Cents       Cents       `default:0`
+	Cents       Cents       `default:"0"`
 	Note        Note        `default:""`
 	Category    Category    `default:""`
+}
+
+type TextSetter interface {
+	SetText(s string) error
+}
+
+// Set fields from text, returns error
+func (t *Transaction) SetText(data []string) error {
+	dataFields := []TextSetter{
+		&t.Date,
+		&t.Category,
+		&t.Description,
+		&t.Cents,
+		&t.Note,
+	}
+
+	for colN, f := range dataFields {
+		err := f.SetText(data[colN])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // Returns true if the transaction has been committed. A committed transaction

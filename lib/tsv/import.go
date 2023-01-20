@@ -31,44 +31,11 @@ func Import(f string) bool {
 		}
 
 		t := new(transaction.Transaction)
-		err = t.Date.SetText(d[0])
+		err := t.SetText(d)
 		if err != nil {
-			fmt.Printf("Skipping line %d: Invalid date\n", i)
+			fmt.Printf("Skipping line %d: %T\n", i)
 			skipped += 1
 			continue
-		}
-
-		err = t.Category.SetText(d[1])
-		if err != nil {
-			fmt.Printf("Skipping line %d: Invalid category\n", i)
-			skipped += 1
-			continue
-		}
-
-		err = t.Description.SetText(d[2])
-		if err != nil {
-			err = fmt.Errorf("Skipping line %d: %w", i, err)
-			fmt.Println(err.Error())
-			skipped += 1
-			continue
-		}
-
-		err = t.Cents.SetText(d[3])
-		if err != nil {
-			fmt.Printf("Skipping line %d: Invalid amount\n", i)
-			skipped += 1
-			continue
-		}
-
-		if len(d) < 4 {
-			err = t.Note.SetText(d[4])
-			if err != nil {
-				fmt.Printf("Skipping line %d: Invalid notes\n", i)
-				skipped += 1
-				continue
-			}
-		} else {
-			d = append(d, "")
 		}
 
 		if !t.IsUniq() {

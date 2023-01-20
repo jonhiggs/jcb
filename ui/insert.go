@@ -46,32 +46,16 @@ func readInsertForm() (*transaction.Transaction, error) {
 	var err error
 	t := new(transaction.Transaction)
 
-	err = t.Date.SetText(insertInputFieldDate.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid date")
-	}
+	err = t.SetText(
+		[]string{
+			insertInputFieldDate.GetText(),
+			insertInputFieldCategory.GetText(),
+			insertInputFieldDescription.GetText(),
+			insertInputFieldCents.GetText(),
+			insertInputFieldNotes.GetText(),
+		})
 
-	err = t.Description.SetText(insertInputFieldDescription.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid description")
-	}
-
-	err = t.Cents.SetText(insertInputFieldCents.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid cents")
-	}
-
-	err = t.Note.SetText(insertInputFieldNotes.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid note")
-	}
-
-	err = t.Category.SetText(insertInputFieldCategory.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid category")
-	}
-
-	return t, nil
+	return t, err
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {

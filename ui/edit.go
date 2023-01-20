@@ -45,32 +45,16 @@ func readEditForm() (*transaction.Transaction, error) {
 	var err error
 	t := new(transaction.Transaction)
 
-	err = t.Date.SetText(editInputFieldDate.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid date")
-	}
+	err = t.SetText(
+		[]string{
+			editInputFieldDate.GetText(),
+			editInputFieldCategory.GetText(),
+			editInputFieldDescription.GetText(),
+			editInputFieldCents.GetText(),
+			editInputFieldNotes.GetText(),
+		})
 
-	err = t.Description.SetText(editInputFieldDescription.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid description")
-	}
-
-	err = t.Cents.SetText(editInputFieldCents.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid cents")
-	}
-
-	err = t.Note.SetText(editInputFieldNotes.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid note")
-	}
-
-	err = t.Category.SetText(editInputFieldCategory.GetText())
-	if err != nil {
-		return t, fmt.Errorf("invalid category")
-	}
-
-	return t, nil
+	return t, err
 }
 
 func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
