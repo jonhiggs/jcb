@@ -3,7 +3,6 @@ package transaction
 import (
 	"errors"
 	"jcb/db"
-	"time"
 )
 
 // Update or Create a transaction in the Database.
@@ -122,18 +121,4 @@ func (t *Transaction) Uncommit() error {
 	//}
 
 	return nil
-}
-
-func DateRange() (time.Time, time.Time) {
-	first, _ := FindFirst()
-	last, _ := FindLast()
-	return first.Date.GetValue(), last.Date.GetValue()
-}
-
-func SumCents(ts []*Transaction) int {
-	var sum int
-	for _, t := range ts {
-		sum += t.Cents.GetValue()
-	}
-	return sum
 }

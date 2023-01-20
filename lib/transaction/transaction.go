@@ -112,3 +112,17 @@ func (t *Transaction) IsUniq() bool {
 
 	return count == 0
 }
+
+func DateRange() (time.Time, time.Time) {
+	first, _ := FindFirst()
+	last, _ := FindLast()
+	return first.Date.GetValue(), last.Date.GetValue()
+}
+
+func SumCents(ts []*Transaction) int {
+	var sum int
+	for _, t := range ts {
+		sum += t.Cents.GetValue()
+	}
+	return sum
+}
