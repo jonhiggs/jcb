@@ -50,7 +50,8 @@ func (d *Date) SetText(s string) error {
 		return fmt.Errorf("setting date from string: %w", err)
 	}
 
-	return (*d).SetValue(ts)
+	(*d).value = ts
+	return nil
 }
 
 func (d *Date) Year() int {
@@ -72,7 +73,11 @@ func ValidDBDateString(string) bool {
 	return true
 }
 
-func ValidDate(time.Time) bool {
-	// TODO
+func ValidDate(t time.Time) bool {
+	lastCommitted, err := FindLastCommitted()
+	if err != nil && t.Before(lastCommitted.Date.GetValue()) {
+		return false
+	}
+
 	return true
 }
