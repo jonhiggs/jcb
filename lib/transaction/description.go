@@ -24,7 +24,7 @@ func (d *Description) GetValue() string {
 // Set the text of Description
 func (d *Description) SetText(s string) error {
 	s = strings.Trim(s, " ")
-	if !ValidDescription(s) {
+	if !validDescription(s) {
 		return errors.New("setting description from string")
 	}
 
@@ -43,6 +43,6 @@ func (d *Description) String() string {
 }
 
 // return ok if input is valid
-func ValidDescription(string) bool {
+func validDescription(string) bool {
 	return true
 }
