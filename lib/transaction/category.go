@@ -3,6 +3,7 @@ package transaction
 import (
 	"fmt"
 	"jcb/config"
+	"regexp"
 	"strings"
 )
 
@@ -46,5 +47,6 @@ func ValidCategory(s string) bool {
 		return false
 	}
 
-	return true
+	re := regexp.MustCompile(`^[A-Za-z0-9\-]+$`)
+	return re.MatchString(s)
 }
