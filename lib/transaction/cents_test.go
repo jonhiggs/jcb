@@ -108,3 +108,16 @@ func TestCentsIsDebit(t *testing.T) {
 		t.Errorf("got %v, expected %v", got, expect)
 	}
 }
+
+func TestCentsAdd(t *testing.T) {
+	var got int
+	var expect int
+
+	c := Cents{1000}
+	got = c.Add(20)
+	expect = 1020
+
+	if got != expect {
+		t.Errorf("got %v, expected %v", got, expect)
+	}
+}
