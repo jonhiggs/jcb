@@ -24,7 +24,7 @@ func (c *Category) GetValue() string {
 // Set the text of Category
 func (c *Category) SetText(s string) error {
 	s = strings.Trim(s, " ")
-	if !ValidCategory(s) {
+	if !validCategory(s) {
 		return fmt.Errorf("setting category from string")
 	}
 
@@ -42,7 +42,7 @@ func (c *Category) String() string {
 	return fmt.Sprintf("%-*s", config.CATEGORY_MAX_LENGTH, c.value)
 }
 
-func ValidCategory(s string) bool {
+func validCategory(s string) bool {
 	if len(s) > config.CATEGORY_MAX_LENGTH {
 		return false
 	}
