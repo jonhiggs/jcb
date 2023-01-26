@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"errors"
+	"fmt"
 	"jcb/db"
 )
 
@@ -92,33 +93,34 @@ func (t *Transaction) Delete() error {
 
 // Commit a transaction
 func (t *Transaction) Commit() error {
-	if !t.IsCommittable() {
-		return errors.New("Commit older transactions first")
+	err := t.IsCommittable()
+	if err != nil {
+		return fmt.Errorf("committing transaction: %w", err)
 	}
 
-	return errors.New("Not implemented")
+	statement, _ := db.Conn.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
 
-	//balance := CommittedBalance() + cents
-	//statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
-
-	//_, err := statement.Exec(balance, timeNow(), timeNow(), id)
-	//if err != nil {
-	//	log.Fatal(fmt.Sprintf("Committransaction(): %s", err))
-	//}
+	_, err = statement.Exec(
+		t.Balance().GetValue(),
+		db.TimeNow(),
+		db.TimeNow(),
+		t.Id,
+	)
+	if err != nil {
+		panic(err)
+	}
 
 	return nil
 }
 
 // Uncommit a transaction
 func (t *Transaction) Uncommit() error {
-	return errors.New("Not implemented")
-	//balance := CommittedBalance() + cents
-	//statement, _ := db.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
+	statement, _ := db.Conn.Prepare("UPDATE transactions SET balance = NULL, committedAt = NULL, updatedAt = ? WHERE id = ? AND committedAt IS NOT NULL")
 
-	//_, err := statement.Exec(balance, timeNow(), timeNow(), id)
-	//if err != nil {
-	//	log.Fatal(fmt.Sprintf("Committransaction(): %s", err))
-	//}
+	_, err := statement.Exec(db.TimeNow(), t.Id)
+	if err != nil {
+		panic(err)
+	}
 
 	return nil
 }

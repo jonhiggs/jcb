@@ -202,8 +202,8 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprint(&balance))
-		if balance.IsDebit() {
+		cell = cview.NewTableCell(fmt.Sprint(t.Balance()))
+		if t.Cents.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)

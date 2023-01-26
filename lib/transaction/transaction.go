@@ -4,6 +4,7 @@
 package transaction
 
 import (
+	"errors"
 	"fmt"
 	"jcb/db"
 	"log"
@@ -104,15 +105,32 @@ func (t *Transaction) GetAttributeString() string {
 }
 
 // Returns true if transaction is immediately ready to be committed.
-func (t *Transaction) IsCommittable() bool {
-	lc, _ := FindLastCommitted()
-	for _, tt := range All(lc.Date.GetValue(), t.Date.GetValue()) {
-		if tt.Date.GetValue().Unix() > t.Date.GetValue().Unix() {
-			return false
-		}
+func (t *Transaction) IsCommittable() error {
+	if t.IsCommitted() {
+		return errors.New("Transaction is already committed")
 	}
 
-	return true
+	lastCommitted, _ := FindLastCommitted()
+	startTime := lastCommitted.Date.GetValue()
+	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
+	for _, tt := range All(startTime, endTime) {
+		if tt.IsCommitted() {
+			continue
+		}
+
+		if tt.Id == t.Id {
+			break
+		}
+
+		panic(fmt.Sprintf("id: %d: date: %s", tt.Id, tt.Date.GetText()))
+
+		// return false if there are any transactions before 't'.
+		if tt.Date.GetValue().After(t.Date.GetValue()) {
+			return fmt.Errorf("id: %d: date: %s", tt.Id, tt.Date.GetText())
+			return errors.New("you must first commit all older transactions first")
+		}
+	}
+	return nil
 }
 
 // Return false if a similar transaction already exists.
@@ -149,4 +167,60 @@ func SumCents(ts []*Transaction) int {
 		sum += t.Cents.GetValue()
 	}
 	return sum
+}
+
+func (t *Transaction) Balance() *Cents {
+	b := new(Cents)
+
+	// the opening balance
+	if t.Id == 0 {
+		return &t.Cents
+	}
+
+	if t.IsCommitted() {
+		var balance int
+
+		statement, _ := db.Conn.Prepare(`
+			SELECT balance 
+			FROM transactions WHERE id = ?
+		`)
+
+		err := statement.QueryRow(t.Id).Scan(&balance)
+		if err != nil {
+			panic(err)
+		}
+
+		b.SetValue(balance)
+		return b
+	}
+
+	lastCommitted, err := FindLastCommitted()
+	if err != nil {
+		b.SetValue(0)
+	} else {
+		var balance int
+
+		statement, _ := db.Conn.Prepare(`
+			SELECT balance 
+			FROM transactions WHERE id = ?
+		`)
+
+		err := statement.QueryRow(lastCommitted.Id).Scan(&balance)
+		if err != nil {
+			panic(err)
+		}
+
+		b.SetValue(balance)
+	}
+
+	startTime := lastCommitted.Date.GetValue()
+	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
+	for _, t := range All(startTime, endTime) {
+		if t.IsCommitted() {
+			continue
+		}
+		b.Add(t.Cents.GetValue())
+	}
+
+	return b
 }
