@@ -345,6 +345,7 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		printStatus(fmt.Sprint(err))
 	}
 
+	updateTransactionsTable()
 	return nil
 }
 
