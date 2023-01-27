@@ -8,6 +8,7 @@ import (
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
+	"github.com/mcuadros/go-defaults"
 )
 
 var insertForm *cview.Form
@@ -45,6 +46,7 @@ func closeInsert() {
 func readInsertForm() (*transaction.Transaction, error) {
 	var err error
 	t := new(transaction.Transaction)
+	defaults.SetDefaults(t)
 
 	err = t.SetText(
 		[]string{
