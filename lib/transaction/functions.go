@@ -95,7 +95,7 @@ func (t *Transaction) Delete() error {
 func (t *Transaction) Commit() error {
 	err := t.IsCommittable()
 	if err != nil {
-		return fmt.Errorf("committing transaction: %w", err)
+		return fmt.Errorf("commit failed: %w", err)
 	}
 
 	statement, _ := db.Conn.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")

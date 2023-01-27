@@ -122,14 +122,12 @@ func (t *Transaction) IsCommittable() error {
 			break
 		}
 
-		panic(fmt.Sprintf("id: %d: date: %s", tt.Id, tt.Date.GetText()))
-
 		// return false if there are any transactions before 't'.
-		if tt.Date.GetValue().After(t.Date.GetValue()) {
-			return fmt.Errorf("id: %d: date: %s", tt.Id, tt.Date.GetText())
-			return errors.New("you must first commit all older transactions first")
+		if t.Date.GetValue().After(tt.Date.GetValue()) {
+			return errors.New("you must first commit all older transactions")
 		}
 	}
+
 	return nil
 }
 
