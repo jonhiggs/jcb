@@ -582,7 +582,7 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 
 		lastUncommitted, err := transaction.FindLastUncommitted()
 		if err != nil {
-			panic("You should not make it here. You cannot repeat a committed transaction so there must be uncommitted transactions!")
+			panic("You cannot make it here. You cannot repeat a committed transaction so there must be uncommitted transactions!")
 		}
 
 		text := fmt.Sprintf("%d-12-31", lastUncommitted.Date.Year())
