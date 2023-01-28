@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestExpandDaily(t *testing.T) {
+func TestRepeatDaily(t *testing.T) {
 	d := new(Transaction)
 	d.Date.SetText("2022-01-01")
 	d.Description.SetText("the description")
@@ -14,7 +14,7 @@ func TestExpandDaily(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Expand("1d", 1, time.Date(2022, 12, 31, 23, 59, 59, 59, time.UTC))
+	got, err := d.Repeat("1d", 1, time.Date(2022, 12, 31, 23, 59, 59, 59, time.UTC))
 
 	if len(got) != 364 {
 		t.Errorf("expected 364 but got %d", len(got))
@@ -35,7 +35,7 @@ func TestExpandDaily(t *testing.T) {
 	}
 }
 
-func TestExpandFourDaily(t *testing.T) {
+func TestRepeatFourDaily(t *testing.T) {
 	d := new(Transaction)
 	d.Date.SetText("2022-01-01")
 	d.Description.SetText("the description")
@@ -44,7 +44,7 @@ func TestExpandFourDaily(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Expand("4d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("4d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 7 {
 		t.Errorf("expected 7 but got %d", len(got))
@@ -60,14 +60,14 @@ func TestExpandFourDaily(t *testing.T) {
 	}
 }
 
-func TestExpandZeroDaily(t *testing.T) {
+func TestRepeatZeroDaily(t *testing.T) {
 	d := new(Transaction)
 	d.Date.SetText("2022-01-01")
 	d.Description.SetText("the description")
 	d.Cents.SetValue(1200)
 	d.Category.SetText("test")
 
-	got, err := d.Expand("0d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("0d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 0 {
 		t.Errorf("expected 0 but got %d", len(got))
@@ -79,7 +79,7 @@ func TestExpandZeroDaily(t *testing.T) {
 
 }
 
-func TestExpandWeekly(t *testing.T) {
+func TestRepeatWeekly(t *testing.T) {
 	d := new(Transaction)
 	d.Date.SetText("2022-01-01")
 	d.Description.SetText("the description")
@@ -88,7 +88,7 @@ func TestExpandWeekly(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Expand("1w", 1, time.Date(2022, 3, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("1w", 1, time.Date(2022, 3, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 8 {
 		t.Errorf("expected 8 but got %d", len(got))
@@ -104,7 +104,7 @@ func TestExpandWeekly(t *testing.T) {
 	}
 }
 
-func TestExpandMonthly(t *testing.T) {
+func TestRepeatMonthly(t *testing.T) {
 	d := new(Transaction)
 	d.Date.SetText("2022-01-31")
 	d.Description.SetText("the description")
@@ -113,7 +113,7 @@ func TestExpandMonthly(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Expand("1m", 1, time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("1m", 1, time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 12 {
 		t.Errorf("expected 12 but got %d", len(got))
