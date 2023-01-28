@@ -212,12 +212,13 @@ func (t *Transaction) Balance() *Cents {
 	}
 
 	startTime := lastCommitted.Date.GetValue()
-	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
-	for _, t := range All(startTime, endTime) {
-		if t.IsCommitted() {
+	endTime := t.Date.GetValue()
+
+	for _, tt := range All(startTime, endTime) {
+		if tt.IsCommitted() {
 			continue
 		}
-		b.Add(t.Cents.GetValue())
+		b.Add(tt.Cents.GetValue())
 	}
 
 	return b

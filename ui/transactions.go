@@ -13,10 +13,8 @@ import (
 
 var transactionsTable *cview.Table
 var transactionIds []int64
-var balance transaction.Cents
 
 func createTransactionsTable() *cview.Table {
-	balance.SetValue(0)
 	transactionsTable = cview.NewTable()
 	transactionsTable.Select(0, 0)
 	transactionsTable.SetBorders(false)
@@ -82,7 +80,6 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	balance.SetValue(0)
 	start, end := transaction.DateRange()
 	all := transaction.All(start, end)
 
@@ -138,8 +135,6 @@ func updateTransactionsTable() {
 
 	transactionIds = make([]int64, len(all)+1)
 	for i, t := range all {
-		balance.Add(t.Cents.GetValue())
-
 		var colorFg tcell.Color
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
@@ -202,8 +197,9 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprint(t.Balance()))
-		if t.Cents.IsDebit() {
+		balance := t.Balance()
+		cell = cview.NewTableCell(fmt.Sprint(balance))
+		if balance.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)
