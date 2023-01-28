@@ -7,9 +7,8 @@ import (
 
 // take a transaction and a some repeat parameters, then return an expanded
 // list of repeated transactions.
-func Expand(t *Transaction, rule string, multiplier int, end time.Time) ([]*Transaction, error) {
+func (t *Transaction) Expand(rule string, multiplier int, end time.Time) ([]*Transaction, error) {
 	var transactions []*Transaction
-	transactions = append(transactions, t)
 
 	// TODO: validate the rule
 

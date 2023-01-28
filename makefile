@@ -2,7 +2,7 @@ run: test
 	go run ./cmd/main.go -f ./test.db
 
 test: 
-	go test ./lib/transaction ./lib/repeater
+	go test ./lib/transaction
 	@#go test ./ui/input-bindings
 	@#go test ./ui/acceptanceFunction
 
