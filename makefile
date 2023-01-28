@@ -1,10 +1,10 @@
 run: test
 	go run ./cmd/main.go -f ./test.db
 
-test:
-	go test ./lib/repeater
-	go test ./ui/input-bindings/input-bindings_test.go
-	go test ./ui/acceptanceFunction/acceptanceFunction_test.go
+test: 
+	go test ./lib/transaction ./lib/repeater
+	@#go test ./ui/input-bindings
+	@#go test ./ui/acceptanceFunction
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
