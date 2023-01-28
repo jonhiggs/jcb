@@ -227,6 +227,12 @@ func selectionId() int64 {
 	return transactionIds[r]
 }
 
+// get Transaction of the selection
+func selectionTransaction() *transaction.Transaction {
+	t, _ := transaction.Find(selectionId())
+	return t
+}
+
 func isCommitted(r int) bool {
 	if transactionsTable.GetCell(r, config.ATTR_COLUMN).GetText()[0:1] == "C" {
 		return true

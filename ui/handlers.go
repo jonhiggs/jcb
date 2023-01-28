@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/find"
-	"jcb/lib/repeater"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -598,9 +596,9 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 			repeatUntil := new(transaction.Date)
 			repeatUntil.SetText(repeatUntilString)
 
-			err = repeater.Insert(selectionId(), repeatRuleValue, repeatUntil.GetValue())
-			if err != nil {
-				log.Fatal(err)
+			transactionSlice, _ := selectionTransaction().Repeat(repeatRuleValue, repeatUntil.GetValue())
+			for _, tr := range transactionSlice {
+				tr.Save()
 			}
 
 			updateTransactionsTable()

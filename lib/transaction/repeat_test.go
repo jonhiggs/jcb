@@ -14,7 +14,7 @@ func TestRepeatDaily(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Repeat("1d", 1, time.Date(2022, 12, 31, 23, 59, 59, 59, time.UTC))
+	got, err := d.Repeat("1d", time.Date(2022, 12, 31, 23, 59, 59, 59, time.UTC))
 
 	if len(got) != 364 {
 		t.Errorf("expected 364 but got %d", len(got))
@@ -44,7 +44,7 @@ func TestRepeatFourDaily(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Repeat("4d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("4d", time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 7 {
 		t.Errorf("expected 7 but got %d", len(got))
@@ -67,7 +67,7 @@ func TestRepeatZeroDaily(t *testing.T) {
 	d.Cents.SetValue(1200)
 	d.Category.SetText("test")
 
-	got, err := d.Repeat("0d", 1, time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("0d", time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 0 {
 		t.Errorf("expected 0 but got %d", len(got))
@@ -88,7 +88,7 @@ func TestRepeatWeekly(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Repeat("1w", 1, time.Date(2022, 3, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("1w", time.Date(2022, 3, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 8 {
 		t.Errorf("expected 8 but got %d", len(got))
@@ -113,7 +113,7 @@ func TestRepeatMonthly(t *testing.T) {
 
 	var expect string
 
-	got, err := d.Repeat("1m", 1, time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))
+	got, err := d.Repeat("1m", time.Date(2023, 2, 1, 0, 0, 0, 0, time.UTC))
 
 	if len(got) != 12 {
 		t.Errorf("expected 12 but got %d", len(got))

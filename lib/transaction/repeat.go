@@ -7,7 +7,7 @@ import (
 
 // take a transaction and a some repeat parameters, then return an expanded
 // list of repeated transactions.
-func (t *Transaction) Repeat(rule string, multiplier int, end time.Time) ([]*Transaction, error) {
+func (t *Transaction) Repeat(rule string, end time.Time) ([]*Transaction, error) {
 	var transactions []*Transaction
 
 	// TODO: validate the rule
@@ -23,13 +23,13 @@ func (t *Transaction) Repeat(rule string, multiplier int, end time.Time) ([]*Tra
 
 		switch u {
 		case "d":
-			d = t.Date.GetValue().AddDate(0, 0, (multiplier * i * f))
+			d = t.Date.GetValue().AddDate(0, 0, (i * f))
 		case "w":
-			d = t.Date.GetValue().AddDate(0, 0, (multiplier * i * (f * 7)))
+			d = t.Date.GetValue().AddDate(0, 0, (i * (f * 7)))
 		case "m":
-			d = t.Date.GetValue().AddDate(0, (multiplier * i * f), 0)
+			d = t.Date.GetValue().AddDate(0, (i * f), 0)
 		case "y":
-			d = t.Date.GetValue().AddDate((multiplier * i * f), 0, 0)
+			d = t.Date.GetValue().AddDate((i * f), 0, 0)
 		}
 
 		if d.After(end) {
