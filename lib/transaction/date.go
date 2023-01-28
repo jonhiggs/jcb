@@ -1,7 +1,6 @@
 package transaction
 
 import (
-	"errors"
 	"fmt"
 	"jcb/db"
 	"strings"
@@ -16,10 +15,6 @@ func (d *Date) GetValue() time.Time { return (*d).value }
 
 // Set the date.
 func (d *Date) SetValue(t time.Time) error {
-	if !ValidDate(t) {
-		return errors.New("invalid date")
-	}
-
 	(*d).value = t
 	return nil
 }
