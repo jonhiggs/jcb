@@ -57,7 +57,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 			log.Fatal(fmt.Sprintf("All(): %s", err))
 		}
 
-		t := new(Transaction)
+		t := NewTransaction()
 		t.Id = id
 		t.Date.SetText(date)
 		t.Description.SetValue(description)

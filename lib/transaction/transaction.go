@@ -20,10 +20,18 @@ type Transaction struct {
 	Cents       Cents
 	Note        Note
 	Category    Category
+	Tagged      bool
 }
 
 type TextSetter interface {
 	SetText(s string) error
+}
+
+func NewTransaction() *Transaction {
+	t := new(Transaction)
+	t.Id = -1
+	t.Tagged = false
+	return t
 }
 
 // Set fields from text, returns error
