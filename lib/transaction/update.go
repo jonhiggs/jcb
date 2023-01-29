@@ -43,9 +43,6 @@ func UpdateDate(s string, ts []*Transaction) []*Transaction {
 
 func UpdateCents(s string, ts []*Transaction) []*Transaction {
 	var modifedTransactions []*Transaction
-
-	// TODO: prevent data from being set too early
-
 	for _, t := range ts {
 		if t.Cents.GetText() != s {
 			t.Cents.SetText(s)
