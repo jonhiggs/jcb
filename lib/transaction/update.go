@@ -6,7 +6,6 @@ func UpdateCategory(s string, ts []*Transaction) []*Transaction {
 	for _, t := range ts {
 		if t.Category.GetText() != s {
 			t.Category.SetText(s)
-			t.Save()
 			modifedTransactions = append(modifedTransactions, t)
 		}
 	}

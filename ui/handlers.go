@@ -512,6 +512,9 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), taggedTransactions())
 				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions() {
+						t.Save()
+					}
 					updateTransactionsTable()
 				}
 				return nil
