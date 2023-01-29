@@ -502,15 +502,25 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 		case '=':
 			openPrompt("Amount:", selectionTransaction().Cents.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				cents := promptInputField.GetText()
-				updateCents(cents, taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateCents(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case '@':
 			openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				date := promptInputField.GetText()
-				updateDate(date, taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateDate(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		}
@@ -521,6 +531,18 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				removeTag(r)
 			}
 		}
+
+		openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
+			panels.HidePanel("prompt")
+			modifiedTransactions := transaction.UpdateDate(promptInputField.GetText(), taggedTransactions())
+			if len(modifiedTransactions) > 0 {
+				for _, t := range modifiedTransactions {
+					t.Save()
+				}
+				updateTransactionsTable()
+			}
+			return nil
+		})
 	}
 
 	transactionsTable.Select(startingRow, 0)
