@@ -21,6 +21,7 @@ type Transaction struct {
 	Note        Note
 	Category    Category
 	Tagged      bool
+	FindMatch   bool
 }
 
 type TextSetter interface {
@@ -31,6 +32,7 @@ func NewTransaction() *Transaction {
 	t := new(Transaction)
 	t.Id = -1
 	t.Tagged = false
+	// TODO: set find match
 	return t
 }
 

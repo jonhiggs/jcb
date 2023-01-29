@@ -71,9 +71,9 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	for i, t := range transactions {
+	for _, t := range transactions {
 		if !t.IsCommitted() {
-			selectTransaction(i)
+			selectTransaction(t.Id)
 			return nil
 		}
 	}
@@ -301,7 +301,6 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	transactionsTable.RemoveRow(curRow)
-	removeTag(transactions[curRow].Id)
 	updateTransactionsTable()
 	transactionsTable.Select(r, 0)
 
@@ -399,12 +398,7 @@ func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	if isTagged(t.Id) {
-		removeTag(t.Id)
-	} else {
-		applyTag(t.Id)
-	}
-
+	t.Tagged = !t.Tagged
 	updateTransactionsTable()
 	handleSelectNext(ev)
 
@@ -457,14 +451,14 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 	case *tcell.EventKey:
 		switch e.Rune() {
 		case 'x':
-			for _, r := range taggedTransactionIds {
-				selectTransaction(transactions[r].Id)
+			for _, t := range taggedTransactions() {
+				selectTransaction(t.Id)
 				handleDeleteTransaction(e)
 				startingRow, _ = transactionsTable.GetSelection()
 			}
 		case 't':
-			for _, r := range taggedTransactionIds {
-				removeTag(r)
+			for _, t := range taggedTransactions() {
+				t.Tagged = false
 			}
 		case 'D':
 
@@ -519,8 +513,8 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 
 		switch e.Key() {
 		case tcell.KeyCtrlT:
-			for _, r := range taggedTransactionIds {
-				removeTag(r)
+			for _, t := range taggedTransactions() {
+				t.Tagged = false
 			}
 		}
 

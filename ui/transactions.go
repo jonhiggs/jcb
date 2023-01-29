@@ -152,7 +152,7 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_MODIFIED_BG
 		}
 
-		if isTagged(t.Id) {
+		if t.Tagged {
 			colorFg = config.COLOR_TAGGED_FG
 			colorBg = config.COLOR_TAGGED_BG
 		}
