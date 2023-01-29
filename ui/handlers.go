@@ -377,6 +377,10 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 		modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), t)
 		printStatus(fmt.Sprintf("Updated category for %d transactions", len(modifiedTransactions)))
 		if len(modifiedTransactions) > 0 {
+			for _, t := range modifiedTransactions {
+				t.Save()
+			}
+
 			updateTransactionsTable()
 		}
 		return nil
@@ -394,8 +398,16 @@ func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
 
 	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateDescription(promptInputField.GetText(), []int64{transactionIds[r]})
+		t := []*transaction.Transaction{selectionTransaction()}
+		modifiedTransactions := transaction.UpdateDescription(promptInputField.GetText(), t)
+		printStatus(fmt.Sprintf("Updated description for %d transactions", len(modifiedTransactions)))
+		if len(modifiedTransactions) > 0 {
+			for _, t := range modifiedTransactions {
+				t.Save()
+			}
+
+			updateTransactionsTable()
+		}
 		return nil
 	})
 
@@ -512,7 +524,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), taggedTransactions())
 				if len(modifiedTransactions) > 0 {
-					for _, t := range modifiedTransactions() {
+					for _, t := range modifiedTransactions {
 						t.Save()
 					}
 					updateTransactionsTable()
@@ -522,7 +534,13 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 		case 'd':
 			openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				updateDescription(promptInputField.GetText(), taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateDescription(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case '=':

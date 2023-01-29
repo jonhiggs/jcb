@@ -12,3 +12,16 @@ func UpdateCategory(s string, ts []*Transaction) []*Transaction {
 
 	return modifedTransactions
 }
+
+func UpdateDescription(s string, ts []*Transaction) []*Transaction {
+	var modifedTransactions []*Transaction
+
+	for _, t := range ts {
+		if t.Description.GetText() != s {
+			t.Description.SetText(s)
+			modifedTransactions = append(modifedTransactions, t)
+		}
+	}
+
+	return modifedTransactions
+}
