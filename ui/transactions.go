@@ -14,6 +14,9 @@ var transactionsTable *cview.Table
 var transactions []*transaction.Transaction
 
 func createTransactionsTable() *cview.Table {
+	start, end := transaction.DateRange()
+	transactions = transaction.All(start, end)
+
 	transactionsTable = cview.NewTable()
 	transactionsTable.Select(0, 0)
 	transactionsTable.SetBorders(false)
@@ -79,9 +82,6 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	start, end := transaction.DateRange()
-	transactions = transaction.All(start, end)
-
 	var cell *cview.TableCell
 
 	cell = cview.NewTableCell("")

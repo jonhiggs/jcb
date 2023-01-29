@@ -83,27 +83,11 @@ func (t *Transaction) IsSaved() bool {
 		return false
 	}
 
-	if !t.Description.Saved {
-		return false
+	if t.Description.Saved && t.Cents.Saved && t.Category.Saved && t.Date.Saved && t.Note.Saved {
+		return true
 	}
 
-	if !t.Cents.Saved {
-		return false
-	}
-
-	if !t.Category.Saved {
-		return false
-	}
-
-	if !t.Date.Saved {
-		return false
-	}
-
-	if !t.Note.Saved {
-		return false
-	}
-
-	return true
+	return false
 }
 
 // Returns the attributes string
