@@ -193,7 +193,7 @@ func FindLastCommitted() (*Transaction, error) {
 
 	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("FindLastCommitted(): %s", err))
+		panic(err)
 	}
 
 	t := new(Transaction)
