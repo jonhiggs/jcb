@@ -20,7 +20,7 @@ var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
 	t, _ := transaction.Find(selectionId())
-	if t.IsCommitted() {
+	if t.Committed {
 		printStatus("Cannot edit a committed transaction")
 		return
 	}

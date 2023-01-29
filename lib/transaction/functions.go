@@ -8,7 +8,7 @@ import (
 
 // Update or Create a transaction in the Database.
 func (t *Transaction) Save() error {
-	if t.IsCommitted() {
+	if t.Committed {
 		return errors.New("Cannot modify committed transactions")
 	}
 
@@ -76,7 +76,7 @@ func (t *Transaction) Save() error {
 
 // Delete a transaction
 func (t *Transaction) Delete() error {
-	if t.IsCommitted() {
+	if t.Committed {
 		return errors.New("Cannot delete committed transactions")
 	}
 	statement, err := db.Conn.Prepare(`

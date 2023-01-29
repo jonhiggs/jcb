@@ -17,9 +17,9 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 	var records []*Transaction
 
 	statement, err := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category
+		SELECT id, date, description, cents, notes, category, committedAt
 		FROM (
-			SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999") AS committedAt
+			SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
 			FROM transactions
 			ORDER BY committedAt ASC, date ASC, cents DESC
 		)
@@ -43,6 +43,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		var cents int
 		var notes string
 		var category string
+		var committedAt string
 
 		err = rows.Scan(
 			&id,
@@ -51,6 +52,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 			&cents,
 			&notes,
 			&category,
+			&committedAt,
 		)
 
 		if err != nil {
@@ -64,6 +66,8 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t.Cents.SetValue(cents)
 		t.Note.SetValue(notes)
 		t.Category.SetValue(category)
+
+		t.Committed = (committedAt != "2999-12-31")
 
 		t.Date.Saved = true
 		t.Description.Saved = true
@@ -97,13 +101,14 @@ func Find(id int) (*Transaction, error) {
 	var cents int
 	var notes string
 	var category string
+	var committedAt string
 
 	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category 
+		SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
 		FROM transactions WHERE id = ?
 	`)
 
-	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category)
+	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category, &committedAt)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Find(): %s", err))
 	}
@@ -115,6 +120,14 @@ func Find(id int) (*Transaction, error) {
 	t.Cents.SetValue(cents)
 	t.Note.SetValue(notes)
 	t.Category.SetValue(category)
+
+	t.Committed = (committedAt == "2999-12-31")
+
+	t.Date.Saved = true
+	t.Description.Saved = true
+	t.Cents.Saved = true
+	t.Note.Saved = true
+	t.Category.Saved = true
 
 	return t, nil
 }

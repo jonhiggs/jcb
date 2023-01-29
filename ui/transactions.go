@@ -138,7 +138,7 @@ func updateTransactionsTable() {
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
-		if t.IsCommitted() {
+		if t.Committed {
 			colorFg = config.COLOR_COMMITTED_FG
 			colorBg = config.COLOR_COMMITTED_BG
 			attributes = 0
@@ -194,9 +194,8 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
-		balance := t.Balance()
-		cell = cview.NewTableCell(fmt.Sprint(balance))
-		if balance.IsDebit() {
+		cell = cview.NewTableCell(fmt.Sprint(t.Balance()))
+		if t.Balance().IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)

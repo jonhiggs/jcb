@@ -72,7 +72,7 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	for _, t := range transactions {
-		if !t.IsCommitted() {
+		if !t.Committed {
 			selectTransaction(t.Id)
 			return nil
 		}
@@ -311,7 +311,7 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	var err error
 	t, _ := transaction.Find(selectionId())
 
-	if t.IsCommitted() {
+	if t.Committed {
 		err = t.Uncommit()
 	} else {
 		err = t.Commit()
@@ -340,7 +340,7 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleEditSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	t := selectionTransaction()
-	if t.IsCommitted() {
+	if t.Committed {
 		printStatus("Cannot edit committed transactions")
 		return nil
 	}
@@ -393,7 +393,7 @@ func handleEditSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 	t := selectionTransaction()
-	if t.IsCommitted() {
+	if t.Committed {
 		printStatus("Cannot tag committed transactions")
 		return nil
 	}

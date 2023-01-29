@@ -1,6 +1,3 @@
-// Package transactions2 is a refactor of transactions which will soon be
-// discarded. It's purpose is for fetching and manipulating transactions which
-// are stored in the transactionbase.
 package transaction
 
 import (
@@ -14,7 +11,7 @@ import (
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
-	Id          int `default:"-1"`
+	Id          int
 	Date        Date
 	Description Description
 	Cents       Cents
@@ -22,6 +19,7 @@ type Transaction struct {
 	Category    Category
 	Tagged      bool
 	FindMatch   bool
+	Committed   bool
 }
 
 type TextSetter interface {
@@ -56,25 +54,6 @@ func (t *Transaction) SetText(data []string) error {
 	return nil
 }
 
-// Returns true if the transaction has been committed. A committed transaction
-// is one that has been reconciled against the bank statement.
-func (t *Transaction) IsCommitted() bool {
-	var field string
-	if t.Id == -1 {
-		return false
-	}
-	statement, _ := db.Conn.Prepare(`
-		SELECT IFNULL(committedAt,"") FROM transactions
-		WHERE id = ?
-	`)
-	err := statement.QueryRow(t.Id).Scan(&field)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("IsCommitted(): %s", err))
-	}
-
-	return field != ""
-}
-
 // Returns true if the transaction has been saved to the permanent transactionbase. A
 // working transactionbase is used on startup which is only flushed to the save file
 // with the `:w` command.
@@ -93,7 +72,7 @@ func (t *Transaction) IsSaved() bool {
 // Returns the attributes string
 func (t *Transaction) GetAttributeString() string {
 	s := ""
-	if t.IsCommitted() {
+	if t.Committed {
 		s += "C"
 	} else {
 		s += " "
@@ -116,7 +95,7 @@ func (t *Transaction) GetAttributeString() string {
 
 // Returns true if transaction is immediately ready to be committed.
 func (t *Transaction) IsCommittable() error {
-	if t.IsCommitted() {
+	if t.Committed {
 		return errors.New("Transaction is already committed")
 	}
 
@@ -124,7 +103,7 @@ func (t *Transaction) IsCommittable() error {
 	startTime := lastCommitted.Date.GetValue()
 	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
 	for _, tt := range All(startTime, endTime) {
-		if tt.IsCommitted() {
+		if tt.Committed {
 			continue
 		}
 
@@ -178,14 +157,14 @@ func SumCents(ts []*Transaction) int {
 }
 
 func (t *Transaction) Balance() *Cents {
-	b := new(Cents)
+	b := NewCents()
 
 	// the opening balance
 	if t.Id == 0 {
 		return &t.Cents
 	}
 
-	if t.IsCommitted() {
+	if t.Committed {
 		var balance int
 
 		statement, _ := db.Conn.Prepare(`
@@ -195,7 +174,7 @@ func (t *Transaction) Balance() *Cents {
 
 		err := statement.QueryRow(t.Id).Scan(&balance)
 		if err != nil {
-			panic(err)
+			panic(fmt.Sprintf("%s for %d", err, t.Id))
 		}
 
 		b.SetValue(balance)
@@ -216,10 +195,11 @@ func (t *Transaction) Balance() *Cents {
 
 		err := statement.QueryRow(lastCommitted.Id).Scan(&balance)
 		if err != nil {
-			panic(err)
+			panic(fmt.Sprintf("%s for %d", err, t.Id))
 		}
 
 		b.SetValue(balance)
+		return b
 	}
 
 	// Add the rolling tally of the uncommitted transactions to the balance.
@@ -240,7 +220,7 @@ func (t *Transaction) Balance() *Cents {
 
 	err = statement.QueryRow(t.Id).Scan(&balance)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("%s for %d", err, t.Id))
 	}
 
 	b.Add(balance)

@@ -20,7 +20,7 @@ func tagMatches(id int) {
 	matchCount := 0
 
 	for r, t := range transactions {
-		if t.IsCommitted() || t.Tagged {
+		if t.Committed || t.Tagged {
 			continue
 		}
 

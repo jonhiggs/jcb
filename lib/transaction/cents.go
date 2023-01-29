@@ -15,6 +15,7 @@ type Cents struct {
 func NewCents() *Cents {
 	c := new(Cents)
 	c.Saved = true
+	c.value = 0
 	return c
 }
 
