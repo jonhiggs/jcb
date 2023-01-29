@@ -347,35 +347,46 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
+func handleEditSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 	if isCommitted(r) {
 		printStatus("Cannot edit committed transactions")
 		return nil
 	}
 
-	openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCents(promptInputField.GetText(), []int64{transactionIds[r]})
-		return nil
-	})
+	var function func(s string, ts []*transaction.Transaction) []*transaction.Transaction
+	var label string
+	var dataType string
+	var placeholderText string
 
-	return nil
-}
-
-func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
+	switch ev.Rune() {
+	case '@':
+		function = transaction.UpdateDate
+		label = "Date:"
+		dataType = "date"
+		placeholderText = selectedDate()
+	case '=':
+		function = transaction.UpdateCents
+		label = "Amount:"
+		dataType = "amount"
+		placeholderText = selectedAmount()
+	case 'd':
+		function = transaction.UpdateDescription
+		label = "Description:"
+		dataType = "description"
+		placeholderText = selectedDescription()
+	case 'D':
+		function = transaction.UpdateCategory
+		label = "Category:"
+		dataType = "category"
+		placeholderText = selectedCategory()
 	}
 
-	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt(label, placeholderText, func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		t := []*transaction.Transaction{selectionTransaction()}
-		modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), t)
-		printStatus(fmt.Sprintf("Updated category for %d transactions", len(modifiedTransactions)))
+		modifiedTransactions := function(promptInputField.GetText(), t)
+		printStatus(fmt.Sprintf("Updated %s for %d transactions", dataType, len(modifiedTransactions)))
 		if len(modifiedTransactions) > 0 {
 			for _, t := range modifiedTransactions {
 				t.Save()
@@ -383,62 +394,6 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 
 			updateTransactionsTable()
 		}
-		return nil
-	})
-
-	return nil
-}
-
-func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		t := []*transaction.Transaction{selectionTransaction()}
-		modifiedTransactions := transaction.UpdateDescription(promptInputField.GetText(), t)
-		printStatus(fmt.Sprintf("Updated description for %d transactions", len(modifiedTransactions)))
-		if len(modifiedTransactions) > 0 {
-			for _, t := range modifiedTransactions {
-				t.Save()
-			}
-
-			updateTransactionsTable()
-		}
-		return nil
-	})
-
-	return nil
-}
-
-func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-
-		date := new(transaction.Date)
-		err := date.SetText(promptInputField.GetText())
-		if err != nil {
-			printStatus(fmt.Sprintf("%s", err))
-			return nil
-		}
-
-		lastCommitted, _ := transaction.FindLastCommitted()
-		if lastCommitted.Date.Unix() > date.Unix() {
-			printStatus("Date must not be before the last committed transaction")
-			return nil
-		}
-
-		updateDate(date.GetText(), []int64{transactionIds[r]})
 		return nil
 	})
 
