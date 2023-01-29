@@ -20,6 +20,7 @@ func (t *Transaction) Repeat(rule string, end time.Time) ([]*Transaction, error)
 		var d time.Time
 		i++
 		newT := *t
+		newT.Id = -1
 
 		switch u {
 		case "d":

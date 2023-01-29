@@ -7,6 +7,7 @@ import (
 
 func TestRepeatDaily(t *testing.T) {
 	d := new(Transaction)
+	d.Id = 123
 	d.Date.SetText("2022-01-01")
 	d.Description.SetText("the description")
 	d.Cents.SetValue(1200)
@@ -18,6 +19,10 @@ func TestRepeatDaily(t *testing.T) {
 
 	if len(got) != 364 {
 		t.Errorf("expected 364 but got %d", len(got))
+	}
+
+	if got[0].Id != -1 {
+		t.Errorf("expected %d but got %d", -1, got[0].Id)
 	}
 
 	expect = "2022-01-02"
