@@ -6,6 +6,12 @@ test:
 	@#go test ./ui/input-bindings
 	@#go test ./ui/acceptanceFunction
 
+build:
+	go build -o ./jcb ./cmd/main.go
+
+profile: build
+	./jcb -f ./test.db -p test.prof
+
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
          release/jcb_openbsd_amd64
