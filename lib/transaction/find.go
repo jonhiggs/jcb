@@ -123,7 +123,9 @@ func FindFirst() (*Transaction, error) {
 
 	statement, _ := db.Conn.Prepare(`
 		SELECT id, date, description, cents, notes, category 
-		FROM transactions ORDER BY date LIMIT 1
+		FROM transactions
+		ORDER BY date
+		LIMIT 1
 	`)
 
 	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
@@ -185,8 +187,8 @@ func FindLastCommitted() (*Transaction, error) {
 		SELECT id, date, description, cents, notes, category 
 		FROM transactions
 		WHERE committedAt IS NOT NULL
-		ORDER BY committedAt
-		DESC LIMIT 1
+		ORDER BY committedAt DESC
+		LIMIT 1
 	`)
 
 	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
@@ -218,12 +220,12 @@ func FindLastUncommitted() (*Transaction, error) {
 		FROM transactions
 		WHERE committedAt IS NULL
 		ORDER BY date ASC, cents DESC
-		DESC LIMIT 1
+		LIMIT 1
 	`)
 
 	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
 	if err != nil {
-		log.Fatal(fmt.Sprintf("FindLastUncommitted(): %s", err))
+		panic(err)
 	}
 
 	t := new(Transaction)
