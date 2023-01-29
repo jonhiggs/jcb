@@ -10,7 +10,9 @@ build:
 	go build -o ./jcb ./cmd/main.go
 
 profile: build
+	rm profile*.pdf
 	./jcb -f ./test.db -p test.prof
+	go tool pprof --pdf test.prof
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
