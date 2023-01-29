@@ -221,11 +221,10 @@ func selectTransaction(id int64) {
 // get the id of the selection
 func selectionId() int64 {
 	r, _ := transactionsTable.GetSelection()
-	return transactions[r].Id
+	return transactions[r-1].Id
 }
 
 // get Transaction of the selection
 func selectionTransaction() *transaction.Transaction {
-	t, _ := transaction.Find(selectionId())
-	return t
+	return transactions[selectionId()]
 }
