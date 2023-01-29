@@ -70,7 +70,11 @@ func (t *Transaction) IsCommitted() bool {
 // with the `:w` command.
 func (t *Transaction) IsSaved() bool {
 	var field string
-	statement, _ := db.Conn.Prepare("SELECT updatedAt FROM transactions WHERE id = ?")
+	statement, _ := db.Conn.Prepare(`
+		SELECT updatedAt
+		FROM transactions
+		WHERE id = ?
+	`)
 	err := statement.QueryRow(t.Id).Scan(&field)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("IsSaved(): %s", err))
@@ -192,6 +196,7 @@ func (t *Transaction) Balance() *Cents {
 		return b
 	}
 
+	// set balance to that of the last committed transaction
 	lastCommitted, err := FindLastCommitted()
 	if err != nil {
 		b.SetValue(0)
@@ -211,15 +216,27 @@ func (t *Transaction) Balance() *Cents {
 		b.SetValue(balance)
 	}
 
-	startTime := lastCommitted.Date.GetValue()
-	endTime := t.Date.GetValue()
+	// Add the rolling tally of the uncommitted transactions to the balance.
+	var balance int
+	statement, err := db.Conn.Prepare(`
+		SELECT total FROM (
+			SELECT id, SUM(cents) OVER (
+				ORDER BY committedAt ASC, date ASC, cents DESC
+				ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+			) as total
+			FROM transactions WHERE committedAt IS NULL)
+		WHERE id = ?;
+	`)
 
-	for _, tt := range All(startTime, endTime) {
-		if tt.IsCommitted() {
-			continue
-		}
-		b.Add(tt.Cents.GetValue())
+	if err != nil {
+		panic(err)
 	}
 
+	err = statement.QueryRow(t.Id).Scan(&balance)
+	if err != nil {
+		panic(err)
+	}
+
+	b.Add(balance)
 	return b
 }
