@@ -9,6 +9,13 @@ import (
 
 type Cents struct {
 	value int
+	Saved bool
+}
+
+func NewCents() *Cents {
+	c := new(Cents)
+	c.Saved = true
+	return c
 }
 
 // Get the cents.
@@ -17,6 +24,7 @@ func (c *Cents) GetValue() int { return (*c).value }
 // Set the cents.
 func (c *Cents) SetValue(i int) error {
 	(*c).value = i
+	(*c).Saved = false
 	return nil
 }
 
@@ -63,6 +71,7 @@ func (c *Cents) SetText(s string) error {
 	s = strings.Replace(s, ".", "", 1)
 	i, _ := strconv.Atoi(s)
 
+	(*c).Saved = false
 	(*c).value = i
 
 	return nil
@@ -82,6 +91,7 @@ func (c *Cents) IsCredit() bool {
 
 func (c *Cents) Add(i int) int {
 	(*c).value += i
+	(*c).Saved = false
 	return (*c).value
 }
 

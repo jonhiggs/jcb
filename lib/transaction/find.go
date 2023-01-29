@@ -37,7 +37,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id int64
+		var id int
 		var date string
 		var description string
 		var cents int
@@ -65,6 +65,12 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t.Note.SetValue(notes)
 		t.Category.SetValue(category)
 
+		t.Date.Saved = true
+		t.Description.Saved = true
+		t.Cents.Saved = true
+		t.Note.Saved = true
+		t.Category.Saved = true
+
 		records = append(records, t)
 	}
 
@@ -85,7 +91,7 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 }
 
 // Return a transaction from a transaction ID.
-func Find(id int64) (*Transaction, error) {
+func Find(id int) (*Transaction, error) {
 	var date string
 	var description string
 	var cents int
@@ -114,7 +120,7 @@ func Find(id int64) (*Transaction, error) {
 }
 
 func FindFirst() (*Transaction, error) {
-	var id int64
+	var id int
 	var date string
 	var description string
 	var cents int
@@ -145,7 +151,7 @@ func FindFirst() (*Transaction, error) {
 }
 
 func FindLast() (*Transaction, error) {
-	var id int64
+	var id int
 	var date string
 	var description string
 	var cents int
@@ -176,7 +182,7 @@ func FindLast() (*Transaction, error) {
 }
 
 func FindLastCommitted() (*Transaction, error) {
-	var id int64
+	var id int
 	var date string
 	var description string
 	var cents int
@@ -208,7 +214,7 @@ func FindLastCommitted() (*Transaction, error) {
 }
 
 func FindLastUncommitted() (*Transaction, error) {
-	var id int64
+	var id int
 	var date string
 	var description string
 	var cents int

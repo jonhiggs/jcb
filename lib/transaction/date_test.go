@@ -7,7 +7,7 @@ import (
 )
 
 func TestDateNew(t *testing.T) {
-	d := new(Date)
+	d := NewDate()
 
 	got := d.value.Format("2006-01-02")
 	expect := "0001-01-01"
@@ -15,10 +15,14 @@ func TestDateNew(t *testing.T) {
 	if got != expect {
 		t.Errorf("got %s, expected %s", got, expect)
 	}
+
+	if !d.Saved {
+		t.Errorf("got %v, expected %v", d.Saved, true)
+	}
 }
 
 func TestDateGetText(t *testing.T) {
-	d := new(Date)
+	d := NewDate()
 	d.value = time.Date(2020, 2, 3, 0, 0, 0, 0, time.UTC)
 
 	got := d.GetText()
@@ -30,7 +34,7 @@ func TestDateGetText(t *testing.T) {
 }
 
 func TestDateSetText(t *testing.T) {
-	d := new(Date)
+	d := NewDate()
 	var err error
 	var got string
 	var expect string
@@ -46,6 +50,10 @@ func TestDateSetText(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("received unexpected error: %s", err)
+	}
+
+	if d.Saved {
+		t.Errorf("got %v, expected %v", d.Saved, false)
 	}
 
 	// a database date
@@ -71,7 +79,7 @@ func TestDateSetText(t *testing.T) {
 }
 
 func TestDateYear(t *testing.T) {
-	d := new(Date)
+	d := NewDate()
 	d.value = time.Date(2020, 2, 3, 0, 0, 0, 0, time.UTC)
 
 	got := d.Year()
@@ -83,7 +91,7 @@ func TestDateYear(t *testing.T) {
 }
 
 func TestDateUnix(t *testing.T) {
-	d := new(Date)
+	d := NewDate()
 	d.value = time.Date(2020, 2, 3, 0, 0, 0, 0, time.UTC)
 
 	got := d.Unix()

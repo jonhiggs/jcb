@@ -7,7 +7,14 @@ import (
 )
 
 type Note struct {
-	value string `default:`
+	value string
+	Saved bool
+}
+
+func NewNote() *Note {
+	n := new(Note)
+	n.Saved = true
+	return n
 }
 
 // Get the string of Note
@@ -28,6 +35,7 @@ func (n *Note) SetText(s string) error {
 	}
 
 	(*n).value = s
+	(*n).Saved = false
 	return nil
 }
 

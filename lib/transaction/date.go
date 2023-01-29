@@ -9,6 +9,13 @@ import (
 
 type Date struct {
 	value time.Time
+	Saved bool
+}
+
+func NewDate() *Date {
+	d := new(Date)
+	d.Saved = true
+	return d
 }
 
 func (d *Date) GetValue() time.Time { return (*d).value }
@@ -16,6 +23,7 @@ func (d *Date) GetValue() time.Time { return (*d).value }
 // Set the date.
 func (d *Date) SetValue(t time.Time) error {
 	(*d).value = t
+	(*d).Saved = false
 	return nil
 }
 
@@ -46,6 +54,7 @@ func (d *Date) SetText(s string) error {
 	}
 
 	(*d).value = ts
+	(*d).Saved = false
 	return nil
 }
 

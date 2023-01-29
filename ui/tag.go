@@ -6,9 +6,9 @@ import (
 	"jcb/lib/transaction"
 )
 
-var taggedTransactionIds []int64
+var taggedTransactionIds []int
 
-func isTagged(id int64) bool {
+func isTagged(id int) bool {
 	for _, i := range taggedTransactionIds {
 		if i == id {
 			return true
@@ -27,13 +27,13 @@ func taggedTransactions() []*transaction.Transaction {
 	return ts
 }
 
-func applyTag(id int64) {
+func applyTag(id int) {
 	taggedTransactionIds = append(taggedTransactionIds, id)
 	updateInfo()
 }
 
-func removeTag(id int64) {
-	var newTransactionIds []int64
+func removeTag(id int) {
+	var newTransactionIds []int
 	for _, i := range taggedTransactionIds {
 		if i != id {
 			newTransactionIds = append(newTransactionIds, i)
@@ -43,7 +43,7 @@ func removeTag(id int64) {
 	updateInfo()
 }
 
-func toggleTag(id int64) {
+func toggleTag(id int) {
 	if isTagged(id) {
 		removeTag(id)
 	} else {
@@ -51,7 +51,7 @@ func toggleTag(id int64) {
 	}
 }
 
-func tagMatches(id int64) {
+func tagMatches(id int) {
 	matchCount := 0
 
 	for r, t := range transactions {
@@ -70,7 +70,7 @@ func tagMatches(id int64) {
 	updateTransactionsTable()
 }
 
-func untagMatches(id int64) {
+func untagMatches(id int) {
 	matchCount := 0
 
 	for _, i := range taggedTransactionIds {

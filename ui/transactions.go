@@ -209,7 +209,7 @@ func updateTransactionsTable() {
 }
 
 // select transaction by id
-func selectTransaction(id int64) {
+func selectTransaction(id int) {
 	for i, t := range transactions {
 		if t.Id == id {
 			transactionsTable.Select(i, 0)
@@ -219,7 +219,7 @@ func selectTransaction(id int64) {
 }
 
 // get the id of the selection
-func selectionId() int64 {
+func selectionId() int {
 	r, _ := transactionsTable.GetSelection()
 	return transactions[r-1].Id
 }

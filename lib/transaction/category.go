@@ -9,6 +9,13 @@ import (
 
 type Category struct {
 	value string
+	Saved bool
+}
+
+func NewCategory() *Category {
+	c := new(Category)
+	c.Saved = true
+	return c
 }
 
 // Get the string of Category
@@ -29,6 +36,7 @@ func (c *Category) SetText(s string) error {
 	}
 
 	(*c).value = s
+	(*c).Saved = false
 	return nil
 }
 

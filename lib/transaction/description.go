@@ -9,6 +9,13 @@ import (
 
 type Description struct {
 	value string
+	Saved bool
+}
+
+func NewDescription() *Description {
+	d := new(Description)
+	d.Saved = true
+	return d
 }
 
 // Get the string of Description
@@ -28,6 +35,7 @@ func (d *Description) SetText(s string) error {
 		return errors.New("setting description from string")
 	}
 
+	(*d).Saved = false
 	(*d).value = s
 	return nil
 }

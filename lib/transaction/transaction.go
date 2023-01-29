@@ -14,7 +14,7 @@ import (
 // A transaction is an event that either has happened or you predict will
 // happen.
 type Transaction struct {
-	Id          int64 `default:"-1"`
+	Id          int `default:"-1"`
 	Date        Date
 	Description Description
 	Cents       Cents
@@ -69,19 +69,31 @@ func (t *Transaction) IsCommitted() bool {
 // working transactionbase is used on startup which is only flushed to the save file
 // with the `:w` command.
 func (t *Transaction) IsSaved() bool {
-	var field string
-	statement, _ := db.Conn.Prepare(`
-		SELECT updatedAt
-		FROM transactions
-		WHERE id = ?
-	`)
-	err := statement.QueryRow(t.Id).Scan(&field)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("IsSaved(): %s", err))
+	if t.Id == -1 {
+		return false
 	}
 
-	saveTime, _ := time.Parse(db.TimeLayout, field)
-	return saveTime.UnixMicro() < db.SaveTime.UnixMicro()
+	if !t.Description.Saved {
+		return false
+	}
+
+	if !t.Cents.Saved {
+		return false
+	}
+
+	if !t.Category.Saved {
+		return false
+	}
+
+	if !t.Date.Saved {
+		return false
+	}
+
+	if !t.Note.Saved {
+		return false
+	}
+
+	return true
 }
 
 // Returns the attributes string

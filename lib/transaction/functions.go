@@ -39,7 +39,8 @@ func (t *Transaction) Save() error {
 			return err
 		}
 
-		t.Id, _ = res.LastInsertId()
+		id, _ := res.LastInsertId()
+		t.Id = int(id)
 	} else {
 		statement, err := db.Conn.Prepare(`
 			UPDATE transactions

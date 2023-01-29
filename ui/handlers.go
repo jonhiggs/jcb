@@ -73,7 +73,7 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
 	for i, t := range transactions {
 		if !t.IsCommitted() {
-			selectTransaction(int64(i))
+			selectTransaction(i)
 			return nil
 		}
 	}
@@ -178,18 +178,13 @@ func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-
-	for i := r - 1; i != r; i-- {
-		if i == 0 {
-			i = len(transactions) - 1
-			continue
+	for i := selectionId() + 1; i != selectionId(); i++ {
+		if !transactions[i].IsSaved() {
+			transactionsTable.Select(i, 0)
 		}
 
-		t, _ := transaction.Find(selectionId())
-		if !t.IsSaved() {
-			transactionsTable.Select(i, 0)
-			return nil
+		if i == len(transactions)-1 {
+			i = -1
 		}
 	}
 

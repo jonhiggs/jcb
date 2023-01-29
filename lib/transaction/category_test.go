@@ -3,13 +3,17 @@ package transaction
 import "testing"
 
 func TestCategoryNew(t *testing.T) {
-	c := new(Category)
+	c := NewCategory()
 
 	got := c.value
 	expect := ""
 
 	if got != expect {
 		t.Errorf("got %s, expected %s", got, expect)
+	}
+
+	if !c.Saved {
+		t.Errorf("got %v, expected %v", c.Saved, true)
 	}
 }
 
@@ -19,7 +23,7 @@ func TestCategorySetText(t *testing.T) {
 	var err error
 
 	{
-		c := new(Category)
+		c := NewCategory()
 		_ = c.SetText("category")
 		got = c.GetText()
 		expect = "category"
@@ -30,7 +34,7 @@ func TestCategorySetText(t *testing.T) {
 	}
 
 	{
-		c := new(Category)
+		c := NewCategory()
 		err = c.SetText("one two")
 		got = c.GetText()
 		expect = ""
@@ -45,7 +49,7 @@ func TestCategorySetText(t *testing.T) {
 	}
 
 	{
-		c := new(Category)
+		c := NewCategory()
 		err = c.SetText("a-really-long-long-category")
 		got = c.GetText()
 		expect = ""
@@ -60,7 +64,7 @@ func TestCategorySetText(t *testing.T) {
 	}
 
 	{
-		c := new(Category)
+		c := NewCategory()
 		err = c.SetText("&&***")
 		got = c.GetText()
 		expect = ""

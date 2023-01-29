@@ -2,19 +2,14 @@ package transaction
 
 import "testing"
 
-func TestCentsNew(t *testing.T) {
-	c := new(Cents)
-
-	got := c.value
-	expect := 0
-
-	if got != expect {
-		t.Errorf("got %d, expected %d", got, expect)
-	}
-}
-
 func TestCentsGetText(t *testing.T) {
-	c := Cents{123}
+	c := NewCents()
+
+	if !c.Saved {
+		t.Errorf("got %v, expected %v", c.Saved, true)
+	}
+
+	c.SetValue(123)
 
 	got := c.GetText()
 	expect := "1.23"
@@ -23,16 +18,24 @@ func TestCentsGetText(t *testing.T) {
 		t.Errorf("got %s, expected %s", got, expect)
 	}
 
+	if c.Saved {
+		t.Errorf("got %v, expected %v", c.Saved, false)
+	}
+
 }
 
 func TestCentsSetText(t *testing.T) {
-	c := new(Cents)
+	c := NewCents()
 	var got string
 	var expect string
 
 	_ = c.SetText("1.23")
 	got = c.GetText()
 	expect = "1.23"
+
+	if c.Saved {
+		t.Errorf("got %v, expected %v", c.Saved, false)
+	}
 
 	if got != expect {
 		t.Errorf("got %s, expected %s", got, expect)
@@ -75,14 +78,18 @@ func TestCentsIsCredit(t *testing.T) {
 	var got bool
 	var expect bool
 
-	got = (&Cents{1000}).IsCredit()
+	c := NewCents()
+
+	c.SetValue(1000)
+	got = c.IsCredit()
 	expect = true
 
 	if got != expect {
 		t.Errorf("got %v, expected %v", got, expect)
 	}
 
-	got = (&Cents{-1000}).IsCredit()
+	c.SetValue(-1000)
+	got = c.IsCredit()
 	expect = false
 
 	if got != expect {
@@ -94,14 +101,18 @@ func TestCentsIsDebit(t *testing.T) {
 	var got bool
 	var expect bool
 
-	got = (&Cents{1000}).IsDebit()
+	c := NewCents()
+
+	c.SetValue(1000)
+	got = c.IsDebit()
 	expect = false
 
 	if got != expect {
 		t.Errorf("got %v, expected %v", got, expect)
 	}
 
-	got = (&Cents{-1000}).IsDebit()
+	c.SetValue(-1000)
+	got = c.IsDebit()
 	expect = true
 
 	if got != expect {
@@ -113,11 +124,23 @@ func TestCentsAdd(t *testing.T) {
 	var got int
 	var expect int
 
-	c := Cents{1000}
+	c := NewCents()
+
 	got = c.Add(20)
-	expect = 1020
+	expect = 20
 
 	if got != expect {
 		t.Errorf("got %v, expected %v", got, expect)
+	}
+
+	got = c.Add(20)
+	expect = 40
+
+	if got != expect {
+		t.Errorf("got %v, expected %v", got, expect)
+	}
+
+	if c.Saved {
+		t.Errorf("got %v, expected %v", c.Saved, false)
 	}
 }
