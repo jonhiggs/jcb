@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/lib/transaction"
-	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -231,32 +230,4 @@ func selectionId() int64 {
 func selectionTransaction() *transaction.Transaction {
 	t, _ := transaction.Find(selectionId())
 	return t
-}
-
-func isCommitted(r int) bool {
-	if transactionsTable.GetCell(r, config.ATTR_COLUMN).GetText()[0:1] == "C" {
-		return true
-	} else {
-		return false
-	}
-}
-
-func selectedAmount() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.AMOUNT_COLUMN).GetText(), " ")
-}
-
-func selectedCategory() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.CATEGORY_COLUMN).GetText(), " ")
-}
-
-func selectedDescription() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.DESCRIPTION_COLUMN).GetText(), " ")
-}
-
-func selectedDate() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.DATE_COLUMN).GetText(), " ")
 }
