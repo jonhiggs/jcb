@@ -54,15 +54,14 @@ func toggleTag(id int64) {
 func tagMatches(id int64) {
 	matchCount := 0
 
-	for r, i := range transactionIds {
-		t, _ := transaction.Find(i)
-		if t.IsCommitted() || isTagged(i) {
+	for r, t := range transactions {
+		if t.IsCommitted() || isTagged(t.Id) {
 			continue
 		}
 
 		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
-			applyTag(i)
+			applyTag(t.Id)
 		}
 	}
 

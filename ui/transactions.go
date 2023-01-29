@@ -11,7 +11,7 @@ import (
 )
 
 var transactionsTable *cview.Table
-var transactionIds []int64
+var transactions []*transaction.Transaction
 
 func createTransactionsTable() *cview.Table {
 	transactionsTable = cview.NewTable()
@@ -80,7 +80,7 @@ func createTransactionsTable() *cview.Table {
 
 func updateTransactionsTable() {
 	start, end := transaction.DateRange()
-	all := transaction.All(start, end)
+	transactions = transaction.All(start, end)
 
 	var cell *cview.TableCell
 
@@ -132,13 +132,11 @@ func updateTransactionsTable() {
 	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
-	transactionIds = make([]int64, len(all)+1)
-	for i, t := range all {
+	for i, t := range transactions {
+
 		var colorFg tcell.Color
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
-
-		transactionIds[i+1] = t.Id
 
 		if t.IsCommitted() {
 			colorFg = config.COLOR_COMMITTED_FG
@@ -212,8 +210,8 @@ func updateTransactionsTable() {
 
 // select transaction by id
 func selectTransaction(id int64) {
-	for i, v := range transactionIds {
-		if v == id {
+	for i, t := range transactions {
+		if t.Id == id {
 			transactionsTable.Select(i, 0)
 		}
 	}
@@ -223,7 +221,7 @@ func selectTransaction(id int64) {
 // get the id of the selection
 func selectionId() int64 {
 	r, _ := transactionsTable.GetSelection()
-	return transactionIds[r]
+	return transactions[r].Id
 }
 
 // get Transaction of the selection

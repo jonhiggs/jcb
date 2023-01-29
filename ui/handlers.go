@@ -71,10 +71,9 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	for _, id := range transactionIds {
-		t, _ := transaction.Find(id)
+	for i, t := range transactions {
 		if !t.IsCommitted() {
-			selectTransaction(id)
+			selectTransaction(int64(i))
 			return nil
 		}
 	}
@@ -91,7 +90,7 @@ func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 			break
 		}
 
-		if i == len(transactionIds) {
+		if i == len(transactions) {
 			i = 0
 		}
 	}
@@ -127,7 +126,7 @@ func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 	curYear, _ := strconv.Atoi(curDate[0:4])
 
 	r, _ := transactionsTable.GetSelection()
-	for i := r; i < len(transactionIds); i++ {
+	for i := r; i < len(transactions); i++ {
 		date := transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()
 		month, _ := strconv.Atoi(date[5:7])
 		year, _ := strconv.Atoi(date[0:4])
@@ -137,7 +136,7 @@ func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 	}
-	transactionsTable.Select(len(transactionIds)-1, 0)
+	transactionsTable.Select(len(transactions)-1, 0)
 
 	return nil
 }
@@ -166,7 +165,7 @@ func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 	selectedDate := new(transaction.Date)
 	selectedDate.SetText(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
 
-	for i := curRow; i < len(transactionIds)-1; i++ {
+	for i := curRow; i < len(transactions)-1; i++ {
 		curDate := new(transaction.Date)
 		curDate.SetText(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText())
 		if curDate.Year() != selectedDate.Year() {
@@ -183,7 +182,7 @@ func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
 
 	for i := r - 1; i != r; i-- {
 		if i == 0 {
-			i = len(transactionIds) - 1
+			i = len(transactions) - 1
 			continue
 		}
 
@@ -207,7 +206,7 @@ func handleSelectModifiedNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == len(transactionIds)-1 {
+		if i == len(transactions)-1 {
 			i = 0
 		}
 	}
@@ -259,7 +258,7 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == len(transactionIds)-1 {
+		if i == len(transactions)-1 {
 			i = 0
 		}
 	}
@@ -279,7 +278,7 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 		}
 
 		if i == 0 {
-			i = len(transactionIds) - 1
+			i = len(transactions) - 1
 		}
 	}
 
@@ -293,7 +292,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 	curRow, _ := transactionsTable.GetSelection()
 	var r int
-	if curRow == len(transactionIds)-1 {
+	if curRow == len(transactions)-1 {
 		r = curRow - 1
 	} else {
 		r = curRow
@@ -307,7 +306,7 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	}
 
 	transactionsTable.RemoveRow(curRow)
-	removeTag(transactionIds[curRow])
+	removeTag(transactions[curRow].Id)
 	updateTransactionsTable()
 	transactionsTable.Select(r, 0)
 
@@ -335,9 +334,7 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
-
-	t, _ := transaction.Find(id)
+	t, _ := transaction.Find(transactions[r].Id)
 	err := t.Commit()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
@@ -430,7 +427,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		}
 
 		startingRow, _ := transactionsTable.GetSelection()
-		tagMatches(transactionIds[startingRow])
+		tagMatches(transactions[startingRow].Id)
 		return nil
 	})
 
@@ -448,7 +445,7 @@ func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		}
 
 		startingRow, _ := transactionsTable.GetSelection()
-		untagMatches(transactionIds[startingRow])
+		untagMatches(transactions[startingRow].Id)
 		return nil
 	})
 
@@ -466,7 +463,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 		switch e.Rune() {
 		case 'x':
 			for _, r := range taggedTransactionIds {
-				selectTransaction(transactionIds[r])
+				selectTransaction(transactions[r].Id)
 				handleDeleteTransaction(e)
 				startingRow, _ = transactionsTable.GetSelection()
 			}
