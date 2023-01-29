@@ -373,8 +373,12 @@ func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
 
 	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCategory(promptInputField.GetText(), []int64{transactionIds[r]})
+		t := []*transaction.Transaction{selectionTransaction()}
+		modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), t)
+		printStatus(fmt.Sprintf("Updated category for %d transactions", len(modifiedTransactions)))
+		if len(modifiedTransactions) > 0 {
+			updateTransactionsTable()
+		}
 		return nil
 	})
 
@@ -506,7 +510,10 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 		case 'D':
 			openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				updateCategory(promptInputField.GetText(), taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case 'd':

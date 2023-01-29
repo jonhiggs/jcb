@@ -5,33 +5,6 @@ import (
 	"jcb/lib/transaction"
 )
 
-func updateCategory(s string, ids []int64) {
-	orig := new(transaction.Category)
-	err := orig.SetText(s)
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return
-	}
-
-	skipped := 0
-
-	for _, id := range ids {
-		t, _ := transaction.Find(id)
-
-		// TODO: create a function to detect whether the data has changed
-		t.Category.SetText(orig.GetValue())
-		if true {
-			t.Save()
-		} else {
-			skipped++
-		}
-	}
-
-	modified := len(ids) - skipped
-	printStatus(fmt.Sprintf("Updated category for %d transactions", modified))
-	updateTransactionsTable()
-}
-
 func updateDescription(s string, ids []int64) {
 	orig := new(transaction.Description)
 	err := orig.SetText(s)

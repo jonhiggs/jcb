@@ -18,6 +18,15 @@ func isTagged(id int64) bool {
 	return false
 }
 
+func taggedTransactions() []*transaction.Transaction {
+	var ts []*transaction.Transaction
+	for _, id := range taggedTransactionIds {
+		t, _ := transaction.Find(id)
+		ts = append(ts, t)
+	}
+	return ts
+}
+
 func applyTag(id int64) {
 	taggedTransactionIds = append(taggedTransactionIds, id)
 	updateInfo()
