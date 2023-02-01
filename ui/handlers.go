@@ -401,6 +401,8 @@ func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 	t.Tagged = !t.Tagged
 	updateTransactionsTable()
 	handleSelectNext(ev)
+	r, _ := transactionsTable.GetSelection()
+	printStatus(fmt.Sprintf("Tagging id %d in row %d", t.Id, r))
 
 	return nil
 }

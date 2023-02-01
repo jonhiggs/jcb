@@ -220,6 +220,13 @@ func selectTransaction(id int) {
 // get the id of the selection
 func selectionId() int {
 	r, _ := transactionsTable.GetSelection()
+	//panic(fmt.Sprintf(
+	//	"row %d was %s, transaction %d was %s",
+	//	r-1,
+	//	transactionsTable.GetCell(r-1, config.DATE_COLUMN).GetText(),
+	//	transactions[r-1].Id,
+	//	transactions[r-1].Date.GetText(),
+	//))
 	return transactions[r-1].Id
 }
 
