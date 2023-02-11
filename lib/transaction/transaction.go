@@ -168,7 +168,7 @@ func (t *Transaction) Balance() *Cents {
 		var balance int
 
 		statement, _ := db.Conn.Prepare(`
-			SELECT balance 
+			SELECT balance
 			FROM transactions WHERE id = ?
 		`)
 
@@ -189,7 +189,7 @@ func (t *Transaction) Balance() *Cents {
 		var balance int
 
 		statement, _ := db.Conn.Prepare(`
-			SELECT balance 
+			SELECT balance
 			FROM transactions WHERE id = ?
 		`)
 
