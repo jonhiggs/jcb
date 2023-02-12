@@ -27,11 +27,7 @@ func openInsert() {
 	panels.ShowPanel("insert")
 	panels.SendToFront("insert")
 
-	curRow, _ := transactionsTable.GetSelection()
-	curDate := new(transaction.Date)
-	curDate.SetText(transactionsTable.GetCell(curRow, 1).GetText())
-
-	insertInputFieldDate.SetText(curDate.GetText())
+	insertInputFieldDate.SetText(selectionTransaction().Date.GetText())
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldNotes.SetText("")
