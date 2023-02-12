@@ -19,9 +19,9 @@ var editInputFieldNotes *cview.InputField
 var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
-	t, _ := transaction.Find(selectionId())
+	t := selectionTransaction()
 	if t.Committed {
-		printStatus("Cannot edit a committed transaction")
+		printStatus("Cannot edit committed transactions")
 		return
 	}
 
