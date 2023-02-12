@@ -11,8 +11,9 @@ build:
 
 profile: build
 	rm -f profile*.pdf
-	./jcb -f ./test.db -p test.prof
+	-./jcb -f ./test.db -p test.prof
 	go tool pprof --pdf test.prof
+	evince profile001.pdf
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \
