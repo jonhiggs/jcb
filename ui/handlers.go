@@ -253,7 +253,7 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == len(transactions)-1 {
+		if i >= len(transactions)-1 {
 			i = 0
 		}
 	}
@@ -272,7 +272,7 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == 0 {
+		if i <= 0 {
 			i = len(transactions) - 1
 		}
 	}
