@@ -327,9 +327,8 @@ func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	t, _ := transaction.Find(transactions[r].Id)
-	err := t.Commit()
+	t := selectionTransaction()
+	err := t.ToggleCommit()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 	}

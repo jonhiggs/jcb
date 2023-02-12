@@ -125,3 +125,12 @@ func (t *Transaction) Uncommit() error {
 
 	return nil
 }
+
+// Toggle whether transaction is committed
+func (t *Transaction) ToggleCommit() error {
+	if t.Committed {
+		return t.Uncommit()
+	} else {
+		return t.Commit()
+	}
+}
