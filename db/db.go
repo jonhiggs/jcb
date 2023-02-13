@@ -51,7 +51,7 @@ func Init(file string) error {
 	`
 	_, err = Conn.Exec(sts)
 
-	statement, err := Conn.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
+	statement, err := Conn.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, balance, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -60,6 +60,7 @@ func Init(file string) error {
 		0,
 		time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC),
 		"Opening Balance",
+		0,
 		0,
 		time.Now(),
 		time.Now(),
