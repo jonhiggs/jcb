@@ -84,6 +84,9 @@ func createTransactionsTable() *cview.Table {
 func updateTransactionsTable() {
 	var cell *cview.TableCell
 
+	start, end := transaction.DateRange()
+	transactions = transaction.All(start, end)
+
 	cell = cview.NewTableCell("")
 	cell.SetTextColor(config.COLOR_TITLE_FG)
 	cell.SetAttributes(tcell.AttrUnderline | tcell.AttrBold)
