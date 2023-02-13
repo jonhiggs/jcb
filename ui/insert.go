@@ -8,7 +8,6 @@ import (
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
-	"github.com/mcuadros/go-defaults"
 )
 
 var insertForm *cview.Form
@@ -41,8 +40,7 @@ func closeInsert() {
 
 func readInsertForm() (*transaction.Transaction, error) {
 	var err error
-	t := new(transaction.Transaction)
-	defaults.SetDefaults(t)
+	t := transaction.NewTransaction()
 
 	err = t.SetText(
 		[]string{
@@ -58,17 +56,19 @@ func readInsertForm() (*transaction.Transaction, error) {
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	t, err := readInsertForm()
-
 	if err != nil {
 		printStatus(fmt.Sprint(err))
-	} else {
-		err := t.Save()
-		if err == nil {
-			updateTransactionsTable()
-			selectTransaction(t.Id)
-			closeInsert()
-		}
+		return nil
 	}
+
+	err = t.Save()
+	if err != nil {
+		return nil
+	}
+
+	updateTransactionsTable()
+	selectTransaction(t.Id)
+	closeInsert()
 
 	return nil
 }
