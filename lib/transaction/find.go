@@ -3,11 +3,14 @@ package transaction
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"jcb/db"
 	"log"
 	"time"
 )
+
+var ErrNoResult = errors.New("No results")
 
 // Returns every transaction within time range.
 func All(startTime time.Time, endTime time.Time) []*Transaction {
@@ -203,7 +206,7 @@ func FindLastCommitted() (*Transaction, error) {
 	var category string
 
 	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category 
+		SELECT id, date, description, cents, notes, category
 		FROM transactions
 		WHERE committedAt IS NOT NULL
 		ORDER BY committedAt DESC
@@ -211,8 +214,10 @@ func FindLastCommitted() (*Transaction, error) {
 	`)
 
 	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
-	if err != nil {
-		panic(err)
+	if fmt.Sprintf("%s", err) == "sql: no rows in result set" {
+		return nil, ErrNoResult
+	} else if err != nil {
+		panic(fmt.Sprintf("%s", err))
 	}
 
 	t := new(Transaction)
