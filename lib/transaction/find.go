@@ -144,7 +144,7 @@ func FindFirst() (*Transaction, error) {
 	var category string
 
 	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category 
+		SELECT id, date, description, cents, notes, category
 		FROM transactions
 		ORDER BY date
 		LIMIT 1
@@ -175,7 +175,7 @@ func FindLast() (*Transaction, error) {
 	var category string
 
 	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category 
+		SELECT id, date, description, cents, notes, category
 		FROM transactions
 		ORDER BY date
 		DESC LIMIT 1
@@ -240,7 +240,7 @@ func FindLastUncommitted() (*Transaction, error) {
 	var category string
 
 	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category 
+		SELECT id, date, description, cents, notes, category
 		FROM transactions
 		WHERE committedAt IS NULL
 		ORDER BY date ASC, cents DESC
