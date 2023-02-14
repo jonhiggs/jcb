@@ -225,5 +225,11 @@ func selectionId() int {
 
 // get Transaction of the selection
 func selectionTransaction() *transaction.Transaction {
-	return transactions[selectionId()]
+	id := selectionId()
+	for _, t := range transactions {
+		if t.Id == id {
+			return t
+		}
+	}
+	return nil
 }
