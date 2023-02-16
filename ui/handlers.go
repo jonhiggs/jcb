@@ -309,7 +309,8 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	var err error
-	t, _ := transaction.Find(selectionId())
+
+	t := selectionTransaction()
 
 	if t.Committed {
 		err = t.Uncommit()

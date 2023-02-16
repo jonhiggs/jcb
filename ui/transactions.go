@@ -133,7 +133,6 @@ func updateTransactionsTable() {
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
 	for i, t := range transactions {
-
 		var colorFg tcell.Color
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask

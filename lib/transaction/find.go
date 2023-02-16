@@ -124,7 +124,7 @@ func Find(id int) (*Transaction, error) {
 	t.Note.SetValue(notes)
 	t.Category.SetValue(category)
 
-	t.Committed = (committedAt == "2999-12-31")
+	t.Committed = (committedAt != "2999-12-31")
 
 	t.Date.Saved = true
 	t.Description.Saved = true
