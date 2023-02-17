@@ -283,8 +283,6 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	id := selectionId()
-
 	curRow, _ := transactionsTable.GetSelection()
 	var r int
 	if curRow == len(transactions)-1 {
@@ -293,7 +291,8 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 		r = curRow
 	}
 
-	t, _ := transaction.Find(id)
+	t := selectionTransaction()
+
 	err := t.Delete()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
@@ -302,6 +301,11 @@ func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
 
 	transactionsTable.RemoveRow(curRow)
 	updateTransactionsTable()
+
+	if r > len(transactions) {
+		r = len(transactions)
+	}
+
 	transactionsTable.Select(r, 0)
 
 	return nil
