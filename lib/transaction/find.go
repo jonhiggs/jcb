@@ -20,10 +20,15 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 	var records []*Transaction
 
 	statement, err := db.Conn.Prepare(`
+		SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
+		FROM transactions
+		WHERE id == 0
+		UNION
 		SELECT id, date, description, cents, notes, category, committedAt
 		FROM (
 			SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
 			FROM transactions
+			WHERE id != 0
 			ORDER BY committedAt ASC, date ASC, cents DESC
 		)
 		WHERE date >= ? AND date <= ?
@@ -135,130 +140,27 @@ func Find(id int) (*Transaction, error) {
 	return t, nil
 }
 
-func FindFirst() (*Transaction, error) {
-	var id int
-	var date string
-	var description string
-	var cents int
-	var notes string
-	var category string
-
-	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category
-		FROM transactions
-		ORDER BY date
-		LIMIT 1
-	`)
-
-	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("FindFirst(): %s", err))
-	}
-
-	t := new(Transaction)
-	t.Id = id
-	t.Date.SetText(date)
-	t.Description.SetValue(description)
-	t.Cents.SetValue(cents)
-	t.Note.SetValue(notes)
-	t.Category.SetValue(category)
-
-	return t, nil
-}
-
-func FindLast() (*Transaction, error) {
-	var id int
-	var date string
-	var description string
-	var cents int
-	var notes string
-	var category string
-
-	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category
-		FROM transactions
-		ORDER BY date
-		DESC LIMIT 1
-	`)
-
-	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("FindLast(): %s", err))
-	}
-
-	t := new(Transaction)
-	t.Id = id
-	t.Date.SetText(date)
-	t.Description.SetText(description)
-	t.Cents.SetValue(cents)
-	t.Note.SetValue(notes)
-	t.Category.SetValue(category)
-
-	return t, nil
-}
-
 func FindLastCommitted() (*Transaction, error) {
-	var id int
-	var date string
-	var description string
-	var cents int
-	var notes string
-	var category string
+	all := All(time.Unix(0, 0), time.Unix(32503554000, 0))
 
-	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category
-		FROM transactions
-		WHERE committedAt IS NOT NULL
-		ORDER BY committedAt DESC
-		LIMIT 1
-	`)
+	for i := len(all) - 1; i >= 0; i-- {
+		if !all[i].Committed {
+			continue
+		}
 
-	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
-	if fmt.Sprintf("%s", err) == "sql: no rows in result set" {
-		return nil, ErrNoResult
-	} else if err != nil {
-		panic(fmt.Sprintf("%s", err))
+		return all[i], nil
 	}
 
-	t := new(Transaction)
-	t.Id = id
-	t.Date.SetText(date)
-	t.Description.SetText(description)
-	t.Cents.SetValue(cents)
-	t.Note.SetValue(notes)
-	t.Category.SetValue(category)
-
-	return t, nil
+	return nil, errors.New("no committed transactions were found")
 }
 
 func FindLastUncommitted() (*Transaction, error) {
-	var id int
-	var date string
-	var description string
-	var cents int
-	var notes string
-	var category string
+	all := All(time.Unix(0, 0), time.Unix(32503554000, 0))
+	last := all[len(all)-1]
 
-	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category
-		FROM transactions
-		WHERE committedAt IS NULL
-		ORDER BY date ASC, cents DESC
-		LIMIT 1
-	`)
-
-	err := statement.QueryRow().Scan(&id, &date, &description, &cents, &notes, &category)
-	if err != nil {
-		panic(err)
+	if last.Committed {
+		return nil, errors.New("no uncommitted transactions were found")
 	}
 
-	t := new(Transaction)
-	t.Id = id
-	t.Date.SetText(date)
-	t.Description.SetText(description)
-	t.Cents.SetValue(cents)
-	t.Note.SetValue(notes)
-	t.Category.SetValue(category)
-
-	return t, nil
+	return last, nil
 }

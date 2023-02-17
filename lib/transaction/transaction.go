@@ -96,10 +96,17 @@ func (t *Transaction) GetAttributeString() string {
 // Returns true if transaction is immediately ready to be committed.
 func (t *Transaction) IsCommittable() error {
 	if t.Committed {
-		return errors.New("Transaction is already committed")
+		return errors.New("transaction is already committed")
 	}
 
-	lastCommitted, _ := FindLastCommitted()
+	lastCommitted, err := FindLastCommitted()
+	if err != nil {
+		if t.Id != 0 {
+			return errors.New("commit the opening balance transaction first")
+		}
+		return nil
+	}
+
 	startTime := lastCommitted.Date.GetValue()
 	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
 	for _, tt := range All(startTime, endTime) {
@@ -143,9 +150,8 @@ func (t *Transaction) IsUniq() bool {
 }
 
 func DateRange() (time.Time, time.Time) {
-	first, _ := FindFirst()
-	last, _ := FindLast()
-	return first.Date.GetValue(), last.Date.GetValue()
+	all := All(time.Unix(0, 0), time.Unix(32503554000, 0))
+	return all[0].Date.GetValue(), all[len(all)-1].Date.GetValue()
 }
 
 func SumCents(ts []*Transaction) int {
