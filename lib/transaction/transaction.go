@@ -20,6 +20,8 @@ type Transaction struct {
 	Tagged      bool
 	FindMatch   bool
 	Committed   bool
+	NextId      int
+	PrevId      int
 }
 
 type TextSetter interface {

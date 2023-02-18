@@ -16,6 +16,7 @@ var ErrNoResult = errors.New("No results")
 func All(startTime time.Time, endTime time.Time) []*Transaction {
 	var rows *sql.Rows
 	var err error
+	var prevId = -1
 
 	var records []*Transaction
 
@@ -105,8 +106,14 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		t.Cents.Saved = true
 		t.Note.Saved = true
 		t.Category.Saved = true
+		t.PrevId = prevId
+		t.NextId = -1
 
 		records = append(records, t)
+		if len(records) > 1 {
+			records[len(records)-2].NextId = t.Id
+		}
+		prevId = t.Id
 	}
 
 	return records
