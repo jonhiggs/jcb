@@ -209,26 +209,14 @@ func (t *Transaction) Balance() *Cents {
 	}
 
 	// Add the rolling tally of the uncommitted transactions to the balance.
-	var balance int
-	statement, err := db.Conn.Prepare(`
-		SELECT total FROM (
-			SELECT id, SUM(cents) OVER (
-				ORDER BY committedAt ASC, date ASC, cents DESC
-				ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-			) as total
-			FROM transactions WHERE committedAt IS NULL)
-		WHERE id = ?;
-	`)
+	for _, t := range All(lastCommitted.Date.GetValue(), t.Date.GetValue()) {
+		if t.Committed {
+			b = t.Balance()
+			continue
+		}
 
-	if err != nil {
-		panic(err)
+		b.Add(t.Cents.GetValue())
 	}
 
-	err = statement.QueryRow(t.Id).Scan(&balance)
-	if err != nil {
-		panic(fmt.Sprintf("%s for %d", err, t.Id))
-	}
-
-	b.Add(balance)
 	return b
 }
