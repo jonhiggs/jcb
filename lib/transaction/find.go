@@ -46,9 +46,9 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 				IFNULL((SELECT tagged FROM cache WHERE id = transactions.id),0) AS tagged
 			FROM transactions
 			WHERE id != 0
-			ORDER BY committedAt ASC, date ASC, cents DESC
 		)
 		WHERE date >= ? AND date <= ?
+		ORDER BY committedAt ASC, date ASC, cents DESC
 	`)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("All(): %s", err))
