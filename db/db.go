@@ -51,6 +51,15 @@ func Init(file string) error {
 	`
 	_, err = Conn.Exec(sts)
 
+	sts = `
+	    CREATE TABLE IF NOT EXISTS cache(
+	        id INTEGER NOT NULL,
+			tagged INTEGER default 0,
+			UNIQUE(id)
+	    );
+	`
+	_, err = Conn.Exec(sts)
+
 	statement, err := Conn.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, balance, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err

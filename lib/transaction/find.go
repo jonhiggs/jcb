@@ -20,13 +20,29 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 	var records []*Transaction
 
 	statement, err := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
+		SELECT
+			id,
+			date,
+			description,
+			cents,
+			notes,
+			category,
+			IFNULL(committedAt, "2999-12-31") AS committedAt,
+			IFNULL((SELECT tagged FROM cache WHERE id = 0),0) AS tagged
 		FROM transactions
 		WHERE id == 0
 		UNION
-		SELECT id, date, description, cents, notes, category, committedAt
+		SELECT id, date, description, cents, notes, category, committedAt,tagged
 		FROM (
-			SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
+			SELECT
+				id,
+				date,
+				description,
+				cents,
+				notes,
+				category,
+				IFNULL(committedAt, "2999-12-31") AS committedAt,
+				IFNULL((SELECT tagged FROM cache WHERE id = transactions.id),0) AS tagged
 			FROM transactions
 			WHERE id != 0
 			ORDER BY committedAt ASC, date ASC, cents DESC
@@ -52,6 +68,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 		var notes string
 		var category string
 		var committedAt string
+		var tagged int
 
 		err = rows.Scan(
 			&id,
@@ -61,6 +78,7 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 			&notes,
 			&category,
 			&committedAt,
+			&tagged,
 		)
 
 		if err != nil {
@@ -69,6 +87,11 @@ func All(startTime time.Time, endTime time.Time) []*Transaction {
 
 		t := NewTransaction()
 		t.Id = id
+		if tagged == 0 {
+			t.Tagged = false
+		} else {
+			t.Tagged = true
+		}
 		t.Date.SetText(date)
 		t.Description.SetValue(description)
 		t.Cents.SetValue(cents)
