@@ -402,7 +402,7 @@ func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
 		return nil
 	}
 
-	t.Tagged = !t.Tagged
+	t.ToggleTagged()
 	updateTransactionsTable()
 	handleSelectNext(ev)
 	r, _ := transactionsTable.GetSelection()

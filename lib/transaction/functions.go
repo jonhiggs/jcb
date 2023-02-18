@@ -134,3 +134,44 @@ func (t *Transaction) ToggleCommit() error {
 		return t.Commit()
 	}
 }
+
+func (t *Transaction) Tag() {
+	statement, _ := db.Conn.Prepare(`
+		INSERT INTO cache (id, tagged)
+		  VALUES(?, 1)
+		  ON CONFLICT(id)
+		  DO UPDATE SET tagged=1;
+	`)
+
+	_, err := statement.Exec(t.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	t.Tagged = true
+}
+
+func (t *Transaction) Untag() {
+	statement, _ := db.Conn.Prepare(`
+		INSERT INTO cache (id, tagged)
+		  VALUES(?, 0)
+		  ON CONFLICT(id)
+		  DO UPDATE SET tagged=0;
+	`)
+
+	_, err := statement.Exec(t.Id)
+	if err != nil {
+		panic(err)
+	}
+
+	t.Tagged = false
+}
+
+// Toggle whether transaction is tagged
+func (t *Transaction) ToggleTagged() {
+	if t.Tagged {
+		t.Untag()
+	} else {
+		t.Tag()
+	}
+}
