@@ -205,17 +205,20 @@ func (t *Transaction) Balance() *Cents {
 		}
 
 		b.SetValue(balance)
-		return b
 	}
 
 	// Add the rolling tally of the uncommitted transactions to the balance.
-	for _, t := range All(lastCommitted.Date.GetValue(), t.Date.GetValue()) {
-		if t.Committed {
-			b = t.Balance()
+	for _, x := range All(time.Unix(0, 0), t.Date.GetValue()) {
+		if x.Committed {
+			b = x.Balance()
 			continue
 		}
 
-		b.Add(t.Cents.GetValue())
+		b.Add(x.Cents.GetValue())
+
+		if x.Id == t.Id {
+			break
+		}
 	}
 
 	return b
