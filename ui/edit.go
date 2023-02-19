@@ -28,7 +28,7 @@ func handleOpenEdit() {
 	panels.ShowPanel("edit")
 	panels.SendToFront("edit")
 
-	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.Id))
+	editForm.SetTitle(" Edit Transaction ")
 	editInputFieldDate.SetText(t.Date.GetText())
 	editInputFieldDescription.SetText(t.Description.GetText())
 	editInputFieldCents.SetText(t.Cents.GetText())
