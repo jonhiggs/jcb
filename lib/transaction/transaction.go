@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jcb/db"
 	"log"
+	"regexp"
 	"time"
 )
 
@@ -17,7 +18,7 @@ type Transaction struct {
 	Note        Note
 	Category    Category
 	Tagged      bool
-	FindMatch   bool
+	FindMatch   bool // FIXME: why is this here?
 	Committed   bool
 	NextId      int
 	PrevId      int
@@ -233,4 +234,16 @@ func (t *Transaction) Balance() *Cents {
 	}
 
 	return b
+}
+
+func (t *Transaction) MatchesQuery(query *regexp.Regexp) bool {
+	if query.MatchString(t.Category.GetText()) {
+		return true
+	}
+
+	if query.MatchString(t.Description.GetText()) {
+		return true
+	}
+
+	return false
 }

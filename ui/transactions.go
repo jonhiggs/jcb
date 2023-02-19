@@ -233,3 +233,20 @@ func selectionTransaction() *transaction.Transaction {
 	}
 	return nil
 }
+
+// shift and push transactions so that id comes first
+func shiftAndPushTransactions(id int) []*transaction.Transaction {
+	var shiftPos int
+
+	for i, t := range transactions {
+		if t.Id == id {
+			shiftPos = i
+		}
+	}
+
+	if shiftPos == 0 {
+		return transactions
+	}
+
+	return append(transactions[shiftPos:len(transactions)-1], transactions[0:shiftPos-1]...)
+}

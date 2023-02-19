@@ -3,7 +3,6 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/lib/find"
 	"jcb/lib/transaction"
 	"jcb/lib/validate"
 	"jcb/ui/acceptanceFunction"
@@ -213,7 +212,7 @@ func handleFindForwards(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("/", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
-		err := find.SetQuery(promptInputField.GetText())
+		err := setQuery(promptInputField.GetText())
 		if err != nil {
 			printStatus(fmt.Sprintf("%s", err))
 			return nil
@@ -230,7 +229,7 @@ func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("?", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
-		err := find.SetQuery(promptInputField.GetText())
+		err := setQuery(promptInputField.GetText())
 		if err != nil {
 			printStatus(fmt.Sprintf("%s", err))
 			return nil
@@ -244,17 +243,13 @@ func handleFindBackwards(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
-
-	for i := curRow + 1; i != curRow; i++ {
-
-		if find.TableRowMatches(transactionsTable, i) {
-			transactionsTable.Select(i, 0)
-			return nil
+	for i, t := range shiftAndPushTransactions(selectionId()) {
+		if i == 0 {
+			continue
 		}
-
-		if i >= len(transactions)-1 {
-			i = 0
+		if t.MatchesQuery(query) {
+			selectTransaction(t.Id)
+			return nil
 		}
 	}
 
@@ -264,16 +259,23 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
-	curRow, _ := transactionsTable.GetSelection()
+	transactionsShifted := shiftAndPushTransactions(selectionId())
+	var transactionsShiftedReversed []*transaction.Transaction
 
-	for i := curRow - 1; i != curRow; i-- {
-		if find.TableRowMatches(transactionsTable, i) {
-			transactionsTable.Select(i, 0)
-			return nil
+	for i := len(transactionsShifted) - 1; i >= 0; i-- {
+		transactionsShiftedReversed = append(
+			transactionsShiftedReversed,
+			transactionsShifted[i],
+		)
+	}
+
+	for i, t := range transactionsShiftedReversed {
+		if i == 0 {
+			continue
 		}
-
-		if i <= 0 {
-			i = len(transactions) - 1
+		if t.MatchesQuery(query) {
+			selectTransaction(t.Id)
+			return nil
 		}
 	}
 
@@ -415,7 +417,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Tag matched transactions:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
-		err := find.SetQuery(promptInputField.GetText())
+		err := setQuery(promptInputField.GetText())
 		if err != nil {
 			printStatus(fmt.Sprintf("%s", err))
 			return nil
@@ -433,7 +435,7 @@ func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Untag matched transactions:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
-		err := find.SetQuery(promptInputField.GetText())
+		err := setQuery(promptInputField.GetText())
 		if err != nil {
 			printStatus(fmt.Sprintf("%s", err))
 			return nil
