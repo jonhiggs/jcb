@@ -12,9 +12,13 @@ require (
 )
 
 require (
+	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/google/pprof v0.0.0-20211214055906-6f57359322fd // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-runewidth v0.0.14-0.20220323023645-f9d555329d96 // indirect
+	github.com/mcuadros/go-defaults v1.2.0 // indirect
+	github.com/pkg/profile v1.7.0 // indirect
 	github.com/rivo/uniseg v0.4.2 // indirect
 	golang.org/x/sys v0.0.0-20220731174439-a90be440212d // indirect
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035 // indirect

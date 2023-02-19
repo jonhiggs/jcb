@@ -1,9 +1,9 @@
 package ui
 
 import (
+	"fmt"
 	"jcb/config"
 	"jcb/lib/category"
-	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
 	"time"
 
@@ -48,7 +48,7 @@ func updateReportTable() {
 	var cell *cview.TableCell
 
 	st, _ := transaction.Find(selectionId())
-	year := st.Date.Year()
+	year := st.Date.GetValue().Year()
 
 	columns := []string{
 		"CATEGORY",
@@ -82,26 +82,30 @@ func updateReportTable() {
 		reportTable.SetCell(0, i, cell)
 	}
 
-	for row, catName := range category.All() {
+	reportStart := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+	reportEnd := time.Date(year, 12, 31, 23, 59, 59, 99999, time.UTC)
+	for row, cat := range category.All(reportStart, reportEnd) {
 		for col, _ := range columns {
 			if col == 0 {
-				cell = cview.NewTableCell(catName)
+				cell = cview.NewTableCell(cat.Name)
 				cell.SetTextColor(config.COLOR_TITLE_FG)
 			} else {
-				var startTime time.Time
-				var endTime time.Time
+				// TODO: FIX THIS
+				//var startTime time.Time
+				//var endTime time.Time
 
-				switch col {
-				case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
-					startTime = time.Date(year, time.Month(col), 1, 0, 0, 0, 0, time.UTC)
-					endTime = startTime.AddDate(0, 1, 0)
-				case 13:
-					startTime = time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
-					endTime = startTime.AddDate(1, 0, 0)
-				}
+				//switch col {
+				//case 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12:
+				//	startTime = time.Date(year, time.Month(col), 1, 0, 0, 0, 0, time.UTC)
+				//	endTime = startTime.AddDate(0, 1, 0)
+				//case 13:
+				//	startTime = time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+				//	endTime = startTime.AddDate(1, 0, 0)
+				//}
 
-				cents := category.Sum(catName, startTime, endTime)
-				cell = cview.NewTableCell(" " + stringf.Cents(cents))
+				//cents, _ := cat.SumCents(startTime, endTime)
+				cents := 12345
+				cell = cview.NewTableCell(fmt.Sprint(cents))
 
 				if col == 13 {
 					cell.SetAttributes(tcell.AttrBold)
@@ -138,14 +142,17 @@ func updateReportTable() {
 			endTime = startTime.AddDate(1, 0, 0)
 		}
 
-		cents := transaction.Sum(startTime, endTime)
-		cell = cview.NewTableCell(" " + stringf.Cents(cents))
+		monthlyTransactions := transaction.All(startTime, endTime)
+		cents := new(transaction.Cents)
+		cents.SetValue(transaction.SumCents(monthlyTransactions))
+
+		cell = cview.NewTableCell(fmt.Sprint(cents))
 		cell.SetSelectable(false)
 		cell.SetAlign(cview.AlignRight)
 		cell.SetAttributes(tcell.AttrBold)
 		cell.SetBackgroundColor(config.COLOR_LIGHT_BG)
 
-		if cents < 0 {
+		if cents.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)

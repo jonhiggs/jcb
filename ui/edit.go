@@ -3,12 +3,8 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
 
-	dataf "jcb/lib/formatter/data"
-	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
-	"jcb/lib/validator"
 	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
@@ -23,22 +19,21 @@ var editInputFieldNotes *cview.InputField
 var editInputFieldCategory *cview.InputField
 
 func handleOpenEdit() {
-	if transaction.Attributes(selectionId()).Committed {
-		printStatus("Cannot edit a committed transaction")
+	t := selectionTransaction()
+	if t.Committed {
+		printStatus("Cannot edit committed transactions")
 		return
 	}
 
 	panels.ShowPanel("edit")
 	panels.SendToFront("edit")
 
-	t, _ := transaction.Find(selectionId())
-	ts := stringf.Transaction(t)
-
-	editInputFieldDate.SetText(ts.Date)
-	editInputFieldDescription.SetText(ts.Description)
-	editInputFieldCents.SetText(ts.Cents)
-	editInputFieldNotes.SetText(transaction.Notes(selectionId()))
-	editInputFieldCategory.SetText(ts.Category)
+	editForm.SetTitle(fmt.Sprintf(" Edit Transaction (%d) ", t.Id))
+	editInputFieldDate.SetText(t.Date.GetText())
+	editInputFieldDescription.SetText(t.Description.GetText())
+	editInputFieldCents.SetText(t.Cents.GetText())
+	editInputFieldNotes.SetText(t.Note.GetText())
+	editInputFieldCategory.SetText(t.Category.GetText())
 }
 
 func closeEdit() {
@@ -46,61 +41,36 @@ func closeEdit() {
 	editForm.SetFocus(0)
 }
 
-func readEditForm() domain.Transaction {
-	date := dataf.Date(editInputFieldDate.GetText())
-	description := dataf.Description(editInputFieldDescription.GetText())
-	cents := dataf.Cents(editInputFieldCents.GetText())
-	notes := dataf.Notes(editInputFieldNotes.GetText())
-	category := dataf.Category(editInputFieldCategory.GetText())
+func readEditForm() (*transaction.Transaction, error) {
+	var err error
+	t := new(transaction.Transaction)
 
-	return domain.Transaction{
-		selectionId(),
-		date,
-		description,
-		cents,
-		notes,
-		category,
-	}
+	err = t.SetText(
+		[]string{
+			editInputFieldDate.GetText(),
+			editInputFieldCategory.GetText(),
+			editInputFieldDescription.GetText(),
+			editInputFieldCents.GetText(),
+			editInputFieldNotes.GetText(),
+		})
+
+	return t, err
 }
 
 func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	if !checkEditForm() {
-		return nil
-	}
-
-	t := readEditForm()
-	err := transaction.Edit(t)
-	if err == nil {
-		updateTransactionsTable()
-		selectTransaction(t.Id)
-		closeEdit()
+	t, err := readEditForm()
+	if err != nil {
+		printStatus(fmt.Sprint(err))
 	} else {
-		printStatus(fmt.Sprint(err))
+		err := t.Save()
+		if err == nil {
+			updateTransactionsTable()
+			selectTransaction(t.Id)
+			closeEdit()
+		}
 	}
+
 	return nil
-}
-
-func checkEditForm() bool {
-	var err error
-	err = validator.Date(editInputFieldDate.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validator.Description(editInputFieldDescription.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validator.Cents(editInputFieldCents.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	return true
 }
 
 func createEditForm() *cview.Form {

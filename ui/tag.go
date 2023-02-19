@@ -6,53 +6,27 @@ import (
 	"jcb/lib/transaction"
 )
 
-var taggedTransactionIds []int64
-
-func isTagged(id int64) bool {
-	for _, i := range taggedTransactionIds {
-		if i == id {
-			return true
+func taggedTransactions() []*transaction.Transaction {
+	var ts []*transaction.Transaction
+	for _, t := range transactions {
+		if t.Tagged {
+			ts = append(ts, t)
 		}
 	}
-
-	return false
+	return ts
 }
 
-func applyTag(id int64) {
-	taggedTransactionIds = append(taggedTransactionIds, id)
-	updateInfo()
-}
-
-func removeTag(id int64) {
-	var newTransactionIds []int64
-	for _, i := range taggedTransactionIds {
-		if i != id {
-			newTransactionIds = append(newTransactionIds, i)
-		}
-	}
-	taggedTransactionIds = newTransactionIds
-	updateInfo()
-}
-
-func toggleTag(id int64) {
-	if isTagged(id) {
-		removeTag(id)
-	} else {
-		applyTag(id)
-	}
-}
-
-func tagMatches(id int64) {
+func tagMatches(id int) {
 	matchCount := 0
 
-	for r, i := range transactionIds {
-		if transaction.Attributes(i).Committed || isTagged(i) {
+	for r, t := range transactions {
+		if t.Committed || t.Tagged {
 			continue
 		}
 
 		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
-			applyTag(i)
+			t.Tagged = true
 		}
 	}
 
@@ -61,16 +35,16 @@ func tagMatches(id int64) {
 	updateTransactionsTable()
 }
 
-func untagMatches(id int64) {
+func untagMatches(id int) {
 	matchCount := 0
 
-	for _, i := range taggedTransactionIds {
-		selectTransaction(i)
+	for _, t := range taggedTransactions() {
+		selectTransaction(t.Id)
 		r, _ := transactionsTable.GetSelection()
 
 		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
-			removeTag(i)
+			t.Tagged = false
 		}
 	}
 

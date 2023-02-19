@@ -3,11 +3,7 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
-	dataf "jcb/lib/formatter/data"
-	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
-	"strings"
 
 	"code.rocketnine.space/tslocum/cbind"
 	"code.rocketnine.space/tslocum/cview"
@@ -15,12 +11,9 @@ import (
 )
 
 var transactionsTable *cview.Table
-var transactionIds []int64
-var transactionAttributes []domain.Attributes
-var initialBalance int64
+var transactions []*transaction.Transaction
 
 func createTransactionsTable() *cview.Table {
-	initialBalance = 0
 	transactionsTable = cview.NewTable()
 	transactionsTable.Select(0, 0)
 	transactionsTable.SetBorders(false)
@@ -64,10 +57,10 @@ func createTransactionsTable() *cview.Table {
 	c.Set("F1", handleOpenHelp)
 	c.Set("F2", handleOpenTransactions)
 	c.Set("F3", handleOpenReport)
-	c.Set("=", handleEditCents)
-	c.Set("D", handleEditCategory)
-	c.Set("d", handleEditDescription)
-	c.Set("@", handleEditDate)
+	c.Set("=", handleEditSingleTransaction)
+	c.Set("D", handleEditSingleTransaction)
+	c.Set("d", handleEditSingleTransaction)
+	c.Set("@", handleEditSingleTransaction)
 	transactionsTable.SetInputCapture(c.Capture)
 
 	updateTransactionsTable()
@@ -86,10 +79,10 @@ func createTransactionsTable() *cview.Table {
 }
 
 func updateTransactionsTable() {
-	committed := transaction.Committed()
-	all := transaction.All()
-
 	var cell *cview.TableCell
+
+	start, end := transaction.DateRange()
+	transactions = transaction.All(start, end)
 
 	cell = cview.NewTableCell("")
 	cell.SetTextColor(config.COLOR_TITLE_FG)
@@ -139,31 +132,12 @@ func updateTransactionsTable() {
 	cell.SetBackgroundColor(config.COLOR_TITLE_BG)
 	transactionsTable.SetCell(0, config.BALANCE_COLUMN, cell)
 
-	b := initialBalance
-	transactionIds = make([]int64, len(all)+1)
-	transactionAttributes = make([]domain.Attributes, len(all)+1)
-	for i, t := range all {
-		b += t.Cents
-		date := stringf.Date(t.Date)
-		description := stringf.Description(t.Description)
-		cents := stringf.Cents(t.Cents)
-		balance := stringf.Cents(b)
-		isCommitted := false
-
-		for _, ct := range committed {
-			if ct.Id == t.Id {
-				isCommitted = true
-			}
-		}
-
+	for i, t := range transactions {
 		var colorFg tcell.Color
 		var colorBg tcell.Color
 		var attributes tcell.AttrMask
 
-		transactionIds[i+1] = t.Id
-		transactionAttributes[i+1] = transaction.Attributes(t.Id)
-
-		if isCommitted {
+		if t.Committed {
 			colorFg = config.COLOR_COMMITTED_FG
 			colorBg = config.COLOR_COMMITTED_BG
 			attributes = 0
@@ -172,47 +146,44 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_UNCOMMITTED_BG
 		}
 
-		if !transactionAttributes[i+1].Saved {
+		if !t.IsSaved() {
 			colorFg = config.COLOR_MODIFIED_FG
 			colorBg = config.COLOR_MODIFIED_BG
 		}
 
-		if isTagged(t.Id) {
+		if t.Tagged {
 			colorFg = config.COLOR_TAGGED_FG
 			colorBg = config.COLOR_TAGGED_BG
 		}
 
-		cell = cview.NewTableCell(stringf.Attributes(transactionAttributes[i+1]))
+		cell = cview.NewTableCell(t.GetAttributeString())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.ATTR_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%-10s", stringf.Category(t.Category)))
+		cell = cview.NewTableCell(fmt.Sprint(&t.Category))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		transactionsTable.SetCell(i+1, config.CATEGORY_COLUMN, cell)
 
-		cell = cview.NewTableCell(date)
+		cell = cview.NewTableCell(t.Date.GetText())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DATE_COLUMN, cell)
 
-		if len(description) > config.DESCRIPTION_MAX_LENGTH {
-			description = description[0:config.DESCRIPTION_MAX_LENGTH]
-		}
-		cell = cview.NewTableCell(fmt.Sprintf("%-*s", config.DESCRIPTION_MAX_LENGTH, description))
+		cell = cview.NewTableCell(fmt.Sprint(&t.Description))
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)
 		cell.SetAlign(cview.AlignLeft)
 		transactionsTable.SetCell(i+1, config.DESCRIPTION_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%10s", cents))
-		if dataf.Cents(cents) < 0 {
+		cell = cview.NewTableCell(fmt.Sprint(&t.Cents))
+		if t.Cents.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)
@@ -222,8 +193,9 @@ func updateTransactionsTable() {
 		cell.SetAlign(cview.AlignRight)
 		transactionsTable.SetCell(i+1, config.AMOUNT_COLUMN, cell)
 
-		cell = cview.NewTableCell(fmt.Sprintf("%10s", balance))
-		if dataf.Cents(balance) < 0 {
+		balance := t.Balance()
+		cell = cview.NewTableCell(fmt.Sprint(balance))
+		if balance.IsDebit() {
 			cell.SetTextColor(config.COLOR_NEGATIVE_FG)
 		} else {
 			cell.SetTextColor(config.COLOR_POSITIVE_FG)
@@ -236,9 +208,9 @@ func updateTransactionsTable() {
 }
 
 // select transaction by id
-func selectTransaction(id int64) {
-	for i, v := range transactionIds {
-		if v == id {
+func selectTransaction(id int) {
+	for i, t := range transactions {
+		if t.Id == id {
 			transactionsTable.Select(i, 0)
 		}
 	}
@@ -246,35 +218,18 @@ func selectTransaction(id int64) {
 }
 
 // get the id of the selection
-func selectionId() int64 {
+func selectionId() int {
 	r, _ := transactionsTable.GetSelection()
-	return transactionIds[r]
+	return transactions[r-1].Id
 }
 
-func isCommitted(r int) bool {
-	if transactionsTable.GetCell(r, config.ATTR_COLUMN).GetText()[0:1] == "C" {
-		return true
-	} else {
-		return false
+// get Transaction of the selection
+func selectionTransaction() *transaction.Transaction {
+	id := selectionId()
+	for _, t := range transactions {
+		if t.Id == id {
+			return t
+		}
 	}
-}
-
-func selectedAmount() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.AMOUNT_COLUMN).GetText(), " ")
-}
-
-func selectedCategory() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.CATEGORY_COLUMN).GetText(), " ")
-}
-
-func selectedDescription() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.DESCRIPTION_COLUMN).GetText(), " ")
-}
-
-func selectedDate() string {
-	r, _ := transactionsTable.GetSelection()
-	return strings.Trim(transactionsTable.GetCell(r, config.DATE_COLUMN).GetText(), " ")
+	return nil
 }

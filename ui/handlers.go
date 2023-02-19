@@ -3,15 +3,11 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/db"
 	"jcb/lib/find"
-	dataf "jcb/lib/formatter/data"
-	"jcb/lib/repeater"
 	"jcb/lib/transaction"
-	"jcb/lib/validator"
+	"jcb/lib/validate"
 	"jcb/ui/acceptanceFunction"
 	inputBindings "jcb/ui/input-bindings"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -75,19 +71,12 @@ func handleHalfPageUp(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectFirstUncommitted(ev *tcell.EventKey) *tcell.EventKey {
-	uncommitted := transaction.Uncommitted()
-	if len(uncommitted) > 0 {
-		firstUncommitted := uncommitted[0]
-
-		for i, v := range transactionIds {
-			if firstUncommitted.Id == v {
-				transactionsTable.Select(i, 0)
-				return nil
-			}
+	for _, t := range transactions {
+		if !t.Committed {
+			selectTransaction(t.Id)
+			return nil
 		}
 	}
-
-	transactionsTable.Select(len(transactionIds)-1, 0)
 	return nil
 }
 
@@ -101,7 +90,7 @@ func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 			break
 		}
 
-		if i == len(transactionIds) {
+		if i == len(transactions) {
 			i = 0
 		}
 	}
@@ -110,7 +99,7 @@ func handleSelectSimilar(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
-	curDate := selectedDate()
+	curDate := selectionTransaction().Date.GetText()
 	curMonth, _ := strconv.Atoi(curDate[5:7])
 	curYear, _ := strconv.Atoi(curDate[0:4])
 
@@ -132,12 +121,12 @@ func handleSelectMonthPrev(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
-	curDate := selectedDate()
+	curDate := selectionTransaction().Date.GetText()
 	curMonth, _ := strconv.Atoi(curDate[5:7])
 	curYear, _ := strconv.Atoi(curDate[0:4])
 
 	r, _ := transactionsTable.GetSelection()
-	for i := r; i < len(transactionIds); i++ {
+	for i := r; i < len(transactions); i++ {
 		date := transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()
 		month, _ := strconv.Atoi(date[5:7])
 		year, _ := strconv.Atoi(date[0:4])
@@ -147,18 +136,20 @@ func handleSelectMonthNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 	}
-	transactionsTable.Select(len(transactionIds)-1, 0)
+	transactionsTable.Select(len(transactions)-1, 0)
 
 	return nil
 }
 
 func handleSelectYearPrev(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
-	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
+	selectedDate := new(transaction.Date)
+	selectedDate.SetText(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
 
 	for i := curRow; i > 0; i-- {
-		year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-		if int(year) != int(curYear) {
+		curDate := new(transaction.Date)
+		curDate.SetText(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText())
+		if curDate.Year() != selectedDate.Year() {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -171,11 +162,13 @@ func handleSelectYearPrev(ev *tcell.EventKey) *tcell.EventKey {
 
 func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 	curRow, _ := transactionsTable.GetSelection()
-	curYear := dataf.Date(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText()).Year()
+	selectedDate := new(transaction.Date)
+	selectedDate.SetText(transactionsTable.GetCell(curRow, config.DATE_COLUMN).GetText())
 
-	for i := curRow; i < len(transactionIds)-1; i++ {
-		year := dataf.Date(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText()).Year()
-		if int(year) != int(curYear) {
+	for i := curRow; i < len(transactions)-1; i++ {
+		curDate := new(transaction.Date)
+		curDate.SetText(transactionsTable.GetCell(i, config.DATE_COLUMN).GetText())
+		if curDate.Year() != selectedDate.Year() {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
@@ -185,17 +178,13 @@ func handleSelectYearNext(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleSelectModifiedPrev(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-
-	for i := r - 1; i != r; i-- {
-		if i == 0 {
-			i = len(transactionIds) - 1
-			continue
+	for i := selectionId() + 1; i != selectionId(); i++ {
+		if !transactions[i].IsSaved() {
+			transactionsTable.Select(i, 0)
 		}
 
-		if !transactionAttributes[i].Saved {
-			transactionsTable.Select(i, 0)
-			return nil
+		if i == len(transactions)-1 {
+			i = -1
 		}
 	}
 
@@ -206,12 +195,13 @@ func handleSelectModifiedNext(ev *tcell.EventKey) *tcell.EventKey {
 	r, _ := transactionsTable.GetSelection()
 
 	for i := r + 1; i != r; i++ {
-		if !transactionAttributes[i].Saved {
+		t, _ := transaction.Find(selectionId())
+		if !t.IsSaved() {
 			transactionsTable.Select(i, 0)
 			return nil
 		}
 
-		if i == len(transactionIds)-1 {
+		if i == len(transactions)-1 {
 			i = 0
 		}
 	}
@@ -263,7 +253,7 @@ func handleSelectMatchNext(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == len(transactionIds)-1 {
+		if i >= len(transactions)-1 {
 			i = 0
 		}
 	}
@@ -282,8 +272,8 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 			return nil
 		}
 
-		if i == 0 {
-			i = len(transactionIds) - 1
+		if i <= 0 {
+			i = len(transactions) - 1
 		}
 	}
 
@@ -293,52 +283,43 @@ func handleSelectMatchPrev(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleDeleteTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	id := selectionId()
-
 	curRow, _ := transactionsTable.GetSelection()
 	var r int
-	if curRow == len(transactionIds)-1 {
+	if curRow == len(transactions)-1 {
 		r = curRow - 1
 	} else {
 		r = curRow
 	}
 
-	err := transaction.Delete(id)
+	t := selectionTransaction()
+
+	err := t.Delete()
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 		return nil
 	}
 
 	transactionsTable.RemoveRow(curRow)
-	removeTag(transactionIds[curRow])
 	updateTransactionsTable()
+
+	if r > len(transactions) {
+		r = len(transactions)
+	}
+
 	transactionsTable.Select(r, 0)
 
 	return nil
 }
 
 func handleCommitTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
-
-	if transaction.Attributes(id).Committed {
-		transaction.Uncommit(id)
-	} else {
-		transaction.Commit(id, initialBalance)
-	}
-	updateTransactionsTable()
-	return nil
-}
-
-func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	id := transactionIds[r]
-
 	var err error
-	if transaction.Attributes(id).Committed {
-		err = transaction.UncommitSingle(id)
+
+	t := selectionTransaction()
+
+	if t.Committed {
+		err = t.Uncommit()
 	} else {
-		err = transaction.CommitSingle(id)
+		err = t.Commit()
 	}
 
 	if err != nil {
@@ -350,81 +331,64 @@ func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
-func handleEditCents(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
+func handleCommitSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	t := selectionTransaction()
+	err := t.ToggleCommit()
+	if err != nil {
+		printStatus(fmt.Sprint(err))
 	}
 
-	openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCents(promptInputField.GetText(), []int64{transactionIds[r]})
-		return nil
-	})
-
+	updateTransactionsTable()
 	return nil
 }
 
-func handleEditCategory(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
+func handleEditSingleTransaction(ev *tcell.EventKey) *tcell.EventKey {
+	t := selectionTransaction()
+	if t.Committed {
 		printStatus("Cannot edit committed transactions")
 		return nil
 	}
 
-	openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateCategory(promptInputField.GetText(), []int64{transactionIds[r]})
-		return nil
-	})
+	var function func(s string, ts []*transaction.Transaction) []*transaction.Transaction
+	var label string
+	var dataType string
+	var placeholderText string
 
-	return nil
-}
-
-func handleEditDescription(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
+	switch ev.Rune() {
+	case '@':
+		function = transaction.UpdateDate
+		label = "Date:"
+		dataType = "date"
+		placeholderText = t.Date.GetText()
+	case '=':
+		function = transaction.UpdateCents
+		label = "Amount:"
+		dataType = "amount"
+		placeholderText = t.Cents.GetText()
+	case 'd':
+		function = transaction.UpdateDescription
+		label = "Description:"
+		dataType = "description"
+		placeholderText = t.Description.GetText()
+	case 'D':
+		function = transaction.UpdateCategory
+		label = "Category:"
+		dataType = "category"
+		placeholderText = t.Category.GetText()
 	}
 
-	openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt(label, placeholderText, func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		updateDescription(promptInputField.GetText(), []int64{transactionIds[r]})
-		return nil
-	})
+		t := []*transaction.Transaction{selectionTransaction()}
+		modifiedTransactions := function(promptInputField.GetText(), t)
+		printStatus(fmt.Sprintf("Updated %s for %d transactions", dataType, len(modifiedTransactions)))
+		if len(modifiedTransactions) > 0 {
+			for _, t := range modifiedTransactions {
+				t.Save()
+			}
 
-	return nil
-}
-
-func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
-		printStatus("Cannot edit committed transactions")
-		return nil
-	}
-
-	openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
-		panels.HidePanel("prompt")
-		r, _ := transactionsTable.GetSelection()
-		dateString := promptInputField.GetText()
-
-		err := validator.Date(dateString)
-		if err != nil {
-			printStatus(fmt.Sprintf("%s", err))
-			return nil
+			updateTransactionsTable()
 		}
-
-		if db.DateLastCommitted().Unix() > dataf.Date(dateString).Unix() {
-			printStatus("Date must not be before the last committed transaction")
-			return nil
-		}
-
-		updateDate(dateString, []int64{transactionIds[r]})
 		return nil
 	})
 
@@ -432,26 +396,23 @@ func handleEditDate(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleTagToggle(ev *tcell.EventKey) *tcell.EventKey {
-	r, _ := transactionsTable.GetSelection()
-	if isCommitted(r) {
+	t := selectionTransaction()
+	if t.Committed {
 		printStatus("Cannot tag committed transactions")
 		return nil
 	}
 
-	if isTagged(transactionIds[r]) {
-		removeTag(transactionIds[r])
-	} else {
-		applyTag(transactionIds[r])
-	}
-
+	t.ToggleTagged()
 	updateTransactionsTable()
 	handleSelectNext(ev)
+	r, _ := transactionsTable.GetSelection()
+	printStatus(fmt.Sprintf("Tagging id %d in row %d: %b", t.Id, r, t.Tagged))
 
 	return nil
 }
 
 func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
-	openPrompt("Tag matched transactions:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt("Tag matched transactions:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
 		err := find.SetQuery(promptInputField.GetText())
@@ -461,7 +422,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		}
 
 		startingRow, _ := transactionsTable.GetSelection()
-		tagMatches(transactionIds[startingRow])
+		tagMatches(transactions[startingRow].Id)
 		return nil
 	})
 
@@ -469,7 +430,7 @@ func handleTagMatches(ev *tcell.EventKey) *tcell.EventKey {
 }
 
 func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
-	openPrompt("Untag matched transactions:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+	openPrompt("Untag matched transactions:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 
 		err := find.SetQuery(promptInputField.GetText())
@@ -479,7 +440,7 @@ func handleUntagMatches(ev *tcell.EventKey) *tcell.EventKey {
 		}
 
 		startingRow, _ := transactionsTable.GetSelection()
-		untagMatches(transactionIds[startingRow])
+		untagMatches(transactions[startingRow].Id)
 		return nil
 	})
 
@@ -496,50 +457,84 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 	case *tcell.EventKey:
 		switch e.Rune() {
 		case 'x':
-			for _, r := range taggedTransactionIds {
-				selectTransaction(transactionIds[r])
+			for _, t := range taggedTransactions() {
+				selectTransaction(t.Id)
 				handleDeleteTransaction(e)
 				startingRow, _ = transactionsTable.GetSelection()
 			}
 		case 't':
-			for _, r := range taggedTransactionIds {
-				removeTag(r)
+			for _, t := range taggedTransactions() {
+				t.Tagged = false
 			}
 		case 'D':
-			openPrompt("Category:", selectedCategory(), func(ev *tcell.EventKey) *tcell.EventKey {
+
+			openPrompt("Category:", selectionTransaction().Category.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				category := dataf.Category(promptInputField.GetText())
-				updateCategory(category, taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case 'd':
-			openPrompt("Description:", selectedDescription(), func(ev *tcell.EventKey) *tcell.EventKey {
+			openPrompt("Description:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				updateDescription(promptInputField.GetText(), taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateDescription(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case '=':
-			openPrompt("Amount:", selectedAmount(), func(ev *tcell.EventKey) *tcell.EventKey {
+			openPrompt("Amount:", selectionTransaction().Cents.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				cents := promptInputField.GetText()
-				updateCents(cents, taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateCents(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		case '@':
-			openPrompt("Date:", selectedDate(), func(ev *tcell.EventKey) *tcell.EventKey {
+			openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
-				date := promptInputField.GetText()
-				updateDate(date, taggedTransactionIds)
+				modifiedTransactions := transaction.UpdateDate(promptInputField.GetText(), taggedTransactions())
+				if len(modifiedTransactions) > 0 {
+					for _, t := range modifiedTransactions {
+						t.Save()
+					}
+					updateTransactionsTable()
+				}
 				return nil
 			})
 		}
 
 		switch e.Key() {
 		case tcell.KeyCtrlT:
-			for _, r := range taggedTransactionIds {
-				removeTag(r)
+			for _, t := range taggedTransactions() {
+				t.Tagged = false
 			}
 		}
+
+		openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
+			panels.HidePanel("prompt")
+			modifiedTransactions := transaction.UpdateDate(promptInputField.GetText(), taggedTransactions())
+			if len(modifiedTransactions) > 0 {
+				for _, t := range modifiedTransactions {
+					t.Save()
+				}
+				updateTransactionsTable()
+			}
+			return nil
+		})
 	}
 
 	transactionsTable.Select(startingRow, 0)
@@ -575,28 +570,33 @@ func handleRepeat(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt("Repeat pattern:", "1m", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
 		repeatRuleValue = promptInputField.GetText()
-		err := validator.RepeatRule(repeatRuleValue)
+		err := validate.RepeatRule(repeatRuleValue)
 		if err != nil {
 			printStatus(fmt.Sprint(err))
 			return nil
 		}
 
-		text := fmt.Sprintf("%d-12-31", db.DateLastUncommitted().Year())
+		lastUncommitted, err := transaction.FindLastUncommitted()
+		if err != nil {
+			panic("You cannot make it here. You cannot repeat a committed transaction so there must be uncommitted transactions!")
+		}
+
+		text := fmt.Sprintf("%d-12-31", lastUncommitted.Date.Year())
 		openPrompt("Repeat until:", text, func(ev *tcell.EventKey) *tcell.EventKey {
 			panels.HidePanel("prompt")
 			repeatUntilString := promptInputField.GetText()
 
-			err := validator.Date(repeatUntilString)
-			if err != nil {
+			if !transaction.ValidDateString(repeatUntilString) {
 				printStatus(fmt.Sprint(err))
 				return nil
 			}
 
-			repeatUntilValue = dataf.Date(repeatUntilString)
+			repeatUntil := new(transaction.Date)
+			repeatUntil.SetText(repeatUntilString)
 
-			err = repeater.Insert(selectionId(), repeatRuleValue, repeatUntilValue)
-			if err != nil {
-				log.Fatal(err)
+			transactionSlice, _ := selectionTransaction().Repeat(repeatRuleValue, repeatUntil.GetValue())
+			for _, tr := range transactionSlice {
+				tr.Save()
 			}
 
 			updateTransactionsTable()

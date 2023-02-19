@@ -3,14 +3,8 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
-	"jcb/domain"
-	"jcb/lib/dates"
-	"jcb/lib/validator"
-	inputBindings "jcb/ui/input-bindings"
-
-	dataf "jcb/lib/formatter/data"
-	stringf "jcb/lib/formatter/string"
 	"jcb/lib/transaction"
+	inputBindings "jcb/ui/input-bindings"
 
 	"code.rocketnine.space/tslocum/cview"
 	"github.com/gdamore/tcell/v2"
@@ -32,10 +26,7 @@ func openInsert() {
 	panels.ShowPanel("insert")
 	panels.SendToFront("insert")
 
-	curRow, _ := transactionsTable.GetSelection()
-	curDate := dataf.Date(transactionsTable.GetCell(curRow, 1).GetText())
-
-	insertInputFieldDate.SetText(stringf.Date(curDate))
+	insertInputFieldDate.SetText(selectionTransaction().Date.GetText())
 	insertInputFieldDescription.SetText("")
 	insertInputFieldCents.SetText("")
 	insertInputFieldNotes.SetText("")
@@ -47,58 +38,38 @@ func closeInsert() {
 	insertForm.SetFocus(0)
 }
 
-func checkInsertForm() bool {
+func readInsertForm() (*transaction.Transaction, error) {
 	var err error
+	t := transaction.NewTransaction()
 
-	err = validator.Date(insertInputFieldDate.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
+	err = t.SetText(
+		[]string{
+			insertInputFieldDate.GetText(),
+			insertInputFieldCategory.GetText(),
+			insertInputFieldDescription.GetText(),
+			insertInputFieldCents.GetText(),
+			insertInputFieldNotes.GetText(),
+		})
 
-	err = validator.Description(insertInputFieldDescription.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	err = validator.Cents(insertInputFieldCents.GetText())
-	if err != nil {
-		printStatus(fmt.Sprint(err))
-		return false
-	}
-
-	return true
-}
-
-func readInsertForm() domain.Transaction {
-	date := dataf.Date(insertInputFieldDate.GetText())
-	description := dataf.Description(insertInputFieldDescription.GetText())
-	cents := dataf.Cents(insertInputFieldCents.GetText())
-	notes := dataf.Notes(insertInputFieldNotes.GetText())
-	category := dataf.Category(insertInputFieldCategory.GetText())
-
-	return domain.Transaction{-1, date, description, cents, notes, category}
+	return t, err
 }
 
 func handleInsertTransaction(ev *tcell.EventKey) *tcell.EventKey {
-	if !checkInsertForm() {
+	t, err := readInsertForm()
+	if err != nil {
+		printStatus(fmt.Sprint(err))
 		return nil
 	}
 
-	var id int64
-	var err error
-
-	id, err = transaction.Insert(readInsertForm())
+	err = t.Save()
 	if err != nil {
-		printStatus(fmt.Sprint(err))
 		return nil
 	}
 
 	updateTransactionsTable()
-	selectTransaction(id)
-
+	selectTransaction(t.Id)
 	closeInsert()
+
 	return nil
 }
 
@@ -106,9 +77,14 @@ func createInsertForm() *cview.Form {
 	insertForm = cview.NewForm()
 	insertForm.SetCancelFunc(closeInsert)
 
+	lastCommitted, err := transaction.FindLastCommitted()
+	if err != nil {
+		panic("FIXME: handle when there are no committed transactions")
+	}
+
 	insertInputFieldDate = cview.NewInputField()
 	insertInputFieldDate.SetLabel("Date:")
-	insertInputFieldDate.SetText(dates.LastCommitted().Format("2006-01-02"))
+	insertInputFieldDate.SetText(lastCommitted.Date.GetText())
 	insertInputFieldDate.SetFieldWidth(11)
 
 	insertInputFieldCategory = cview.NewInputField()

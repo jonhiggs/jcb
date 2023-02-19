@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"io"
-	"jcb/domain"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,11 +12,13 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *sql.DB
+const TimeLayout = "2006-01-02 15:04:05.999999999-07:00"
+
+var Conn *sql.DB
 var workingFile string
 var saveFile string
 var SaveTime time.Time
-var dirty bool
+var Dirty bool
 
 func Init(file string) error {
 	var err error
@@ -27,7 +28,8 @@ func Init(file string) error {
 	workingFile = makeWorkingFile()
 
 	fmt.Fprintf(os.Stderr, "Loading file %s\n", file)
-	db, err = sql.Open("sqlite3", workingFile)
+
+	Conn, err = sql.Open("sqlite3", workingFile)
 
 	if err != nil {
 		log.Fatal(err)
@@ -47,17 +49,31 @@ func Init(file string) error {
 			UNIQUE(id)
 	    );
 	`
-	_, err = db.Exec(sts)
+	_, err = Conn.Exec(sts)
 
-	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
+	sts = `
+	    CREATE TABLE IF NOT EXISTS cache(
+	        id INTEGER NOT NULL,
+			tagged INTEGER default 0,
+			UNIQUE(id)
+	    );
+	`
+	_, err = Conn.Exec(sts)
+
+	statement, err := Conn.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, balance, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 
-	year := time.Now().Year()
-
-	t := domain.Transaction{0, time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC), "Opening Balance", 0, "", ""}
-	_, err = statement.Exec(t.Id, t.Date, t.Description, t.Cents, time.Now(), time.Now())
+	_, err = statement.Exec(
+		0,
+		time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC),
+		"Opening Balance",
+		0,
+		0,
+		time.Now(),
+		time.Now(),
+	)
 	if err != nil {
 		return err
 	}
@@ -118,30 +134,30 @@ func check(err error) {
 }
 
 func Save() {
-	db.Close()
+	Conn.Close()
 
 	err := os.Rename(workingFile, saveFile)
 	check(err)
 	makeWorkingFile()
-	dirty = false
+	Dirty = false
 	SaveTime = time.Now()
 
-	db, err = sql.Open("sqlite3", workingFile)
+	Conn, err = sql.Open("sqlite3", workingFile)
 }
 
 func RemoveWorkingFile() {
 	os.Remove(workingFile)
 }
 
-func Dirty() bool {
+func IsDirty() bool {
 	var count int
 
 	// this is to handle deletes
-	if dirty {
+	if Dirty {
 		return true
 	}
 
-	statement, err := db.Prepare("SELECT COUNT(*) FROM transactions WHERE updatedAt > ?")
+	statement, err := Conn.Prepare("SELECT COUNT(*) FROM transactions WHERE updatedAt > ?")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -152,4 +168,8 @@ func Dirty() bool {
 	}
 
 	return count > 0
+}
+
+func TimeNow() string {
+	return time.Now().Format(TimeLayout)
 }

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"jcb/config"
 	"jcb/db"
-	"jcb/lib/exporter"
-	"jcb/lib/importer"
+	"jcb/lib/tsv"
 	"jcb/ui"
 	"log"
 	"os"
+	"runtime/pprof"
 
 	"nullprogram.com/x/optparse"
 )
@@ -32,11 +32,13 @@ func main() {
 		{"export-tsv", 'e', optparse.KindNone},
 		{"help", 'h', optparse.KindNone},
 		{"version", 'v', optparse.KindNone},
+		{"cpu-profile", 'p', optparse.KindRequired},
 	}
 
 	file := config.DefaultFile()
 	tsvFile := ""
 	exportTsv := false
+	var cpuProfile string
 
 	results, _, err := optparse.Parse(options, os.Args)
 	if err != nil {
@@ -57,7 +59,18 @@ func main() {
 			tsvFile = result.Optarg
 		case "export-tsv":
 			exportTsv = true
+		case "cpu-profile":
+			cpuProfile = result.Optarg
 		}
+	}
+
+	if cpuProfile != "" {
+		f, err := os.Create(cpuProfile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
 	}
 
 	err = db.Init(file)
@@ -66,12 +79,12 @@ func main() {
 	}
 
 	if exportTsv {
-		exporter.Tsv()
+		tsv.Export()
 		return
 	}
 
 	if tsvFile != "" {
-		importer.Tsv(tsvFile)
+		tsv.Import(tsvFile)
 		db.Save()
 		db.RemoveWorkingFile()
 		return

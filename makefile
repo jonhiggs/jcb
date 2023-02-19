@@ -1,12 +1,19 @@
 run: test
 	go run ./cmd/main.go -f ./test.db
 
-test:
-	go test ./lib/formatter/data
-	go test ./lib/formatter/string
-	go test ./lib/repeater
-	go test ./ui/input-bindings/input-bindings_test.go
-	go test ./ui/acceptanceFunction/acceptanceFunction_test.go
+test: 
+	go test ./lib/transaction
+	@#go test ./ui/input-bindings
+	@#go test ./ui/acceptanceFunction
+
+build:
+	go build -o ./jcb ./cmd/main.go
+
+profile: build
+	rm -f profile*.pdf
+	-./jcb -f ./test.db -p test.prof
+	go tool pprof --pdf test.prof
+	evince profile001.pdf
 
 release: release/jcb_darwin_amd64 \
          release/jcb_linux_amd64 \

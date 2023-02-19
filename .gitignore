@@ -3,3 +3,5 @@ test.db
 .test.db.tmp
 demo/
 release/
+*.prof
+*.pdf

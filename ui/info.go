@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"jcb/config"
+	"jcb/lib/transaction"
 
 	"code.rocketnine.space/tslocum/cview"
 )
@@ -17,17 +18,19 @@ func updateInfo() {
 
 	modifedCount := 0
 
-	for i, t := range transactionAttributes {
+	start, end := transaction.DateRange()
+
+	for i, t := range transaction.All(start, end) {
 		if i == 0 {
 			continue
 		}
 
-		if !t.Saved {
+		if !t.IsSaved() {
 			modifedCount += 1
 		}
 	}
 
-	info.SetText(fmt.Sprintf("[%d:%d] [%d] [%d]", row, len(transactionIds)-1, modifedCount, len(taggedTransactionIds)))
+	info.SetText(fmt.Sprintf("[%d:%d] [%d] [%d]", row, len(transactions)-1, modifedCount, len(taggedTransactions())))
 }
 
 func createInfoTextView() *cview.TextView {

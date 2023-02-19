@@ -34,7 +34,7 @@ func Description(field *cview.InputField) bool {
 }
 
 func Notes(field *cview.InputField) bool {
-	if len(field.GetText()) > config.NOTES_MAX_LENGTH {
+	if len(field.GetText()) > config.NOTE_MAX_LENGTH {
 		return false
 	}
 	return true

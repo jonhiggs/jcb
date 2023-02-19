@@ -17,6 +17,13 @@ func runCommand(command string) {
 		printStatus(config.VERSION)
 	case "w":
 		db.Save()
+		for _, t := range transactions {
+			t.Date.Saved = true
+			t.Description.Saved = true
+			t.Cents.Saved = true
+			t.Note.Saved = true
+			t.Category.Saved = true
+		}
 		updateTransactionsTable()
 		updateInfo()
 		printStatus("File saved")
@@ -24,7 +31,7 @@ func runCommand(command string) {
 		updateTransactionsTable()
 		printStatus("Refreshed the transactions")
 	case "quit", "q":
-		if db.Dirty() {
+		if db.IsDirty() {
 			printStatus("You have unsaved changes. Use ':q!' to quit without saving.")
 		} else {
 			app.Stop()
