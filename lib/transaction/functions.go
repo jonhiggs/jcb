@@ -87,6 +87,7 @@ func (t *Transaction) Delete() error {
 	_, err = statement.Exec(t.Id)
 
 	db.Dirty = true
+	t.Untag()
 
 	return err
 }
@@ -109,6 +110,7 @@ func (t *Transaction) Commit() error {
 		panic(err)
 	}
 
+	t.Untag()
 	return nil
 }
 
