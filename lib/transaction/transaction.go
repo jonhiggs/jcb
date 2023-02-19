@@ -1,7 +1,6 @@
 package transaction
 
 import (
-	"errors"
 	"fmt"
 	"jcb/db"
 	"log"
@@ -95,38 +94,42 @@ func (t *Transaction) GetAttributeString() string {
 	return s
 }
 
-// Returns true if transaction is immediately ready to be committed.
-func (t *Transaction) IsCommittable() error {
+// Returns true of transaction cannot have the commit status altered
+func (t *Transaction) IsCommitLocked() bool {
 	if t.Committed {
-		return errors.New("transaction is already committed")
+		nextT, _ := Find(t.NextId)
+		if nextT.Committed {
+			return true
+		}
+	} else {
+		var count int
+
+		if t.Id == 0 {
+			return false
+		}
+
+		statement, err := db.Conn.Prepare(`
+			SELECT COUNT(*)
+			FROM transactions
+			WHERE
+				(date < ? AND committedAt IS NULL)
+				OR (id = 0 and committedAt IS NULL);
+		`)
+		if err != nil {
+			panic(err)
+		}
+
+		err = statement.QueryRow(t.Date.GetText()).Scan(&count)
+		if err != nil {
+			panic(err)
+		}
+
+		if count > 0 {
+			return true
+		}
 	}
 
-	lastCommitted, err := FindLastCommitted()
-	if err != nil {
-		if t.Id != 0 {
-			return errors.New("commit the opening balance transaction first")
-		}
-		return nil
-	}
-
-	startTime := lastCommitted.Date.GetValue()
-	endTime := time.Date(startTime.Year()+1, 1, 1, 0, 0, 0, 0, time.UTC)
-	for _, tt := range All(startTime, endTime) {
-		if tt.Committed {
-			continue
-		}
-
-		if tt.Id == t.Id {
-			break
-		}
-
-		// return false if there are any transactions before 't'.
-		if t.Date.GetValue().After(tt.Date.GetValue()) {
-			return errors.New("you must first commit all older transactions")
-		}
-	}
-
-	return nil
+	return false
 }
 
 // Return false if a similar transaction already exists.

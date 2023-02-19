@@ -134,40 +134,13 @@ func FindByCategory(category string, start time.Time, end time.Time) []*Transact
 
 // Return a transaction from a transaction ID.
 func Find(id int) (*Transaction, error) {
-	var date string
-	var description string
-	var cents int
-	var notes string
-	var category string
-	var committedAt string
-
-	statement, _ := db.Conn.Prepare(`
-		SELECT id, date, description, cents, notes, category, IFNULL(committedAt, "2999-12-31") AS committedAt
-		FROM transactions WHERE id = ?
-	`)
-
-	err := statement.QueryRow(id).Scan(&id, &date, &description, &cents, &notes, &category, &committedAt)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("Find(): %s", err))
+	for _, t := range All(time.Unix(0, 0), time.Unix(32503554000, 0)) {
+		if t.Id == id {
+			return t, nil
+		}
 	}
 
-	t := new(Transaction)
-	t.Id = id
-	t.Date.SetText(date)
-	t.Description.SetValue(description)
-	t.Cents.SetValue(cents)
-	t.Note.SetValue(notes)
-	t.Category.SetValue(category)
-
-	t.Committed = (committedAt != "2999-12-31")
-
-	t.Date.Saved = true
-	t.Description.Saved = true
-	t.Cents.Saved = true
-	t.Note.Saved = true
-	t.Category.Saved = true
-
-	return t, nil
+	return nil, errors.New("transaction not found")
 }
 
 func FindLastCommitted() (*Transaction, error) {

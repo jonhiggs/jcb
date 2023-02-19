@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"errors"
-	"fmt"
 	"jcb/db"
 )
 
@@ -94,14 +93,13 @@ func (t *Transaction) Delete() error {
 
 // Commit a transaction
 func (t *Transaction) Commit() error {
-	err := t.IsCommittable()
-	if err != nil {
-		return fmt.Errorf("commit failed: %w", err)
+	if t.IsCommitLocked() {
+		return errors.New("transaction's commit status cannot be altered")
 	}
 
 	statement, _ := db.Conn.Prepare("UPDATE transactions SET balance = ?, committedAt = ?, updatedAt = ? WHERE id = ? AND committedAt IS NULL")
 
-	_, err = statement.Exec(
+	_, err := statement.Exec(
 		t.Balance().GetValue(),
 		db.TimeNow(),
 		db.TimeNow(),
@@ -116,6 +114,10 @@ func (t *Transaction) Commit() error {
 
 // Uncommit a transaction
 func (t *Transaction) Uncommit() error {
+	if t.IsCommitLocked() {
+		return errors.New("transaction's commit status cannot be altered")
+	}
+
 	statement, _ := db.Conn.Prepare("UPDATE transactions SET balance = NULL, committedAt = NULL, updatedAt = ? WHERE id = ? AND committedAt IS NOT NULL")
 
 	_, err := statement.Exec(db.TimeNow(), t.Id)
