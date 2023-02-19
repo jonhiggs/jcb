@@ -453,6 +453,11 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 
 	startingRow, _ := transactionsTable.GetSelection()
 
+	if len(taggedTransactions()) == 0 {
+		printStatus("no transactions are tagged")
+		return nil
+	}
+
 	switch e := cmdEv.(type) {
 	case *tcell.EventKey:
 		switch e.Rune() {
@@ -462,12 +467,14 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				handleDeleteTransaction(e)
 				startingRow, _ = transactionsTable.GetSelection()
 			}
+			return nil
 		case 't':
 			for _, t := range taggedTransactions() {
-				t.Tagged = false
+				t.Untag()
 			}
+			updateTransactionsTable()
+			return nil
 		case 'D':
-
 			openPrompt("Category:", selectionTransaction().Category.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
 				modifiedTransactions := transaction.UpdateCategory(promptInputField.GetText(), taggedTransactions())
@@ -479,6 +486,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 			})
+			return nil
 		case 'd':
 			openPrompt("Description:", selectionTransaction().Description.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
@@ -491,6 +499,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 			})
+			return nil
 		case '=':
 			openPrompt("Amount:", selectionTransaction().Cents.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
@@ -503,6 +512,7 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 			})
+			return nil
 		case '@':
 			openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {
 				panels.HidePanel("prompt")
@@ -515,13 +525,16 @@ func handleTagCommand(ev *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 			})
+			return nil
 		}
 
 		switch e.Key() {
 		case tcell.KeyCtrlT:
 			for _, t := range taggedTransactions() {
-				t.Tagged = false
+				t.Untag()
 			}
+			updateTransactionsTable()
+			return nil
 		}
 
 		openPrompt("Date:", selectionTransaction().Date.GetText(), func(ev *tcell.EventKey) *tcell.EventKey {

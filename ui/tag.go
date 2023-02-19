@@ -26,7 +26,7 @@ func tagMatches(id int) {
 
 		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
-			t.Tagged = true
+			t.Tag()
 		}
 	}
 
@@ -44,7 +44,7 @@ func untagMatches(id int) {
 
 		if find.TableRowMatches(transactionsTable, r) {
 			matchCount += 1
-			t.Tagged = false
+			t.Untag()
 		}
 	}
 
