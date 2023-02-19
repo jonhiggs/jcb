@@ -73,6 +73,12 @@ func (t *Transaction) IsSaved() bool {
 // Returns the attributes string
 func (t *Transaction) GetAttributeString() string {
 	s := ""
+	if t.Id == 0 {
+		s += "*"
+	} else {
+		s += " "
+	}
+
 	if t.Committed {
 		s += "C"
 	} else {
