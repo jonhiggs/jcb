@@ -30,7 +30,7 @@ func updateInfo() {
 		}
 	}
 
-	info.SetText(fmt.Sprintf("[%d:%d] [%d] [%d]", row, len(transactions)-1, modifedCount, len(taggedTransactions())))
+	info.SetText(fmt.Sprintf("[%d:%d] [%d] [%d]", row, len(transactions), modifedCount, len(taggedTransactions())))
 }
 
 func createInfoTextView() *cview.TextView {
