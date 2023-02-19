@@ -62,6 +62,7 @@ func handleEditTransaction(ev *tcell.EventKey) *tcell.EventKey {
 	if err != nil {
 		printStatus(fmt.Sprint(err))
 	} else {
+		t.Id = selectionId()
 		err := t.Save()
 		if err == nil {
 			updateTransactionsTable()

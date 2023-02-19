@@ -211,7 +211,7 @@ func updateTransactionsTable() {
 func selectTransaction(id int) {
 	for i, t := range transactions {
 		if t.Id == id {
-			transactionsTable.Select(i, 0)
+			transactionsTable.Select(i+1, 0)
 		}
 	}
 
