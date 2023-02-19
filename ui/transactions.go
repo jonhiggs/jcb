@@ -156,7 +156,7 @@ func updateTransactionsTable() {
 			colorBg = config.COLOR_TAGGED_BG
 		}
 
-		cell = cview.NewTableCell(t.GetAttributeString())
+		cell = cview.NewTableCell(t.GetAttributeText())
 		cell.SetTextColor(colorFg)
 		cell.SetBackgroundColor(colorBg)
 		cell.SetAttributes(attributes)

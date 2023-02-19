@@ -72,7 +72,7 @@ func (t *Transaction) IsSaved() bool {
 }
 
 // Returns the attributes string
-func (t *Transaction) GetAttributeString() string {
+func (t *Transaction) GetAttributeText() string {
 	s := ""
 	if t.Id == 0 {
 		s += "*"
