@@ -14,6 +14,11 @@ import (
 
 var reportTable *cview.Table
 
+func closeReport() {
+	panels.HidePanel("report")
+	closeStatus()
+}
+
 func createReportTable() *cview.Table {
 	reportTable = cview.NewTable()
 	reportTable.Select(0, 0)
@@ -26,12 +31,12 @@ func createReportTable() *cview.Table {
 	reportTable.SetSelectionChangedFunc(func(r int, c int) { closeStatus() })
 
 	c := cbind.NewConfiguration()
-	c.Set("q", handleCloseReport)
 	c.Set("j", handleReportSelectNext)
 	c.Set("k", handleReportSelectPrev)
-	c.Set("F1", handleOpenHelp)
-	c.Set("F2", handleOpenTransactions)
-	c.Set("F3", handleOpenReport)
+	c.Set("1", handleOpenHelp)
+	c.Set("2", handleOpenTransactions)
+	c.Set("3", handleOpenBudget)
+	c.Set("4", handleOpenReport)
 	c.Set(":", handleCommand)
 	reportTable.SetInputCapture(c.Capture)
 

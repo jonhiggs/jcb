@@ -561,6 +561,15 @@ func handleOpenReport(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleOpenBudget(ev *tcell.EventKey) *tcell.EventKey {
+	updateBudgetTable()
+	panels.HidePanel("info")
+	panels.HidePanel("status")
+	panels.ShowPanel("budget")
+	panels.SendToFront("budget")
+	return nil
+}
+
 func handleCommand(ev *tcell.EventKey) *tcell.EventKey {
 	openPrompt(":", "", func(ev *tcell.EventKey) *tcell.EventKey {
 		panels.HidePanel("prompt")
@@ -644,6 +653,21 @@ func handleReportSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
 	return nil
 }
 
+func handleBudgetSelectNext(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := budgetTable.GetSelection()
+	if r < budgetTable.GetRowCount()-1 {
+		budgetTable.Select(r+1, 0)
+	}
+
+	return nil
+}
+
+func handleBudgetSelectPrev(ev *tcell.EventKey) *tcell.EventKey {
+	r, _ := budgetTable.GetSelection()
+	budgetTable.Select(r-1, 0)
+	return nil
+}
+
 func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	pn, _ := panels.GetFrontPanel()
 	var field *cview.InputField
@@ -657,6 +681,9 @@ func HandleInputFormCustomBindings(ev *tcell.EventKey) *tcell.EventKey {
 	case "prompt":
 		fieldId, _ := promptForm.GetFocusedItemIndex()
 		field = promptForm.GetFormItem(fieldId).(*cview.InputField)
+	case "insertBudget":
+		fieldId, _ := insertBudgetForm.GetFocusedItemIndex()
+		field = insertBudgetForm.GetFormItem(fieldId).(*cview.InputField)
 	}
 
 	acceptanceFunc := acceptanceFunction.FieldFunc(field)

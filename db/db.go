@@ -49,6 +49,20 @@ func Init(file string) error {
 	`
 	_, err = db.Exec(sts)
 
+	sts = `
+	    CREATE TABLE IF NOT EXISTS budgets(
+	        id INTEGER PRIMARY KEY AUTOINCREMENT,
+	        date TEXT,
+			category TEXT NOT NULL,
+			cumulative INTEGER DEFAULT 0,
+			notes TEXT DEFAULT '',
+			cents INTEGER,
+			updatedAt TEXT,
+			UNIQUE(id)
+	    );
+	`
+	_, err = db.Exec(sts)
+
 	statement, err := db.Prepare("INSERT OR IGNORE INTO transactions (id, date, description, cents, committedAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
@@ -134,7 +148,8 @@ func RemoveWorkingFile() {
 }
 
 func Dirty() bool {
-	var count int
+	var transCount int
+	var budgetCount int
 
 	// this is to handle deletes
 	if dirty {
@@ -146,10 +161,20 @@ func Dirty() bool {
 		log.Fatal(err)
 	}
 
-	err = statement.QueryRow(SaveTime).Scan(&count)
+	err = statement.QueryRow(SaveTime).Scan(&transCount)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return count > 0
+	statement, err = db.Prepare("SELECT COUNT(*) FROM budgets WHERE updatedAt > ?")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = statement.QueryRow(SaveTime).Scan(&budgetCount)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return (transCount + budgetCount) > 0
 }
